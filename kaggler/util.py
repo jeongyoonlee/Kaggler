@@ -1,9 +1,12 @@
-import numpy as np
+from math import exp, log
 from scipy import sparse
 from scipy.stats import norm
 from sklearn.datasets import load_svmlight_file, dump_svmlight_file
 from sklearn.preprocessing import OneHotEncoder
 from statsmodels.distributions.empirical_distribution import ECDF
+
+import heapq
+import numpy as np
 
 
 def get_downsampled_index(n, rate=0.):
@@ -167,3 +170,34 @@ def set_min_max(x, lb, ub):
 
     return x
 
+
+def sigm(x):
+    return 1 / (1 + exp(-max(min(x, 20), -20)))
+
+
+def logloss(yhat, y):
+    yhat = max(min(yhat, 1. - 10e-15), 10e-15)
+    return -log(yhat) if y == 1 else -log(1. - yhat)
+
+
+def read_sps(path):
+    for line in open(path):
+        # parse x
+        xs = line.rstrip().split(' ')
+
+        yield xs[1:], int(xs[0])
+
+
+def shuf_file(f, shuf_win):
+    heap = []
+    for line in f:
+        key = hash(line)
+        if len(heap) < shuf_win:
+            heapq.heappush(heap, (key, line))
+        else:
+            _, out = heapq.heappushpop(heap, (key, line))
+            yield out
+
+    while len(heap) > 0:
+        _, out = heapq.heappop(heap)
+        yield out

@@ -2,13 +2,16 @@ from distutils.core import setup
 
 setup(
     name='Kaggler',
-    version='0.1.1',
+    version='0.2.dev',
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
-    packages=['kaggler', 'kaggler.test'],
+    packages=['kaggler',
+              'kaggler.model',
+              'kaggler.online_model',
+              'kaggler.test'],
     url='http://pypi.python.org/pypi/Kaggler/',
     license='LICENSE.txt',
-    description='Utility functions and common setups for Kaggle competitions.',
+    description='Code for Kaggle Data Science Competitions.',
     long_description=open('README.txt').read(),
     install_requires=[
         "scipy >= 0.14.0",

@@ -1,14 +1,15 @@
-import numpy as np
-import scipy.sparse as sp
+from scipy import sparse
 from scipy.optimize import minimize
 from sklearn import metrics
+
+import logging
+import numpy as np
 import time
 
-from const import SEC_PER_MIN
-from logger import log
+from ..const import SEC_PER_MIN
 
 
-class NeuralNetwork():
+class NN(object):
     """
     Implement a neural network with a single hidden layer.
 
@@ -40,7 +41,7 @@ class NeuralNetwork():
         """
         y = y.reshape((len(y), 1))
 
-        if sp.issparse(X):
+        if sparse.issparse(X):
             X = X.tocsr()
 
         if X_val is not None:
@@ -54,7 +55,7 @@ class NeuralNetwork():
         self.w_opt = self.w
         self.epoch_opt = 0
 
-        log.info('training ...')
+        logging.info('training ...')
         n_obs = X.shape[0]
         n_batch = self.n_b
         n_epoch = self.n_e
@@ -144,7 +145,7 @@ class NeuralNetwork():
                                                           self.auc_opt))
             self.w = self.w_opt
 
-        log.info('done training')
+        logging.info('done training')
 
     def predict(self, X):
         """
@@ -152,7 +153,7 @@ class NeuralNetwork():
         neural network.
 
         """
-        log.info('predicting ...')
+        logging.info('predicting ...')
         yhats = self.predict_raw(X)
 
         return yhats[:, 0]
@@ -187,8 +188,8 @@ class NeuralNetwork():
             idx.append(self.n_i)        # Include the last row for the bias
             w1 = w1[idx, :]
 
-        if sp.issparse(X):
-            return np.hstack((sigm(sp.hstack((X, b)).dot(w1)), b)).dot(w2)
+        if sparse.issparse(X):
+            return np.hstack((sigm(sparse.hstack((X, b)).dot(w1)), b)).dot(w2)
         else:
             return np.hstack((sigm(np.hstack((X, b)).dot(w1)), b)).dot(w2)
 
@@ -223,10 +224,10 @@ class NeuralNetwork():
 
         # Predict for features -- cannot use predict_raw() because here
         # different weights can be used.
-        if sp.issparse(x0):
-            yhat0 = np.hstack((sigm(sp.hstack((x0, b0)).dot(w[:-n_h1].reshape(
+        if sparse.issparse(x0):
+            yhat0 = np.hstack((sigm(sparse.hstack((x0, b0)).dot(w[:-n_h1].reshape(
                                n_i1, n_h))), b0)).dot(w[-n_h1:].reshape(n_h1, 1))
-            yhat1 = np.hstack((sigm(sp.hstack((x1, b1)).dot(w[:-n_h1].reshape(
+            yhat1 = np.hstack((sigm(sparse.hstack((x1, b1)).dot(w[:-n_h1].reshape(
                                n_i1, n_h))), b1)).dot(w[-n_h1:].reshape(n_h1, 1))
         else:
             yhat0 = np.hstack((sigm(np.hstack((x0, b0)).dot(w[:-n_h1].reshape(
@@ -276,11 +277,11 @@ class NeuralNetwork():
         w2 = w[-n_h1:].reshape(n_h1, 1)
         w1 = w[:-n_h1].reshape(n_i1, n_h)
 
-        if sp.issparse(x0):
+        if sparse.issparse(x0):
             x0 = x0.tocsr()[idx0]
             x1 = x1.tocsr()[idx1]
-            xb0 = sp.hstack((x0, b))
-            xb1 = sp.hstack((x1, b))
+            xb0 = sparse.hstack((x0, b))
+            xb1 = sparse.hstack((x1, b))
         else:
             x0 = x0[idx0]
             x1 = x1[idx1]
