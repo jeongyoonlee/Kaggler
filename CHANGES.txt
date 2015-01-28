@@ -1,0 +1,2 @@
+v0.1.1, 2014-09-24 -- Fix wrong dependencies
+v0.1.0, 2014-07-22 -- Initial release.
