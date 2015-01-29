@@ -39,5 +39,10 @@ setup(
                            ['kaggler/online_model/fm.pyx'],
                            libraries=[],
                            include_dirs=[np.get_include()],
+                           extra_compile_args=['-O3']),
+                 Extension('kaggler.online_model.nn',
+                           ['kaggler/online_model/nn.pyx'],
+                           libraries=[],
+                           include_dirs=[np.get_include()],
                            extra_compile_args=['-O3'])],
 )
