@@ -32,7 +32,6 @@ cdef class FTRL:
     cdef double[:] w
     cdef double[:] c
     cdef double[:] z
-    #cdef dict z
 
     def __init__(self,
                  double alpha=0.01,
@@ -52,7 +51,6 @@ cdef class FTRL:
         self.w = np.zeros((self.N,), dtype=np.float64)
         self.c = np.zeros((self.N,), dtype=np.float64)
         self.z = np.zeros((self.N,), dtype=np.float64)
-        #self.z = {}
 
     def _indices(self, list x):
         cdef unsigned int index
@@ -126,9 +124,7 @@ cdef class FTRL:
         cdef int i
         cdef double sign
         cdef double wTx
-        #cdef dict z
 
-        #z = {}
         wTx = 0.
         for i in self._indices(x):
             sign = -1. if self.w[i] < 0 else 1.
@@ -139,7 +135,5 @@ cdef class FTRL:
                             ((self.beta + sqrt(self.c[i])) / self.alpha + self.l2)
 
             wTx += self.z[i]
-
-        #self.z = z
 
         return sigm(wTx)
