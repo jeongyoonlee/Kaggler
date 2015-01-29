@@ -6,7 +6,7 @@ import numpy as np
 
 setup(
     name='Kaggler',
-    version='0.2.dev',
+    version='0.2.0',
 
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
