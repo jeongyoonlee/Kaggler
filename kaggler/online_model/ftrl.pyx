@@ -2,18 +2,12 @@ from __future__ import division
 import numpy as np
 
 cimport cython
-from libc.math cimport exp, sqrt
+from libc.math cimport sqrt, fabs
+from ..util cimport sigm
 cimport numpy as np
 
 
 np.import_array()
-
-cdef inline double double_max(double a, double b): return a if a >= b else b
-cdef inline double double_min(double a, double b): return a if a <= b else b
-
-
-cdef double sigm(double x):
-    return 1 / (1 + exp(-double_max(double_min(x, 20.0), -20.0)))
 
 
 cdef class FTRL:
@@ -23,34 +17,34 @@ cdef class FTRL:
     original FTRL paper is available at http://goo.gl/iqIaH0
     """
 
-    cdef double alpha      # learning rate
-    cdef double beta
+    cdef double a      # learning rate
+    cdef double b
     cdef double l1
     cdef double l2
-    cdef unsigned int N              # # of features
+    cdef unsigned int n              # # of features
     cdef bint interaction
     cdef double[:] w
     cdef double[:] c
     cdef double[:] z
 
     def __init__(self,
-                 double alpha=0.01,
-                 double beta=1.,
+                 double a=0.01,
+                 double b=1.,
                  double l1=1.,
                  double l2=1.,
-                 unsigned int N=2**20,
+                 unsigned int n=2**20,
                  bint interaction=True):
-        self.alpha = alpha      # learning rate
-        self.beta = beta
+        self.a = a      # learning rate
+        self.b = b
         self.l1 = l1
         self.l2 = l2
-        self.N = N              # # of features
+        self.n = n              # # of features
         self.interaction = interaction
 
         # initialize weights and counts
-        self.w = np.zeros((self.N,), dtype=np.float64)
-        self.c = np.zeros((self.N,), dtype=np.float64)
-        self.z = np.zeros((self.N,), dtype=np.float64)
+        self.w = np.zeros((self.n,), dtype=np.float64)
+        self.c = np.zeros((self.n,), dtype=np.float64)
+        self.z = np.zeros((self.n,), dtype=np.float64)
 
     def _indices(self, list x):
         cdef unsigned int index
@@ -68,7 +62,7 @@ cdef class FTRL:
             x = sorted(x)
             for i in xrange(l):
                 for j in xrange(i + 1, l):
-                    yield abs(hash('{}_{}'.format(x[i], x[j]))) % self.N
+                    yield fabs(hash('{}_{}'.format(x[i], x[j]))) % self.n
 
     def get_x(self, list xs):
         """Apply hashing trick to a dictionary of {feature name: value}.
@@ -83,7 +77,7 @@ cdef class FTRL:
         x = []
         for item in xs:
             index, _ = item.split(':')
-            x.append(abs(hash(index)) % self.N)
+            x.append(fabs(hash(index)) % self.n)
 
         return x
 
@@ -107,7 +101,7 @@ cdef class FTRL:
         g = p - y
         g2 = g * g
         for i in self._indices(x):
-            s = (sqrt(self.c[i] + g2) - sqrt(self.c[i])) / self.alpha
+            s = (sqrt(self.c[i] + g2) - sqrt(self.c[i])) / self.a
             self.w[i] += g - s * self.z[i]
             self.c[i] += g2
 
@@ -132,7 +126,7 @@ cdef class FTRL:
                 self.z[i] = 0.
             else:
                 self.z[i] = (sign * self.l1 - self.w[i]) / \
-                            ((self.beta + sqrt(self.c[i])) / self.alpha + self.l2)
+                            ((self.b + sqrt(self.c[i])) / self.a + self.l2)
 
             wTx += self.z[i]
 

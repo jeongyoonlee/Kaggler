@@ -4,18 +4,12 @@ import numpy as np
 import random
 
 cimport cython
-from libc.math cimport exp, sqrt, fabs
+from libc.math cimport sqrt, fabs
+from ..util cimport sigm
 cimport numpy as np
 
 
 np.import_array()
-
-cdef inline double double_max(double a, double b): return a if a >= b else b
-cdef inline double double_min(double a, double b): return a if a <= b else b
-
-
-cdef double sigm(double x):
-    return 1 / (1 + exp(-double_max(double_min(x, 20.0), -20.0)))
 
 
 cdef class NN:
@@ -127,6 +121,7 @@ cdef class NN:
         cdef double dl_dy
         cdef double dl_dz
         cdef double x
+
         # XXX: assuming predict() was called right before with the same idx and
         # val inputs.  Otherwise self.z will be incorrect for updates.
         e = p - y

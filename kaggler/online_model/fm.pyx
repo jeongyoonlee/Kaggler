@@ -4,47 +4,41 @@ import numpy as np
 import random
 
 cimport cython
-from libc.math cimport exp, sqrt, fabs
+from libc.math cimport sqrt, fabs
+from ..util cimport sigm
 cimport numpy as np
 
 
 np.import_array()
 
-cdef inline double double_max(double a, double b): return a if a >= b else b
-cdef inline double double_min(double a, double b): return a if a <= b else b
-
-
-cdef double sigm(double x):
-    return 1 / (1 + exp(-double_max(double_min(x, 20.0), -20.0)))
-
 
 cdef class FM:
     """Factorization Machine online learner."""
 
-    cdef unsigned int N
+    cdef unsigned int n
     cdef unsigned int k
-    cdef double alpha
+    cdef double a
     cdef double w0
     cdef double c0
     cdef double[:] w
     cdef double[:] c
     cdef double[:] V
 
-    def __init__(self, unsigned int N, unsigned int dim=4, double alpha=0.01):
+    def __init__(self, unsigned int n, unsigned int dim=4, double a=0.01):
         cdef int i
 
         random.seed(2014)
-        self.N = N       # # of features
+        self.n = n       # # of features
         self.k = dim
-        self.alpha = alpha      # learning rate
+        self.a = a      # learning rate
 
         # initialize weights, factorized interactions, and counts
         self.w0 = 0.
         self.c0 = 0.
-        self.w = np.zeros((self.N,), dtype=np.float64)
-        self.c = np.zeros((self.N,), dtype=np.float64)
-        self.V = np.zeros((self.N * self.k,), dtype=np.float64)
-        for i in range(self.N * self.k):
+        self.w = np.zeros((self.n,), dtype=np.float64)
+        self.c = np.zeros((self.n,), dtype=np.float64)
+        self.V = np.zeros((self.n * self.k,), dtype=np.float64)
+        for i in range(self.n * self.k):
             self.V[i] = (random.random() - .5) * .001
 
     def get_x(self, xs):
@@ -132,9 +126,9 @@ cdef class FM:
         abs_e = fabs(e)
         self.c0 += abs_e
 
-        self.w0 -= self.alpha / (sqrt(self.c0) + 1) * e
+        self.w0 -= self.a / (sqrt(self.c0) + 1) * e
         for i, x in izip(idx, val):
-            dl_dw = self.alpha / (sqrt(self.c[i]) + 1) * e * x
+            dl_dw = self.a / (sqrt(self.c[i]) + 1) * e * x
             self.w[i] -= dl_dw
             self.c[i] += abs_e
             for f in range(self.k):
