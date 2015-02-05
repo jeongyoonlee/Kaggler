@@ -25,12 +25,14 @@ cdef class NN:
     cdef double c           # counter
     cdef double[:] c0       # counters for input units
     cdef double[:] c1       # counters for hidden units
+    cdef bint interaction   # use interaction between features
 
     def __init__(self,
                  unsigned int n,
                  unsigned int h=10,
                  double a=0.01,
-                 double l2=0.):
+                 double l2=0.,
+                 bint interaction=True):
         cdef int i
 
         random.seed(2014)
@@ -56,7 +58,19 @@ cdef class NN:
         self.c1 = np.zeros((self.h,), dtype=np.float64)
         self.c0 = np.zeros((self.n,), dtype=np.float64)
 
+        # feature interaction
+        self.interaction = interaction
+
     def get_x(self, xs):
+        """Apply hashing trick to a dictionary of {feature name: value}.
+
+        Args:
+            xs - a list of "idx:value"
+
+        Returns:
+            idx - a list of index of non-zero features
+            val - a list of values of non-zero features
+        """
         idx = []
         val = []
 

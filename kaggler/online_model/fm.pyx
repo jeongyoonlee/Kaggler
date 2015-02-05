@@ -37,9 +37,7 @@ cdef class FM:
         self.c0 = 0.
         self.w = np.zeros((self.n,), dtype=np.float64)
         self.c = np.zeros((self.n,), dtype=np.float64)
-        self.V = np.zeros((self.n * self.k,), dtype=np.float64)
-        for i in range(self.n * self.k):
-            self.V[i] = (random.random() - .5) * .001
+        self.V = (np.random.rand(self.n * self.k) - .5) * 1e-6
 
     def get_x(self, xs):
         """Apply hashing trick to a dictionary containing feature names and values.

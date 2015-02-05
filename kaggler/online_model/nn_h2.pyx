@@ -50,19 +50,13 @@ cdef class NN_H2:
         self.l2 = l2
 
         # weights between the output and 2nd hidden layer
-        self.w2 = np.zeros((self.h2 + 1,), dtype=np.float64)
-        for i in range(self.h2 + 1):
-            self.w2[i] = (random.random() - .5) * .0001
+        self.w2 = (np.random.rand(self.h2 + 1) - .5) * 1e-7
 
         # weights between the 2nd hidden layer and 1st hidden layer
-        self.w1 = np.zeros(((self.h1 + 1) * self.h2,), dtype=np.float64)
-        for i in range((self.h1 + 1) * self.h2):
-            self.w1[i] = (random.random() - .5) * .0001
+        self.w1 = (np.random.rand((self.h1 + 1) * self.h2) - .5) * 1e-7
 
         # weights between the 1st hidden layer and inputs
-        self.w0 = np.zeros(((self.n + 1) * self.h1,), dtype=np.float64)
-        for i in range((self.n + 1) * self.h1):
-            self.w0[i] = (random.random() - .5) * .0001
+        self.w0 = (np.random.rand((self.n + 1) * self.h1) - .5) * 1e-7
 
         # hidden units in the 2nd hidden layer
         self.z2 = np.zeros((self.h2,), dtype=np.float64)
