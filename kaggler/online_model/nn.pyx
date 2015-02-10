@@ -1,5 +1,4 @@
 from __future__ import division
-from itertools import izip
 import numpy as np
 import random
 
@@ -56,32 +55,35 @@ cdef class NN:
         # feature interaction
         self.interaction = interaction
 
-    def get_x(self, xs):
-        """Apply hashing trick to a dictionary of {feature name: value}.
+    def read_sparse(self, path):
+        """Apply hashing trick to the libsvm format sparse file.
 
         Args:
-            xs - a list of "idx:value"
+            path - a file path to the libsvm format sparse file
 
         Returns:
             idx - a list of index of non-zero features
             val - a list of values of non-zero features
+            y - target value
         """
-        idx = []
-        val = []
+        for line in open(path):
+            xs = line.rstrip().split(' ')
 
-        for item in xs:
-            i, x = item.split(':')
-            idx.append(int(i))
-            val.append(float(x))
+            y = int(xs[0])
+            idx = []
+            val = []
+            for item in xs[1:]:
+                i, v = item.split(':')
+                idx.append(fabs(hash(i)) % self.n)
+                val.append(float(v))
 
-        return idx, val
+            yield zip(idx, val), y
 
-    def predict(self, list idx, list val):
+    def predict(self, list x):
         """Predict for features.
 
         Args:
-            idx - a list of index of non-zero features
-            val - a list of values of non-zero features
+            x - a list of (index, value) of non-zero features
 
         Returns:
             p - a prediction for input features
@@ -89,7 +91,7 @@ cdef class NN:
         cdef double p
         cdef int j
         cdef int i
-        cdef double x
+        cdef double v
 
         # starting with the bias in the hidden layer
         p = self.w1[self.h]
@@ -100,8 +102,8 @@ cdef class NN:
             self.z[j] = self.w0[self.n * self.h + j]
 
             # calculating and adding values of input units
-            for i, x in izip(idx, val):
-                self.z[j] += self.w0[i * self.h + j] * x
+            for i, v in x:
+                self.z[j] += self.w0[i * self.h + j] * v
 
             # apply the ReLU activation function to the hidden unit
             self.z[j] = self.z[j] if self.z[j] > 0. else 0.
@@ -111,12 +113,11 @@ cdef class NN:
         # apply the sigmoid activation function to the output unit
         return sigm(p)
 
-    def update(self, list idx, list val, double e):
+    def update(self, list x, double e):
         """Update the model.
 
         Args:
-            idx - a list of index of non-zero features
-            val - a list of values of non-zero features
+            x - a list of (index, value) of non-zero features
             e - error between the prediction of the model and target
 
         Returns:
@@ -127,7 +128,7 @@ cdef class NN:
         cdef double abs_e
         cdef double dl_dy
         cdef double dl_dz
-        cdef double x
+        cdef double v
 
         # XXX: assuming predict() was called right before with the same idx and
         # val inputs.  Otherwise self.z will be incorrect for updates.
@@ -152,10 +153,10 @@ cdef class NN:
             self.w0[self.n * self.h + j] -= (dl_dz / (sqrt(self.c1[j]) + 1) +
                                              self.l2 * self.w0[self.n * self.h + j])
             # update weights related to non-zero input units
-            for i, x in izip(idx, val):
+            for i, v in x:
                 # update weights between the hidden unit j and input i
-                # dl/dw0 = dl/dz * dz/dw0 = dl/dz * x
-                self.w0[i * self.h + j] -= (dl_dz / (sqrt(self.c0[i]) + 1) * x +
+                # dl/dw0 = dl/dz * dz/dw0 = dl/dz * v
+                self.w0[i * self.h + j] -= (dl_dz / (sqrt(self.c0[i]) + 1) * v +
                                             self.l2 * self.w0[i * self.h + j])
 
                 # update counter for the input i

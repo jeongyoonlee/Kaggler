@@ -1,5 +1,4 @@
 from __future__ import division
-from itertools import izip
 import numpy as np
 import random
 
@@ -57,25 +56,24 @@ cdef class FM:
             idx = []
             val = []
             for item in xs[1:]:
-                i, x = item.split(':')
+                i, v = item.split(':')
                 idx.append(fabs(hash(i)) % self.n)
-                val.append(float(x))
+                val.append(float(v))
 
-            yield idx, val, y
+            yield zip(idx, val), y
 
-    def predict(self, list idx, list val):
+    def predict(self, list x):
         """Predict for features.
 
         Args:
-            idx - a list of index of non-zero features
-            val - a list of values of non-zero features
+            x - a list of (index, value) of non-zero features
 
         Returns:
             p - a prediction for input features
         """
         cdef int i
         cdef int k
-        cdef double x
+        cdef double v
         cdef double p
         cdef double wx
         cdef double[:] vx
@@ -84,11 +82,11 @@ cdef class FM:
         wx = 0.
         vx = np.zeros((self.k,), dtype=np.float64)
         v2x2 = np.zeros((self.k,), dtype=np.float64)
-        for i, x in izip(idx, val):
-            wx += self.w[i] * x
+        for i, v in x:
+            wx += self.w[i] * v
             for k in range(self.k):
-                vx[k] += self.V[i * self.k + k] * x
-                v2x2[k] += (self.V[i * self.k + k] ** 2) * (x ** 2)
+                vx[k] += self.V[i * self.k + k] * v
+                v2x2[k] += (self.V[i * self.k + k] ** 2) * (v ** 2)
 
         p = self.w0 + wx
         for k in range(self.k):
@@ -96,7 +94,7 @@ cdef class FM:
 
         return sigm(p)
 
-    def update(self, list idx, list val, double e):
+    def update(self, list x, double e):
         """Update the model.
 
         Args:
@@ -110,26 +108,26 @@ cdef class FM:
         cdef int i
         cdef int k
         cdef int f
-        cdef double x
+        cdef double v
         cdef double abs_e
         cdef double dl_dw
         cdef double[:] vx
 
         # calculate v_f * x in advance
         vx = np.zeros((self.k,), dtype=np.float64)
-        for i, x in izip(idx, val):
+        for i, v in x:
             for k in range(self.k):
-                vx[k] += self.V[i * self.k + k] * x
+                vx[k] += self.V[i * self.k + k] * v
 
         # update w0, w, V, c0, and c
         abs_e = fabs(e)
         self.c0 += abs_e
 
         self.w0 -= self.a / (sqrt(self.c0) + 1) * e
-        for i, x in izip(idx, val):
-            dl_dw = self.a / (sqrt(self.c[i]) + 1) * e * x
+        for i, v in x:
+            dl_dw = self.a / (sqrt(self.c[i]) + 1) * e * v
             self.w[i] -= dl_dw
             self.c[i] += abs_e
             for f in range(self.k):
                 self.V[i * self.k + f] -= dl_dw * (vx[f] -
-                                                   self.V[i * self.k + f] * x)
+                                                   self.V[i * self.k + f] * v)

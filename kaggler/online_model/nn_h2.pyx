@@ -1,5 +1,4 @@
 from __future__ import division
-from itertools import izip
 import numpy as np
 import random
 
@@ -70,23 +69,35 @@ cdef class NN_H2:
         self.c1 = np.zeros((self.h1,), dtype=np.float64)
         self.c0 = np.zeros((self.n,), dtype=np.float64)
 
-    def get_x(self, xs):
-        idx = []
-        val = []
+    def read_sparse(self, path):
+        """Apply hashing trick to the libsvm format sparse file.
 
-        for item in xs:
-            i, x = item.split(':')
-            idx.append(int(i))
-            val.append(float(x))
+        Args:
+            path - a file path to the libsvm format sparse file
 
-        return idx, val
+        Returns:
+            idx - a list of index of non-zero features
+            val - a list of values of non-zero features
+            y - target value
+        """
+        for line in open(path):
+            xs = line.rstrip().split(' ')
 
-    def predict(self, list idx, list val):
+            y = int(xs[0])
+            idx = []
+            val = []
+            for item in xs[1:]:
+                i, v = item.split(':')
+                idx.append(fabs(hash(i)) % self.n)
+                val.append(float(v))
+
+            yield zip(idx, val), y
+
+    def predict(self, list x):
         """Predict for features.
 
         Args:
-            idx - a list of index of non-zero features
-            val - a list of values of non-zero features
+            x - a list of (index, value) of non-zero features
 
         Returns:
             p - a prediction for input features
@@ -95,7 +106,7 @@ cdef class NN_H2:
         cdef int k
         cdef int j
         cdef int i
-        cdef double x
+        cdef double v
 
         # starting from the bias in the 2nd hidden layer
         p = self.w2[self.h2]
@@ -111,8 +122,8 @@ cdef class NN_H2:
                 self.z1[j] = self.w0[self.n * self.h1 + j]
 
                 # calculating and adding values of input units
-                for i, x in izip(idx, val):
-                    self.z1[j] += self.w0[i * self.h1 + j] * x
+                for i, v in x:
+                    self.z1[j] += self.w0[i * self.h1 + j] * v
 
                 # apply the ReLU activation function to the first level hidden unit
                 self.z1[j] = self.z1[j] if self.z1[j] > 0. else 0.
@@ -127,12 +138,11 @@ cdef class NN_H2:
         # apply the sigmoid activation function to the output unit
         return sigm(p)
 
-    def update(self, list idx, list val, double e):
+    def update(self, list x, double e):
         """Update the model.
 
         Args:
-            idx - a list of index of non-zero features
-            val - a list of values of non-zero features
+            x - a list of (index, value) of non-zero features
             e - error between the prediction of the model and target
 
         Returns:
@@ -145,7 +155,7 @@ cdef class NN_H2:
         cdef double dl_dy
         cdef double dl_dz1
         cdef double dl_dz2
-        cdef double x
+        cdef double v
 
         # XXX: assuming predict() was called right before with the same idx and
         # val inputs.  Otherwise self.z will be incorrect for updates.
@@ -185,10 +195,10 @@ cdef class NN_H2:
                 self.w0[self.n * self.h1 + j] -= (dl_dz1 / (sqrt(self.c1[j]) + 1) +
                                                     self.l2 * self.w0[self.n * self.h1 + j])
                 # update weights related to non-zero input units
-                for i, x in izip(idx, val):
+                for i, v in x:
                     # update weights between the hidden unit j and input i
-                    # dl/dw1 = dl/dz * dz/dw1 = dl/dz * x
-                    self.w0[i * self.h1 + j] -= (dl_dz1 / (sqrt(self.c0[i]) + 1) * x +
+                    # dl/dw1 = dl/dz * dz/dw1 = dl/dz * v
+                    self.w0[i * self.h1 + j] -= (dl_dz1 / (sqrt(self.c0[i]) + 1) * v +
                                                  self.l2 * self.w0[i * self.h1 + j])
 
                     # update counter for the input i

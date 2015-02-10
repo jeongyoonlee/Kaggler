@@ -32,6 +32,25 @@ libsvm style sparse file format is used for an input.
 ```
 
 # Example
+## SGD
+```
+from kaggler.online_model import SGD
+
+clf = SGD(n=2**20,              # number of hashed features
+          a=.01,                # learning rate
+          l1=1e-6,              # L1 regularization parameter
+          l2=1e-6,              # L2 regularization parameter
+          interaction=True)     # use feature interaction or not
+
+for x, y in clf.read_sparse('train.sparse'):
+    p = clf.predict(x)          # predict for an input
+    clf.update(x, p - y)        # update the model with the target using error
+
+for x, _ in clf.read_sparse('test.sparse'):
+    p = clf.predict(x)
+```
+
+
 ## FTRL
 ```
 from kaggler.online_model import FTRL
@@ -40,7 +59,8 @@ clf = FTRL(n=2**20,             # number of hashed features
            a=.1,                # alpha in the per-coordinate rate
            b=1,                 # beta in the per-coordinate rate
            l1=1.,               # L1 regularization parameter
-           l2=1.)               # L2 regularization parameter
+           l2=1.,               # L2 regularization parameter
+           interaction=True)    # use feature interaction or not
 
 for x, y in clf.read_sparse('train.sparse'):
     p = clf.predict(x)          # predict for an input
@@ -58,12 +78,12 @@ clf = FM(n=1e5,                 # number of features
          dim=4,                 # size of factors for interactions
          a=.01)                 # learning rate
 
-for idx, val, y in clf.read_sparse('train.sparse'):
-    p = clf.predict(idx, val)   # predict for an input
+for x, y in clf.read_sparse('train.sparse'):
+    p = clf.predict(x)          # predict for an input
     clf.update(x, p - y)        # update the model with the target using error
 
-for idx, val, _ in clf.read_sparse('test.sparse'):
-    p = clf.predict(idx, val)
+for x, _ in clf.read_sparse('test.sparse'):
+    p = clf.predict(x)
 ```
 
 ## NN with a single hidden layer
@@ -75,10 +95,10 @@ clf = NN(n=1e5,                 # number of features
          a=.1,                  # learning rate
          l2=1e-6)               # L2 regularization parameter
 
-for idx, val, y in clf.read_sparse('train.sparse'):
-    p = clf.predict(idx, val)   # predict for an input
+for x, y in clf.read_sparse('train.sparse'):
+    p = clf.predict(x)          # predict for an input
     clf.update(x, p - y)        # update the model with the target using error
 
-for idx, val, _ in clf.read_sparse('test.sparse'):
-    p = clf.predict(idx, val)
+for x, _ in clf.read_sparse('test.sparse'):
+    p = clf.predict(x)
 ```

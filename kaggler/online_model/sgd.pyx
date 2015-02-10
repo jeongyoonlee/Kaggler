@@ -1,5 +1,4 @@
 from __future__ import division
-from itertools import izip
 import numpy as np
 import random
 
@@ -24,7 +23,7 @@ cdef class SGD:
     """Simple online learner using a hasing trick."""
 
     def __init__(self,
-                 unsigned int n,
+                 unsigned int n=2**20,
                  double a=0.01,
                  double l1=0.0,
                  double l2=0.0,
@@ -57,29 +56,32 @@ cdef class SGD:
                 for j in xrange(i + 1, l):
                     yield fabs(hash('{}_{}'.format(x[i], x[j]))) % self.n
 
-    def get_x(self, list xs):
-        """Apply hashing trick to a dictionary of {feature name: value}.
+    def read_sparse(self, path):
+        """Apply hashing trick to the libsvm format sparse file.
 
         Args:
-            xs - a list of "idx:value"
+            path - a file path to the libsvm format sparse file
 
         Returns:
-            idx - a list of index of non-zero features
-            val - a list of values of non-zero features
+            x - a list of index of non-zero features
+            y - target value
         """
-        x = []
-        for item in xs:
-            index, _ = item.split(':')
-            x.append(fabs(hash(index)) % self.n)
+        for line in open(path):
+            xs = line.rstrip().split(' ')
 
-        return x
+            y = int(xs[0])
+            x = []
+            for item in xs[1:]:
+                index, _ = item.split(':')
+                x.append(fabs(hash(index)) % self.n)
 
-    def predict(self, list idx):
+            yield x, y
+
+    def predict(self, list x):
         """Predict for features.
 
         Args:
-            idx - a list of index of non-zero features
-            val - a list of values of non-zero features
+            x - a list of index of non-zero features
 
         Returns:
             a prediction for input features
@@ -88,17 +90,16 @@ cdef class SGD:
         cdef double wTx
 
         wTx = 0.
-        for i in self._indices(idx):
+        for i in self._indices(x):
             wTx += self.w[i]
 
         return sigm(wTx)
 
-    def update(self, list idx, double e):
+    def update(self, list x, double e):
         """Update the model.
 
         Args:
-            idx - a list of index of non-zero features
-            val - a list of values of non-zero features
+            x - a list of index of non-zero features
             e - error between the prediction of the model and target
 
         Returns:
@@ -106,7 +107,7 @@ cdef class SGD:
         """
         cdef int i
 
-        for i in self._indices(idx):
+        for i in self._indices(x):
             self.w[i] -= (e * self.a / (sqrt(self.c[i]) + 1) +
                           (self.l1 if self.w[i] >= 0. else -self.l1) +
                           self.l2 * fabs(self.w[i]))
