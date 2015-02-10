@@ -8,7 +8,7 @@ Currently algorithms available are as follows:
 * Stochastic Gradient Descent (SGD)
 * Follow-the-Regularized-Leader (FTRL)
 * Factorization Machine (FM)
-* Neural Networks (NN)
+* Neural Networks (NN) - with a single (NN) or two (NN_H2) hidden layers
 
 # Install
 ## Using pip
@@ -32,14 +32,53 @@ libsvm style sparse file format is used for an input.
 ```
 
 # Example
+## FTRL
 ```
-from kaggler.online_model import FTRL   # FTRL algorithm
+from kaggler.online_model import FTRL
 
-clf = FTRL(a=.1, b=1, l1=1., l2=1.)
+clf = FTRL(n=2**20,             # number of hashed features
+           a=.1,                # alpha in the per-coordinate rate
+           b=1,                 # beta in the per-coordinate rate
+           l1=1.,               # L1 regularization parameter
+           l2=1.)               # L2 regularization parameter
+
 for x, y in clf.read_sparse('train.sparse'):
-    p = clf.predict(x)      # predict for an input
-    clf.update(x, p - y)    # update the model with the target using error
+    p = clf.predict(x)          # predict for an input
+    clf.update(x, p - y)        # update the model with the target using error
 
 for x, _ in clf.read_sparse('test.sparse'):
     p = clf.predict(x)
+```
+
+## FM
+```
+from kaggler.online_model import FM
+
+clf = FM(n=1e5,                 # number of features
+         dim=4,                 # size of factors for interactions
+         a=.01)                 # learning rate
+
+for idx, val, y in clf.read_sparse('train.sparse'):
+    p = clf.predict(idx, val)   # predict for an input
+    clf.update(x, p - y)        # update the model with the target using error
+
+for idx, val, _ in clf.read_sparse('test.sparse'):
+    p = clf.predict(idx, val)
+```
+
+## NN with a single hidden layer
+```
+from kaggler.online_model import NN
+
+clf = NN(n=1e5,                 # number of features
+         h=16,                  # number of hidden units
+         a=.1,                  # learning rate
+         l2=1e-6)               # L2 regularization parameter
+
+for idx, val, y in clf.read_sparse('train.sparse'):
+    p = clf.predict(idx, val)   # predict for an input
+    clf.update(x, p - y)        # update the model with the target using error
+
+for idx, val, _ in clf.read_sparse('test.sparse'):
+    p = clf.predict(idx, val)
 ```
