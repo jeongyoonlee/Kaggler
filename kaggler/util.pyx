@@ -45,16 +45,6 @@ def get_downsampled_index0(x, rate=0., threshold=0.):
     return idx
 
 
-def is_number(s):
-    """Check if a string is a number or not."""
-
-    try:
-        float(s)
-        return True
-    except ValueError:
-        return False
-
-
 def normalize_numerical_feature(feature):
     """Normalize the Pandas column based on cumulative distribution."""
 

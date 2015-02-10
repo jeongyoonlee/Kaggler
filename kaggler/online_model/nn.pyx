@@ -42,13 +42,8 @@ cdef class NN:
         self.a = a
         self.l2 = l2
 
-        self.w1 = np.zeros((self.h + 1,), dtype=np.float64)
-        for i in range(self.h + 1):
-            self.w1[i] = (random.random() - .5) * .0001
-
-        self.w0 = np.zeros(((self.n + 1) * self.h,), dtype=np.float64)
-        for i in range((self.n + 1) * self.h):
-            self.w0[i] = (random.random() - .5) * .0001
+        self.w1 = (np.random.rand(self.h + 1) - .5) * 1e-6
+        self.w0 = (np.random.rand((self.n + 1) * self.h) - .5) * 1e-6
 
         # hidden units in the hidden layer
         self.z = np.zeros((self.h,), dtype=np.float64)

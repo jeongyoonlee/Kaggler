@@ -4,6 +4,17 @@ import heapq
 import numpy as np
 
 
+def is_number(s):
+    """Check if a string is a number or not."""
+
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
+
 def load_data(path, dense=False):
     """Load data from a CSV or libsvm format file.
     
