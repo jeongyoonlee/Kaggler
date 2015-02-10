@@ -39,25 +39,29 @@ cdef class FM:
         self.c = np.zeros((self.n,), dtype=np.float64)
         self.V = (np.random.rand(self.n * self.k) - .5) * 1e-6
 
-    def get_x(self, xs):
-        """Apply hashing trick to a dictionary containing feature names and values.
+    def read_sparse(self, path):
+        """Apply hashing trick to the libsvm format sparse file.
 
         Args:
-            xs - a list of "idx:value"
+            path - a file path to the libsvm format sparse file
 
         Returns:
             idx - a list of index of non-zero features
             val - a list of values of non-zero features
+            y - target value
         """
-        idx = []
-        val = []
+        for line in open(path):
+            xs = line.rstrip().split(' ')
 
-        for item in xs:
-            i, x = item.split(':')
-            idx.append(int(i))
-            val.append(float(x))
+            y = int(xs[0])
+            idx = []
+            val = []
+            for item in xs[1:]:
+                i, x = item.split(':')
+                idx.append(fabs(hash(i)) % self.n)
+                val.append(float(x))
 
-        return idx, val
+            yield idx, val, y
 
     def predict(self, list idx, list val):
         """Predict for features.
@@ -92,14 +96,13 @@ cdef class FM:
 
         return sigm(p)
 
-    def update(self, list idx, list val, double p, double y):
+    def update(self, list idx, list val, double e):
         """Update the model.
 
         Args:
             idx - a list of index of non-zero features
             val - a list of values of non-zero features
-            p - prediction of the model
-            y - true target value
+            e - error between the prediction of the model and target
 
         Returns:
             updated model weights and counts
@@ -108,7 +111,6 @@ cdef class FM:
         cdef int k
         cdef int f
         cdef double x
-        cdef double e
         cdef double abs_e
         cdef double dl_dw
         cdef double[:] vx
@@ -120,7 +122,6 @@ cdef class FM:
                 vx[k] += self.V[i * self.k + k] * x
 
         # update w0, w, V, c0, and c
-        e = p - y
         abs_e = fabs(e)
         self.c0 += abs_e
 

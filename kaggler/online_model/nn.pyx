@@ -111,21 +111,19 @@ cdef class NN:
         # apply the sigmoid activation function to the output unit
         return sigm(p)
 
-    def update(self, list idx, list val, double p, double y):
+    def update(self, list idx, list val, double e):
         """Update the model.
 
         Args:
             idx - a list of index of non-zero features
             val - a list of values of non-zero features
-            p - prediction of the model
-            y - true target value
+            e - error between the prediction of the model and target
 
         Returns:
             updated model weights and counts
         """
         cdef int j
         cdef int i
-        cdef double e
         cdef double abs_e
         cdef double dl_dy
         cdef double dl_dz
@@ -133,7 +131,6 @@ cdef class NN:
 
         # XXX: assuming predict() was called right before with the same idx and
         # val inputs.  Otherwise self.z will be incorrect for updates.
-        e = p - y
         abs_e = fabs(e)
         dl_dy = e * self.a      # dl/dy * (learning rate)
 

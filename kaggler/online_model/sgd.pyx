@@ -93,22 +93,19 @@ cdef class SGD:
 
         return sigm(wTx)
 
-    def update(self, list idx, double p, double y):
+    def update(self, list idx, double e):
         """Update the model.
 
         Args:
             idx - a list of index of non-zero features
             val - a list of values of non-zero features
-            p - prediction of the model
-            y - true target value
+            e - error between the prediction of the model and target
 
         Returns:
             updates model weights and counts
         """
         cdef int i
-        cdef double e
 
-        e = p - y
         for i in self._indices(idx):
             self.w[i] -= (e * self.a / (sqrt(self.c[i]) + 1) +
                           (self.l1 if self.w[i] >= 0. else -self.l1) +

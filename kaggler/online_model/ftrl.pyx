@@ -64,53 +64,53 @@ cdef class FTRL:
                 for j in xrange(i + 1, l):
                     yield fabs(hash('{}_{}'.format(x[i], x[j]))) % self.n
 
-    def get_x(self, list xs):
-        """Apply hashing trick to a dictionary of {feature name: value}.
+    def read_sparse(self, path):
+        """Apply hashing trick to the libsvm format sparse file.
 
         Args:
-            xs - a list of "idx:value"
+            path - a file path to the libsvm format sparse file
 
         Returns:
-            idx - a list of index of non-zero features
-            val - a list of values of non-zero features
+            x - a list of index of non-zero features
+            y - target value
         """
-        x = []
-        for item in xs:
-            index, _ = item.split(':')
-            x.append(fabs(hash(index)) % self.n)
+        for line in open(path):
+            xs = line.rstrip().split(' ')
 
-        return x
+            y = int(xs[0])
+            x = []
+            for item in xs[1:]:
+                index, _ = item.split(':')
+                x.append(fabs(hash(index)) % self.n)
 
-    def update(self, list x, double p, double y):
+            yield x, y
+
+    def update(self, list x, double e):
         """Update the model.
 
         Args:
             idx - a list of index of non-zero features
             val - a list of values of non-zero features
-            p - prediction of the model
-            y - true target value
+            e - error between prediction of the model and target
 
         Returns:
             updates model weights and counts
         """
         cdef int i
-        cdef double g
-        cdef double g2
+        cdef double e2
         cdef double s
 
-        g = p - y
-        g2 = g * g
+        e2 = e * e
         for i in self._indices(x):
-            s = (sqrt(self.c[i] + g2) - sqrt(self.c[i])) / self.a
-            self.w[i] += g - s * self.z[i]
-            self.c[i] += g2
+            s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a
+            self.w[i] += e - s * self.z[i]
+            self.c[i] += e2
 
     def predict(self, list x):
         """Predict for features.
 
         Args:
-            idx - a list of index of non-zero features
-            val - a list of values of non-zero features
+            x - a list of index of non-zero features
 
         Returns:
             a prediction for input features

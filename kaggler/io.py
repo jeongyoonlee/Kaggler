@@ -14,7 +14,6 @@ def is_number(s):
         return False
 
 
-
 def load_data(path, dense=False):
     """Load data from a CSV or libsvm format file.
     

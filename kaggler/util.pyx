@@ -21,7 +21,7 @@ cdef double sigm(double x):
     return 1 / (1 + exp(-fmax(fmin(x, 20.0), -20.0)))
 
 
-cdef double logloss(double p, double y):
+def logloss(double p, double y):
     p = fmax(fmin(p, 1. -1e-15), 1e-15)
     return -log(p) if y == 1. else -log(1. - p)
 

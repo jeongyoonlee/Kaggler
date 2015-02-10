@@ -797,14 +797,14 @@ static void __Pyx_WriteUnraisable(const char *name, int clineno,
                                   int lineno, const char *filename,
                                   int full_traceback);
 
+static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
+    Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
+
 static void __Pyx_RaiseDoubleKeywordsError(const char* func_name, PyObject* kw_name);
 
 static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject **argnames[], \
     PyObject *kwds2, PyObject *values[], Py_ssize_t num_pos_args, \
     const char* function_name);
-
-static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
-    Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
 
 static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name);
 
@@ -1143,16 +1143,17 @@ static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin_KeyError;
 static PyObject *__pyx_builtin_ValueError;
 static PyObject *__pyx_builtin_RuntimeError;
-static PyObject *__pyx_pf_7kaggler_4util_get_downsampled_index(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_n, PyObject *__pyx_v_rate); /* proto */
-static PyObject *__pyx_pf_7kaggler_4util_2get_downsampled_index0(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_x, PyObject *__pyx_v_rate, PyObject *__pyx_v_threshold); /* proto */
-static PyObject *__pyx_pf_7kaggler_4util_4normalize_numerical_feature(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_feature); /* proto */
-static PyObject *__pyx_pf_7kaggler_4util_6normalize_numerical_feature2(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_feature, PyObject *__pyx_v_n); /* proto */
-static PyObject *__pyx_pf_7kaggler_4util_8get_label_encoder(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_feature, PyObject *__pyx_v_min_obs); /* proto */
+static PyObject *__pyx_pf_7kaggler_4util_logloss(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_p, double __pyx_v_y); /* proto */
+static PyObject *__pyx_pf_7kaggler_4util_2get_downsampled_index(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_n, PyObject *__pyx_v_rate); /* proto */
+static PyObject *__pyx_pf_7kaggler_4util_4get_downsampled_index0(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_x, PyObject *__pyx_v_rate, PyObject *__pyx_v_threshold); /* proto */
+static PyObject *__pyx_pf_7kaggler_4util_6normalize_numerical_feature(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_feature); /* proto */
+static PyObject *__pyx_pf_7kaggler_4util_8normalize_numerical_feature2(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_feature, PyObject *__pyx_v_n); /* proto */
+static PyObject *__pyx_pf_7kaggler_4util_10get_label_encoder(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_feature, PyObject *__pyx_v_min_obs); /* proto */
 static PyObject *__pyx_lambda_funcdef_lambda1(PyObject *__pyx_self, PyObject *__pyx_v_x); /* proto */
-static PyObject *__pyx_pf_7kaggler_4util_10encode_categorical_feature(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_feature, PyObject *__pyx_v_min_obs, PyObject *__pyx_v_n); /* proto */
-static PyObject *__pyx_pf_7kaggler_4util_12set_column_width(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_X, PyObject *__pyx_v_n_col); /* proto */
-static PyObject *__pyx_pf_7kaggler_4util_14rank(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_x); /* proto */
-static PyObject *__pyx_pf_7kaggler_4util_16set_min_max(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_x, PyObject *__pyx_v_lb, PyObject *__pyx_v_ub); /* proto */
+static PyObject *__pyx_pf_7kaggler_4util_12encode_categorical_feature(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_feature, PyObject *__pyx_v_min_obs, PyObject *__pyx_v_n); /* proto */
+static PyObject *__pyx_pf_7kaggler_4util_14set_column_width(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_X, PyObject *__pyx_v_n_col); /* proto */
+static PyObject *__pyx_pf_7kaggler_4util_16rank(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_x); /* proto */
+static PyObject *__pyx_pf_7kaggler_4util_18set_min_max(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_x, PyObject *__pyx_v_lb, PyObject *__pyx_v_ub); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
 static PyObject *__pyx_tp_new_7kaggler_4util___pyx_scope_struct__encode_categorical_feature(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -1174,6 +1175,7 @@ static char __pyx_k_n[] = "n";
 static char __pyx_k_p[] = "p";
 static char __pyx_k_q[] = "q";
 static char __pyx_k_x[] = "x";
+static char __pyx_k_y[] = "y";
 static char __pyx_k_Zd[] = "Zd";
 static char __pyx_k_Zf[] = "Zf";
 static char __pyx_k_Zg[] = "Zg";
@@ -1221,6 +1223,7 @@ static char __pyx_k_unique[] = "unique";
 static char __pyx_k_argsort[] = "argsort";
 static char __pyx_k_feature[] = "feature";
 static char __pyx_k_float64[] = "float64";
+static char __pyx_k_logloss[] = "logloss";
 static char __pyx_k_min_obs[] = "min_obs";
 static char __pyx_k_replace[] = "replace";
 static char __pyx_k_reshape[] = "reshape";
@@ -1307,6 +1310,7 @@ static PyObject *__pyx_n_s_label_encoder;
 static PyObject *__pyx_n_s_label_index;
 static PyObject *__pyx_n_s_labels;
 static PyObject *__pyx_n_s_lb;
+static PyObject *__pyx_n_s_logloss;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_matrix;
 static PyObject *__pyx_n_s_min_obs;
@@ -1349,6 +1353,7 @@ static PyObject *__pyx_n_s_unique_rank_sum;
 static PyObject *__pyx_kp_u_unknown_dtype_code_in_numpy_pxd;
 static PyObject *__pyx_n_s_where;
 static PyObject *__pyx_n_s_x;
+static PyObject *__pyx_n_s_y;
 static PyObject *__pyx_n_s_zeros;
 static PyObject *__pyx_n_s_zeros_like;
 static PyObject *__pyx_float_0_;
@@ -1374,6 +1379,7 @@ static PyObject *__pyx_tuple__19;
 static PyObject *__pyx_tuple__21;
 static PyObject *__pyx_tuple__23;
 static PyObject *__pyx_tuple__25;
+static PyObject *__pyx_tuple__27;
 static PyObject *__pyx_codeobj__10;
 static PyObject *__pyx_codeobj__12;
 static PyObject *__pyx_codeobj__14;
@@ -1383,6 +1389,7 @@ static PyObject *__pyx_codeobj__20;
 static PyObject *__pyx_codeobj__22;
 static PyObject *__pyx_codeobj__24;
 static PyObject *__pyx_codeobj__26;
+static PyObject *__pyx_codeobj__28;
 
 /* "kaggler/util.pyx":15
  * np.import_array()
@@ -1496,20 +1503,86 @@ static double __pyx_f_7kaggler_4util_sigm(double __pyx_v_x) {
 /* "kaggler/util.pyx":24
  * 
  * 
- * cdef double logloss(double p, double y):             # <<<<<<<<<<<<<<
+ * def logloss(double p, double y):             # <<<<<<<<<<<<<<
  *     p = fmax(fmin(p, 1. -1e-15), 1e-15)
  *     return -log(p) if y == 1. else -log(1. - p)
  */
 
-static double __pyx_f_7kaggler_4util_logloss(double __pyx_v_p, double __pyx_v_y) {
-  double __pyx_r;
+/* Python wrapper */
+static PyObject *__pyx_pw_7kaggler_4util_1logloss(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_7kaggler_4util_1logloss = {"logloss", (PyCFunction)__pyx_pw_7kaggler_4util_1logloss, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_7kaggler_4util_1logloss(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  double __pyx_v_p;
+  double __pyx_v_y;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  double __pyx_t_1;
+  __Pyx_RefNannySetupContext("logloss (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_p,&__pyx_n_s_y,0};
+    PyObject* values[2] = {0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_p)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_y)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("logloss", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "logloss") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+    }
+    __pyx_v_p = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_p == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_y = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_y == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("logloss", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("kaggler.util.logloss", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_7kaggler_4util_logloss(__pyx_self, __pyx_v_p, __pyx_v_y);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_7kaggler_4util_logloss(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_p, double __pyx_v_y) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("logloss", 0);
 
   /* "kaggler/util.pyx":25
  * 
- * cdef double logloss(double p, double y):
+ * def logloss(double p, double y):
  *     p = fmax(fmin(p, 1. -1e-15), 1e-15)             # <<<<<<<<<<<<<<
  *     return -log(p) if y == 1. else -log(1. - p)
  * 
@@ -1517,30 +1590,44 @@ static double __pyx_f_7kaggler_4util_logloss(double __pyx_v_p, double __pyx_v_y)
   __pyx_v_p = __pyx_f_7kaggler_4util_fmax(__pyx_f_7kaggler_4util_fmin(__pyx_v_p, (1. - 1e-15)), 1e-15);
 
   /* "kaggler/util.pyx":26
- * cdef double logloss(double p, double y):
+ * def logloss(double p, double y):
  *     p = fmax(fmin(p, 1. -1e-15), 1e-15)
  *     return -log(p) if y == 1. else -log(1. - p)             # <<<<<<<<<<<<<<
  * 
  * 
  */
+  __Pyx_XDECREF(__pyx_r);
   if (((__pyx_v_y == 1.) != 0)) {
-    __pyx_t_1 = (-log(__pyx_v_p));
+    __pyx_t_2 = PyFloat_FromDouble((-log(__pyx_v_p))); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 26; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_1 = __pyx_t_2;
+    __pyx_t_2 = 0;
   } else {
-    __pyx_t_1 = (-log((1. - __pyx_v_p)));
+    __pyx_t_2 = PyFloat_FromDouble((-log((1. - __pyx_v_p)))); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 26; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_1 = __pyx_t_2;
+    __pyx_t_2 = 0;
   }
   __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
   goto __pyx_L0;
 
   /* "kaggler/util.pyx":24
  * 
  * 
- * cdef double logloss(double p, double y):             # <<<<<<<<<<<<<<
+ * def logloss(double p, double y):             # <<<<<<<<<<<<<<
  *     p = fmax(fmin(p, 1. -1e-15), 1e-15)
  *     return -log(p) if y == 1. else -log(1. - p)
  */
 
   /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_AddTraceback("kaggler.util.logloss", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
   __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -1554,10 +1641,10 @@ static double __pyx_f_7kaggler_4util_logloss(double __pyx_v_p, double __pyx_v_y)
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_7kaggler_4util_1get_downsampled_index(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_7kaggler_4util_get_downsampled_index[] = "Return the index that downsamples a vector x by the rate.";
-static PyMethodDef __pyx_mdef_7kaggler_4util_1get_downsampled_index = {"get_downsampled_index", (PyCFunction)__pyx_pw_7kaggler_4util_1get_downsampled_index, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7kaggler_4util_get_downsampled_index};
-static PyObject *__pyx_pw_7kaggler_4util_1get_downsampled_index(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_7kaggler_4util_3get_downsampled_index(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_7kaggler_4util_2get_downsampled_index[] = "Return the index that downsamples a vector x by the rate.";
+static PyMethodDef __pyx_mdef_7kaggler_4util_3get_downsampled_index = {"get_downsampled_index", (PyCFunction)__pyx_pw_7kaggler_4util_3get_downsampled_index, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7kaggler_4util_2get_downsampled_index};
+static PyObject *__pyx_pw_7kaggler_4util_3get_downsampled_index(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_n = 0;
   PyObject *__pyx_v_rate = 0;
   int __pyx_lineno = 0;
@@ -1612,14 +1699,14 @@ static PyObject *__pyx_pw_7kaggler_4util_1get_downsampled_index(PyObject *__pyx_
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_7kaggler_4util_get_downsampled_index(__pyx_self, __pyx_v_n, __pyx_v_rate);
+  __pyx_r = __pyx_pf_7kaggler_4util_2get_downsampled_index(__pyx_self, __pyx_v_n, __pyx_v_rate);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_7kaggler_4util_get_downsampled_index(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_n, PyObject *__pyx_v_rate) {
+static PyObject *__pyx_pf_7kaggler_4util_2get_downsampled_index(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_n, PyObject *__pyx_v_rate) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -1711,10 +1798,10 @@ static PyObject *__pyx_pf_7kaggler_4util_get_downsampled_index(CYTHON_UNUSED PyO
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_7kaggler_4util_3get_downsampled_index0(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_7kaggler_4util_2get_downsampled_index0[] = "Return the index that downsamples 0s of a vector x by the rate.";
-static PyMethodDef __pyx_mdef_7kaggler_4util_3get_downsampled_index0 = {"get_downsampled_index0", (PyCFunction)__pyx_pw_7kaggler_4util_3get_downsampled_index0, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7kaggler_4util_2get_downsampled_index0};
-static PyObject *__pyx_pw_7kaggler_4util_3get_downsampled_index0(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_7kaggler_4util_5get_downsampled_index0(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_7kaggler_4util_4get_downsampled_index0[] = "Return the index that downsamples 0s of a vector x by the rate.";
+static PyMethodDef __pyx_mdef_7kaggler_4util_5get_downsampled_index0 = {"get_downsampled_index0", (PyCFunction)__pyx_pw_7kaggler_4util_5get_downsampled_index0, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7kaggler_4util_4get_downsampled_index0};
+static PyObject *__pyx_pw_7kaggler_4util_5get_downsampled_index0(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_x = 0;
   PyObject *__pyx_v_rate = 0;
   PyObject *__pyx_v_threshold = 0;
@@ -1779,14 +1866,14 @@ static PyObject *__pyx_pw_7kaggler_4util_3get_downsampled_index0(PyObject *__pyx
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_7kaggler_4util_2get_downsampled_index0(__pyx_self, __pyx_v_x, __pyx_v_rate, __pyx_v_threshold);
+  __pyx_r = __pyx_pf_7kaggler_4util_4get_downsampled_index0(__pyx_self, __pyx_v_x, __pyx_v_rate, __pyx_v_threshold);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_7kaggler_4util_2get_downsampled_index0(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_x, PyObject *__pyx_v_rate, PyObject *__pyx_v_threshold) {
+static PyObject *__pyx_pf_7kaggler_4util_4get_downsampled_index0(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_x, PyObject *__pyx_v_rate, PyObject *__pyx_v_threshold) {
   PyObject *__pyx_v_idx1 = NULL;
   PyObject *__pyx_v_idx0 = NULL;
   PyObject *__pyx_v_idx0_down = NULL;
@@ -2057,21 +2144,21 @@ static PyObject *__pyx_pf_7kaggler_4util_2get_downsampled_index0(CYTHON_UNUSED P
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_7kaggler_4util_5normalize_numerical_feature(PyObject *__pyx_self, PyObject *__pyx_v_feature); /*proto*/
-static char __pyx_doc_7kaggler_4util_4normalize_numerical_feature[] = "Normalize the Pandas column based on cumulative distribution.";
-static PyMethodDef __pyx_mdef_7kaggler_4util_5normalize_numerical_feature = {"normalize_numerical_feature", (PyCFunction)__pyx_pw_7kaggler_4util_5normalize_numerical_feature, METH_O, __pyx_doc_7kaggler_4util_4normalize_numerical_feature};
-static PyObject *__pyx_pw_7kaggler_4util_5normalize_numerical_feature(PyObject *__pyx_self, PyObject *__pyx_v_feature) {
+static PyObject *__pyx_pw_7kaggler_4util_7normalize_numerical_feature(PyObject *__pyx_self, PyObject *__pyx_v_feature); /*proto*/
+static char __pyx_doc_7kaggler_4util_6normalize_numerical_feature[] = "Normalize the Pandas column based on cumulative distribution.";
+static PyMethodDef __pyx_mdef_7kaggler_4util_7normalize_numerical_feature = {"normalize_numerical_feature", (PyCFunction)__pyx_pw_7kaggler_4util_7normalize_numerical_feature, METH_O, __pyx_doc_7kaggler_4util_6normalize_numerical_feature};
+static PyObject *__pyx_pw_7kaggler_4util_7normalize_numerical_feature(PyObject *__pyx_self, PyObject *__pyx_v_feature) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("normalize_numerical_feature (wrapper)", 0);
-  __pyx_r = __pyx_pf_7kaggler_4util_4normalize_numerical_feature(__pyx_self, ((PyObject *)__pyx_v_feature));
+  __pyx_r = __pyx_pf_7kaggler_4util_6normalize_numerical_feature(__pyx_self, ((PyObject *)__pyx_v_feature));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_7kaggler_4util_4normalize_numerical_feature(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_feature) {
+static PyObject *__pyx_pf_7kaggler_4util_6normalize_numerical_feature(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_feature) {
   PyObject *__pyx_v_p = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -2281,10 +2368,10 @@ static PyObject *__pyx_pf_7kaggler_4util_4normalize_numerical_feature(CYTHON_UNU
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_7kaggler_4util_7normalize_numerical_feature2(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_7kaggler_4util_6normalize_numerical_feature2[] = "Normalize the Pandas column based on cumulative distribution.\n    \n    Args:\n        feature: feature vector to normalize.\n        n: number of observations to use for deriving probability distribution\n           of the feature.  Observations beyond first n observations will be\n           normalized based on the probability distribution found from the\n           first n observations. \n\n    Returns:\n        A normalized feature vector.\n    ";
-static PyMethodDef __pyx_mdef_7kaggler_4util_7normalize_numerical_feature2 = {"normalize_numerical_feature2", (PyCFunction)__pyx_pw_7kaggler_4util_7normalize_numerical_feature2, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7kaggler_4util_6normalize_numerical_feature2};
-static PyObject *__pyx_pw_7kaggler_4util_7normalize_numerical_feature2(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_7kaggler_4util_9normalize_numerical_feature2(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_7kaggler_4util_8normalize_numerical_feature2[] = "Normalize the Pandas column based on cumulative distribution.\n    \n    Args:\n        feature: feature vector to normalize.\n        n: number of observations to use for deriving probability distribution\n           of the feature.  Observations beyond first n observations will be\n           normalized based on the probability distribution found from the\n           first n observations. \n\n    Returns:\n        A normalized feature vector.\n    ";
+static PyMethodDef __pyx_mdef_7kaggler_4util_9normalize_numerical_feature2 = {"normalize_numerical_feature2", (PyCFunction)__pyx_pw_7kaggler_4util_9normalize_numerical_feature2, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7kaggler_4util_8normalize_numerical_feature2};
+static PyObject *__pyx_pw_7kaggler_4util_9normalize_numerical_feature2(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_feature = 0;
   PyObject *__pyx_v_n = 0;
   int __pyx_lineno = 0;
@@ -2339,14 +2426,14 @@ static PyObject *__pyx_pw_7kaggler_4util_7normalize_numerical_feature2(PyObject 
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_7kaggler_4util_6normalize_numerical_feature2(__pyx_self, __pyx_v_feature, __pyx_v_n);
+  __pyx_r = __pyx_pf_7kaggler_4util_8normalize_numerical_feature2(__pyx_self, __pyx_v_feature, __pyx_v_n);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_7kaggler_4util_6normalize_numerical_feature2(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_feature, PyObject *__pyx_v_n) {
+static PyObject *__pyx_pf_7kaggler_4util_8normalize_numerical_feature2(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_feature, PyObject *__pyx_v_n) {
   PyObject *__pyx_v_ecdf = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -2542,9 +2629,9 @@ static PyObject *__pyx_pf_7kaggler_4util_6normalize_numerical_feature2(CYTHON_UN
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_7kaggler_4util_9get_label_encoder(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_7kaggler_4util_9get_label_encoder = {"get_label_encoder", (PyCFunction)__pyx_pw_7kaggler_4util_9get_label_encoder, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_7kaggler_4util_9get_label_encoder(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_7kaggler_4util_11get_label_encoder(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_7kaggler_4util_11get_label_encoder = {"get_label_encoder", (PyCFunction)__pyx_pw_7kaggler_4util_11get_label_encoder, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_7kaggler_4util_11get_label_encoder(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_feature = 0;
   PyObject *__pyx_v_min_obs = 0;
   int __pyx_lineno = 0;
@@ -2599,14 +2686,14 @@ static PyObject *__pyx_pw_7kaggler_4util_9get_label_encoder(PyObject *__pyx_self
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_7kaggler_4util_8get_label_encoder(__pyx_self, __pyx_v_feature, __pyx_v_min_obs);
+  __pyx_r = __pyx_pf_7kaggler_4util_10get_label_encoder(__pyx_self, __pyx_v_feature, __pyx_v_min_obs);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_7kaggler_4util_8get_label_encoder(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_feature, PyObject *__pyx_v_min_obs) {
+static PyObject *__pyx_pf_7kaggler_4util_10get_label_encoder(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_feature, PyObject *__pyx_v_min_obs) {
   PyObject *__pyx_v_label_count = NULL;
   PyObject *__pyx_v_label = NULL;
   PyObject *__pyx_v_label_encoder = NULL;
@@ -2950,10 +3037,10 @@ static PyObject *__pyx_pf_7kaggler_4util_8get_label_encoder(CYTHON_UNUSED PyObje
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_7kaggler_4util_11encode_categorical_feature(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_7kaggler_4util_10encode_categorical_feature[] = "Encode the Pandas column into sparse matrix with one-hot-encoding.";
-static PyMethodDef __pyx_mdef_7kaggler_4util_11encode_categorical_feature = {"encode_categorical_feature", (PyCFunction)__pyx_pw_7kaggler_4util_11encode_categorical_feature, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7kaggler_4util_10encode_categorical_feature};
-static PyObject *__pyx_pw_7kaggler_4util_11encode_categorical_feature(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_7kaggler_4util_13encode_categorical_feature(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_7kaggler_4util_12encode_categorical_feature[] = "Encode the Pandas column into sparse matrix with one-hot-encoding.";
+static PyMethodDef __pyx_mdef_7kaggler_4util_13encode_categorical_feature = {"encode_categorical_feature", (PyCFunction)__pyx_pw_7kaggler_4util_13encode_categorical_feature, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7kaggler_4util_12encode_categorical_feature};
+static PyObject *__pyx_pw_7kaggler_4util_13encode_categorical_feature(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_feature = 0;
   PyObject *__pyx_v_min_obs = 0;
   PyObject *__pyx_v_n = 0;
@@ -3018,7 +3105,7 @@ static PyObject *__pyx_pw_7kaggler_4util_11encode_categorical_feature(PyObject *
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_7kaggler_4util_10encode_categorical_feature(__pyx_self, __pyx_v_feature, __pyx_v_min_obs, __pyx_v_n);
+  __pyx_r = __pyx_pf_7kaggler_4util_12encode_categorical_feature(__pyx_self, __pyx_v_feature, __pyx_v_min_obs, __pyx_v_n);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
@@ -3120,7 +3207,7 @@ static PyObject *__pyx_lambda_funcdef_lambda1(PyObject *__pyx_self, PyObject *__
  * 
  */
 
-static PyObject *__pyx_pf_7kaggler_4util_10encode_categorical_feature(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_feature, PyObject *__pyx_v_min_obs, PyObject *__pyx_v_n) {
+static PyObject *__pyx_pf_7kaggler_4util_12encode_categorical_feature(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_feature, PyObject *__pyx_v_min_obs, PyObject *__pyx_v_n) {
   struct __pyx_obj_7kaggler_4util___pyx_scope_struct__encode_categorical_feature *__pyx_cur_scope;
   PyObject *__pyx_v_labels = NULL;
   PyObject *__pyx_v_enc = NULL;
@@ -3428,10 +3515,10 @@ static PyObject *__pyx_pf_7kaggler_4util_10encode_categorical_feature(CYTHON_UNU
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_7kaggler_4util_13set_column_width(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_7kaggler_4util_12set_column_width[] = "Set the column width of a matrix X to n_col.";
-static PyMethodDef __pyx_mdef_7kaggler_4util_13set_column_width = {"set_column_width", (PyCFunction)__pyx_pw_7kaggler_4util_13set_column_width, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7kaggler_4util_12set_column_width};
-static PyObject *__pyx_pw_7kaggler_4util_13set_column_width(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_7kaggler_4util_15set_column_width(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_7kaggler_4util_14set_column_width[] = "Set the column width of a matrix X to n_col.";
+static PyMethodDef __pyx_mdef_7kaggler_4util_15set_column_width = {"set_column_width", (PyCFunction)__pyx_pw_7kaggler_4util_15set_column_width, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7kaggler_4util_14set_column_width};
+static PyObject *__pyx_pw_7kaggler_4util_15set_column_width(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_X = 0;
   PyObject *__pyx_v_n_col = 0;
   int __pyx_lineno = 0;
@@ -3483,14 +3570,14 @@ static PyObject *__pyx_pw_7kaggler_4util_13set_column_width(PyObject *__pyx_self
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_7kaggler_4util_12set_column_width(__pyx_self, __pyx_v_X, __pyx_v_n_col);
+  __pyx_r = __pyx_pf_7kaggler_4util_14set_column_width(__pyx_self, __pyx_v_X, __pyx_v_n_col);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_7kaggler_4util_12set_column_width(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_X, PyObject *__pyx_v_n_col) {
+static PyObject *__pyx_pf_7kaggler_4util_14set_column_width(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_X, PyObject *__pyx_v_n_col) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -4040,21 +4127,21 @@ static PyObject *__pyx_pf_7kaggler_4util_12set_column_width(CYTHON_UNUSED PyObje
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_7kaggler_4util_15rank(PyObject *__pyx_self, PyObject *__pyx_v_x); /*proto*/
-static char __pyx_doc_7kaggler_4util_14rank[] = "Rank a vector x.  Ties will be averaged.";
-static PyMethodDef __pyx_mdef_7kaggler_4util_15rank = {"rank", (PyCFunction)__pyx_pw_7kaggler_4util_15rank, METH_O, __pyx_doc_7kaggler_4util_14rank};
-static PyObject *__pyx_pw_7kaggler_4util_15rank(PyObject *__pyx_self, PyObject *__pyx_v_x) {
+static PyObject *__pyx_pw_7kaggler_4util_17rank(PyObject *__pyx_self, PyObject *__pyx_v_x); /*proto*/
+static char __pyx_doc_7kaggler_4util_16rank[] = "Rank a vector x.  Ties will be averaged.";
+static PyMethodDef __pyx_mdef_7kaggler_4util_17rank = {"rank", (PyCFunction)__pyx_pw_7kaggler_4util_17rank, METH_O, __pyx_doc_7kaggler_4util_16rank};
+static PyObject *__pyx_pw_7kaggler_4util_17rank(PyObject *__pyx_self, PyObject *__pyx_v_x) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("rank (wrapper)", 0);
-  __pyx_r = __pyx_pf_7kaggler_4util_14rank(__pyx_self, ((PyObject *)__pyx_v_x));
+  __pyx_r = __pyx_pf_7kaggler_4util_16rank(__pyx_self, ((PyObject *)__pyx_v_x));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_7kaggler_4util_14rank(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_x) {
+static PyObject *__pyx_pf_7kaggler_4util_16rank(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_x) {
   PyObject *__pyx_v_unique = NULL;
   PyObject *__pyx_v_idx_inverse = NULL;
   PyObject *__pyx_v_unique_rank_sum = NULL;
@@ -4468,9 +4555,9 @@ static PyObject *__pyx_pf_7kaggler_4util_14rank(CYTHON_UNUSED PyObject *__pyx_se
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_7kaggler_4util_17set_min_max(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_7kaggler_4util_17set_min_max = {"set_min_max", (PyCFunction)__pyx_pw_7kaggler_4util_17set_min_max, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_7kaggler_4util_17set_min_max(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_7kaggler_4util_19set_min_max(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_7kaggler_4util_19set_min_max = {"set_min_max", (PyCFunction)__pyx_pw_7kaggler_4util_19set_min_max, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_7kaggler_4util_19set_min_max(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_x = 0;
   PyObject *__pyx_v_lb = 0;
   PyObject *__pyx_v_ub = 0;
@@ -4531,14 +4618,14 @@ static PyObject *__pyx_pw_7kaggler_4util_17set_min_max(PyObject *__pyx_self, PyO
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_7kaggler_4util_16set_min_max(__pyx_self, __pyx_v_x, __pyx_v_lb, __pyx_v_ub);
+  __pyx_r = __pyx_pf_7kaggler_4util_18set_min_max(__pyx_self, __pyx_v_x, __pyx_v_lb, __pyx_v_ub);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_7kaggler_4util_16set_min_max(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_x, PyObject *__pyx_v_lb, PyObject *__pyx_v_ub) {
+static PyObject *__pyx_pf_7kaggler_4util_18set_min_max(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_x, PyObject *__pyx_v_lb, PyObject *__pyx_v_ub) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -6818,6 +6905,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_label_index, __pyx_k_label_index, sizeof(__pyx_k_label_index), 0, 0, 1, 1},
   {&__pyx_n_s_labels, __pyx_k_labels, sizeof(__pyx_k_labels), 0, 0, 1, 1},
   {&__pyx_n_s_lb, __pyx_k_lb, sizeof(__pyx_k_lb), 0, 0, 1, 1},
+  {&__pyx_n_s_logloss, __pyx_k_logloss, sizeof(__pyx_k_logloss), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_matrix, __pyx_k_matrix, sizeof(__pyx_k_matrix), 0, 0, 1, 1},
   {&__pyx_n_s_min_obs, __pyx_k_min_obs, sizeof(__pyx_k_min_obs), 0, 0, 1, 1},
@@ -6860,6 +6948,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_u_unknown_dtype_code_in_numpy_pxd, __pyx_k_unknown_dtype_code_in_numpy_pxd, sizeof(__pyx_k_unknown_dtype_code_in_numpy_pxd), 0, 1, 0, 0},
   {&__pyx_n_s_where, __pyx_k_where, sizeof(__pyx_k_where), 0, 0, 1, 1},
   {&__pyx_n_s_x, __pyx_k_x, sizeof(__pyx_k_x), 0, 0, 1, 1},
+  {&__pyx_n_s_y, __pyx_k_y, sizeof(__pyx_k_y), 0, 0, 1, 1},
   {&__pyx_n_s_zeros, __pyx_k_zeros, sizeof(__pyx_k_zeros), 0, 0, 1, 1},
   {&__pyx_n_s_zeros_like, __pyx_k_zeros_like, sizeof(__pyx_k_zeros_like), 0, 0, 1, 1},
   {0, 0, 0, 0, 0, 0, 0}
@@ -6966,6 +7055,18 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__8);
   __Pyx_GIVEREF(__pyx_tuple__8);
 
+  /* "kaggler/util.pyx":24
+ * 
+ * 
+ * def logloss(double p, double y):             # <<<<<<<<<<<<<<
+ *     p = fmax(fmin(p, 1. -1e-15), 1e-15)
+ *     return -log(p) if y == 1. else -log(1. - p)
+ */
+  __pyx_tuple__9 = PyTuple_Pack(2, __pyx_n_s_p, __pyx_n_s_y); if (unlikely(!__pyx_tuple__9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple__9);
+  __Pyx_GIVEREF(__pyx_tuple__9);
+  __pyx_codeobj__10 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__9, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_logloss, 24, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+
   /* "kaggler/util.pyx":29
  * 
  * 
@@ -6973,10 +7074,10 @@ static int __Pyx_InitCachedConstants(void) {
  *     """Return the index that downsamples a vector x by the rate."""
  * 
  */
-  __pyx_tuple__9 = PyTuple_Pack(2, __pyx_n_s_n, __pyx_n_s_rate); if (unlikely(!__pyx_tuple__9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_tuple__9);
-  __Pyx_GIVEREF(__pyx_tuple__9);
-  __pyx_codeobj__10 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__9, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_get_downsampled_index, 29, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__11 = PyTuple_Pack(2, __pyx_n_s_n, __pyx_n_s_rate); if (unlikely(!__pyx_tuple__11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple__11);
+  __Pyx_GIVEREF(__pyx_tuple__11);
+  __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__11, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_get_downsampled_index, 29, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "kaggler/util.pyx":35
  * 
@@ -6985,10 +7086,10 @@ static int __Pyx_InitCachedConstants(void) {
  *     """Return the index that downsamples 0s of a vector x by the rate."""
  * 
  */
-  __pyx_tuple__11 = PyTuple_Pack(7, __pyx_n_s_x, __pyx_n_s_rate, __pyx_n_s_threshold, __pyx_n_s_idx1, __pyx_n_s_idx0, __pyx_n_s_idx0_down, __pyx_n_s_idx); if (unlikely(!__pyx_tuple__11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_tuple__11);
-  __Pyx_GIVEREF(__pyx_tuple__11);
-  __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(3, 0, 7, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__11, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_get_downsampled_index0, 35, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__13 = PyTuple_Pack(7, __pyx_n_s_x, __pyx_n_s_rate, __pyx_n_s_threshold, __pyx_n_s_idx1, __pyx_n_s_idx0, __pyx_n_s_idx0_down, __pyx_n_s_idx); if (unlikely(!__pyx_tuple__13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple__13);
+  __Pyx_GIVEREF(__pyx_tuple__13);
+  __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(3, 0, 7, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__13, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_get_downsampled_index0, 35, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "kaggler/util.pyx":48
  * 
@@ -6997,10 +7098,10 @@ static int __Pyx_InitCachedConstants(void) {
  *     """Normalize the Pandas column based on cumulative distribution."""
  * 
  */
-  __pyx_tuple__13 = PyTuple_Pack(2, __pyx_n_s_feature, __pyx_n_s_p); if (unlikely(!__pyx_tuple__13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_tuple__13);
-  __Pyx_GIVEREF(__pyx_tuple__13);
-  __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__13, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_normalize_numerical_feature, 48, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__15 = PyTuple_Pack(2, __pyx_n_s_feature, __pyx_n_s_p); if (unlikely(!__pyx_tuple__15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple__15);
+  __Pyx_GIVEREF(__pyx_tuple__15);
+  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_normalize_numerical_feature, 48, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "kaggler/util.pyx":56
  * 
@@ -7009,10 +7110,10 @@ static int __Pyx_InitCachedConstants(void) {
  *     """Normalize the Pandas column based on cumulative distribution.
  * 
  */
-  __pyx_tuple__15 = PyTuple_Pack(3, __pyx_n_s_feature, __pyx_n_s_n, __pyx_n_s_ecdf); if (unlikely(!__pyx_tuple__15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_tuple__15);
-  __Pyx_GIVEREF(__pyx_tuple__15);
-  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_normalize_numerical_feature2, 56, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__17 = PyTuple_Pack(3, __pyx_n_s_feature, __pyx_n_s_n, __pyx_n_s_ecdf); if (unlikely(!__pyx_tuple__17)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple__17);
+  __Pyx_GIVEREF(__pyx_tuple__17);
+  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_normalize_numerical_feature2, 56, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "kaggler/util.pyx":79
  * 
@@ -7021,10 +7122,10 @@ static int __Pyx_InitCachedConstants(void) {
  *     label_count = {}
  *     for label in feature:
  */
-  __pyx_tuple__17 = PyTuple_Pack(6, __pyx_n_s_feature, __pyx_n_s_min_obs, __pyx_n_s_label_count, __pyx_n_s_label, __pyx_n_s_label_encoder, __pyx_n_s_label_index); if (unlikely(!__pyx_tuple__17)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_tuple__17);
-  __Pyx_GIVEREF(__pyx_tuple__17);
-  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(2, 0, 6, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_get_label_encoder, 79, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__19 = PyTuple_Pack(6, __pyx_n_s_feature, __pyx_n_s_min_obs, __pyx_n_s_label_count, __pyx_n_s_label, __pyx_n_s_label_encoder, __pyx_n_s_label_index); if (unlikely(!__pyx_tuple__19)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple__19);
+  __Pyx_GIVEREF(__pyx_tuple__19);
+  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(2, 0, 6, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_get_label_encoder, 79, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "kaggler/util.pyx":97
  * 
@@ -7033,10 +7134,10 @@ static int __Pyx_InitCachedConstants(void) {
  *     """Encode the Pandas column into sparse matrix with one-hot-encoding."""
  * 
  */
-  __pyx_tuple__19 = PyTuple_Pack(6, __pyx_n_s_feature, __pyx_n_s_min_obs, __pyx_n_s_n, __pyx_n_s_label_encoder, __pyx_n_s_labels, __pyx_n_s_enc); if (unlikely(!__pyx_tuple__19)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_tuple__19);
-  __Pyx_GIVEREF(__pyx_tuple__19);
-  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(3, 0, 6, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_encode_categorical_feature, 97, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__21 = PyTuple_Pack(6, __pyx_n_s_feature, __pyx_n_s_min_obs, __pyx_n_s_n, __pyx_n_s_label_encoder, __pyx_n_s_labels, __pyx_n_s_enc); if (unlikely(!__pyx_tuple__21)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple__21);
+  __Pyx_GIVEREF(__pyx_tuple__21);
+  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(3, 0, 6, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_encode_categorical_feature, 97, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "kaggler/util.pyx":110
  * 
@@ -7045,10 +7146,10 @@ static int __Pyx_InitCachedConstants(void) {
  *     """Set the column width of a matrix X to n_col."""
  * 
  */
-  __pyx_tuple__21 = PyTuple_Pack(2, __pyx_n_s_X, __pyx_n_s_n_col); if (unlikely(!__pyx_tuple__21)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_tuple__21);
-  __Pyx_GIVEREF(__pyx_tuple__21);
-  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_set_column_width, 110, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__23 = PyTuple_Pack(2, __pyx_n_s_X, __pyx_n_s_n_col); if (unlikely(!__pyx_tuple__23)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple__23);
+  __Pyx_GIVEREF(__pyx_tuple__23);
+  __pyx_codeobj__24 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__23, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_set_column_width, 110, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__24)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "kaggler/util.pyx":130
  * 
@@ -7057,10 +7158,10 @@ static int __Pyx_InitCachedConstants(void) {
  *     """Rank a vector x.  Ties will be averaged."""
  * 
  */
-  __pyx_tuple__23 = PyTuple_Pack(6, __pyx_n_s_x, __pyx_n_s_unique, __pyx_n_s_idx_inverse, __pyx_n_s_unique_rank_sum, __pyx_n_s_unique_rank_count, __pyx_n_s_unique_rank_mean); if (unlikely(!__pyx_tuple__23)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_tuple__23);
-  __Pyx_GIVEREF(__pyx_tuple__23);
-  __pyx_codeobj__24 = (PyObject*)__Pyx_PyCode_New(1, 0, 6, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__23, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_rank, 130, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__24)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__25 = PyTuple_Pack(6, __pyx_n_s_x, __pyx_n_s_unique, __pyx_n_s_idx_inverse, __pyx_n_s_unique_rank_sum, __pyx_n_s_unique_rank_count, __pyx_n_s_unique_rank_mean); if (unlikely(!__pyx_tuple__25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple__25);
+  __Pyx_GIVEREF(__pyx_tuple__25);
+  __pyx_codeobj__26 = (PyObject*)__Pyx_PyCode_New(1, 0, 6, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__25, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_rank, 130, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__26)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "kaggler/util.pyx":146
  * 
@@ -7069,10 +7170,10 @@ static int __Pyx_InitCachedConstants(void) {
  *     x[x < lb] = lb
  *     x[x > ub] = ub
  */
-  __pyx_tuple__25 = PyTuple_Pack(3, __pyx_n_s_x, __pyx_n_s_lb, __pyx_n_s_ub); if (unlikely(!__pyx_tuple__25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_tuple__25);
-  __Pyx_GIVEREF(__pyx_tuple__25);
-  __pyx_codeobj__26 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__25, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_set_min_max, 146, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__26)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__27 = PyTuple_Pack(3, __pyx_n_s_x, __pyx_n_s_lb, __pyx_n_s_ub); if (unlikely(!__pyx_tuple__27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple__27);
+  __Pyx_GIVEREF(__pyx_tuple__27);
+  __pyx_codeobj__28 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__27, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jeong_kaggle_Kaggler_kaggl, __pyx_n_s_set_min_max, 146, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__28)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -7174,7 +7275,6 @@ PyMODINIT_FUNC PyInit_util(void)
   /*--- Variable export code ---*/
   /*--- Function export code ---*/
   if (__Pyx_ExportFunction("sigm", (void (*)(void))__pyx_f_7kaggler_4util_sigm, "double (double)") < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  if (__Pyx_ExportFunction("logloss", (void (*)(void))__pyx_f_7kaggler_4util_logloss, "double (double, double)") < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   /*--- Type init code ---*/
   if (PyType_Ready(&__pyx_type_7kaggler_4util___pyx_scope_struct__encode_categorical_feature) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_7kaggler_4util___pyx_scope_struct__encode_categorical_feature.tp_print = 0;
@@ -7298,6 +7398,18 @@ PyMODINIT_FUNC PyInit_util(void)
  */
   import_array();
 
+  /* "kaggler/util.pyx":24
+ * 
+ * 
+ * def logloss(double p, double y):             # <<<<<<<<<<<<<<
+ *     p = fmax(fmin(p, 1. -1e-15), 1e-15)
+ *     return -log(p) if y == 1. else -log(1. - p)
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_1logloss, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_logloss, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
   /* "kaggler/util.pyx":29
  * 
  * 
@@ -7305,7 +7417,7 @@ PyMODINIT_FUNC PyInit_util(void)
  *     """Return the index that downsamples a vector x by the rate."""
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_1get_downsampled_index, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_3get_downsampled_index, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_get_downsampled_index, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7317,7 +7429,7 @@ PyMODINIT_FUNC PyInit_util(void)
  *     """Return the index that downsamples 0s of a vector x by the rate."""
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_3get_downsampled_index0, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_5get_downsampled_index0, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_get_downsampled_index0, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7329,7 +7441,7 @@ PyMODINIT_FUNC PyInit_util(void)
  *     """Normalize the Pandas column based on cumulative distribution."""
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_5normalize_numerical_feature, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_7normalize_numerical_feature, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_normalize_numerical_feature, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7341,7 +7453,7 @@ PyMODINIT_FUNC PyInit_util(void)
  *     """Normalize the Pandas column based on cumulative distribution.
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_7normalize_numerical_feature2, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_9normalize_numerical_feature2, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_normalize_numerical_feature2, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7353,7 +7465,7 @@ PyMODINIT_FUNC PyInit_util(void)
  *     label_count = {}
  *     for label in feature:
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_9get_label_encoder, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_11get_label_encoder, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_get_label_encoder, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7365,7 +7477,7 @@ PyMODINIT_FUNC PyInit_util(void)
  *     """Encode the Pandas column into sparse matrix with one-hot-encoding."""
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_11encode_categorical_feature, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_13encode_categorical_feature, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_encode_categorical_feature, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7377,7 +7489,7 @@ PyMODINIT_FUNC PyInit_util(void)
  *     """Set the column width of a matrix X to n_col."""
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_13set_column_width, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_15set_column_width, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_set_column_width, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7389,7 +7501,7 @@ PyMODINIT_FUNC PyInit_util(void)
  *     """Rank a vector x.  Ties will be averaged."""
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_15rank, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_17rank, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_rank, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7401,7 +7513,7 @@ PyMODINIT_FUNC PyInit_util(void)
  *     x[x < lb] = lb
  *     x[x > ub] = ub
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_17set_min_max, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7kaggler_4util_19set_min_max, NULL, __pyx_n_s_kaggler_util); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_set_min_max, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7535,6 +7647,31 @@ static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
     }
 }
 
+static void __Pyx_RaiseArgtupleInvalid(
+    const char* func_name,
+    int exact,
+    Py_ssize_t num_min,
+    Py_ssize_t num_max,
+    Py_ssize_t num_found)
+{
+    Py_ssize_t num_expected;
+    const char *more_or_less;
+    if (num_found < num_min) {
+        num_expected = num_min;
+        more_or_less = "at least";
+    } else {
+        num_expected = num_max;
+        more_or_less = "at most";
+    }
+    if (exact) {
+        more_or_less = "exactly";
+    }
+    PyErr_Format(PyExc_TypeError,
+                 "%.200s() takes %.8s %" CYTHON_FORMAT_SSIZE_T "d positional argument%.1s (%" CYTHON_FORMAT_SSIZE_T "d given)",
+                 func_name, more_or_less, num_expected,
+                 (num_expected == 1) ? "" : "s", num_found);
+}
+
 static void __Pyx_RaiseDoubleKeywordsError(
     const char* func_name,
     PyObject* kw_name)
@@ -7647,31 +7784,6 @@ invalid_keyword:
     #endif
 bad:
     return -1;
-}
-
-static void __Pyx_RaiseArgtupleInvalid(
-    const char* func_name,
-    int exact,
-    Py_ssize_t num_min,
-    Py_ssize_t num_max,
-    Py_ssize_t num_found)
-{
-    Py_ssize_t num_expected;
-    const char *more_or_less;
-    if (num_found < num_min) {
-        num_expected = num_min;
-        more_or_less = "at least";
-    } else {
-        num_expected = num_max;
-        more_or_less = "at most";
-    }
-    if (exact) {
-        more_or_less = "exactly";
-    }
-    PyErr_Format(PyExc_TypeError,
-                 "%.200s() takes %.8s %" CYTHON_FORMAT_SSIZE_T "d positional argument%.1s (%" CYTHON_FORMAT_SSIZE_T "d given)",
-                 func_name, more_or_less, num_expected,
-                 (num_expected == 1) ? "" : "s", num_found);
 }
 
 static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name) {

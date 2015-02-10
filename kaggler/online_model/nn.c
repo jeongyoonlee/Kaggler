@@ -1524,7 +1524,7 @@ static PyObject *__pyx_builtin_IndexError;
 static int __pyx_pf_7kaggler_12online_model_2nn_2NN___init__(struct __pyx_obj_7kaggler_12online_model_2nn_NN *__pyx_v_self, unsigned int __pyx_v_n, unsigned int __pyx_v_h, double __pyx_v_a, double __pyx_v_l2, int __pyx_v_interaction); /* proto */
 static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_2get_x(CYTHON_UNUSED struct __pyx_obj_7kaggler_12online_model_2nn_NN *__pyx_v_self, PyObject *__pyx_v_xs); /* proto */
 static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_4predict(struct __pyx_obj_7kaggler_12online_model_2nn_NN *__pyx_v_self, PyObject *__pyx_v_idx, PyObject *__pyx_v_val); /* proto */
-static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_obj_7kaggler_12online_model_2nn_NN *__pyx_v_self, PyObject *__pyx_v_idx, PyObject *__pyx_v_val, double __pyx_v_p, double __pyx_v_y); /* proto */
+static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_obj_7kaggler_12online_model_2nn_NN *__pyx_v_self, PyObject *__pyx_v_idx, PyObject *__pyx_v_val, double __pyx_v_e); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
 static int __pyx_array_MemoryView_5array___cinit__(struct __pyx_array_obj *__pyx_v_self, PyObject *__pyx_v_shape, Py_ssize_t __pyx_v_itemsize, PyObject *__pyx_v_format, PyObject *__pyx_v_mode, int __pyx_v_allocate_buffer); /* proto */
@@ -1574,15 +1574,14 @@ static char __pyx_k_a[] = "a";
 static char __pyx_k_b[] = "b";
 static char __pyx_k_c[] = "c";
 static char __pyx_k_d[] = "d";
+static char __pyx_k_e[] = "e";
 static char __pyx_k_f[] = "f";
 static char __pyx_k_g[] = "g";
 static char __pyx_k_h[] = "h";
 static char __pyx_k_i[] = "i";
 static char __pyx_k_l[] = "l";
 static char __pyx_k_n[] = "n";
-static char __pyx_k_p[] = "p";
 static char __pyx_k_q[] = "q";
-static char __pyx_k_y[] = "y";
 static char __pyx_k_Zd[] = "Zd";
 static char __pyx_k_Zf[] = "Zf";
 static char __pyx_k_Zg[] = "Zg";
@@ -1704,6 +1703,7 @@ static PyObject *__pyx_kp_s_contiguous_and_direct;
 static PyObject *__pyx_kp_s_contiguous_and_indirect;
 static PyObject *__pyx_n_s_dtype;
 static PyObject *__pyx_n_s_dtype_is_object;
+static PyObject *__pyx_n_s_e;
 static PyObject *__pyx_n_s_enumerate;
 static PyObject *__pyx_n_s_error;
 static PyObject *__pyx_n_s_flags;
@@ -1734,7 +1734,6 @@ static PyObject *__pyx_n_s_ndim;
 static PyObject *__pyx_n_s_np;
 static PyObject *__pyx_n_s_numpy;
 static PyObject *__pyx_n_s_obj;
-static PyObject *__pyx_n_s_p;
 static PyObject *__pyx_n_s_pack;
 static PyObject *__pyx_n_s_pyx_getbuffer;
 static PyObject *__pyx_n_s_pyx_vtable;
@@ -1759,7 +1758,6 @@ static PyObject *__pyx_kp_u_unknown_dtype_code_in_numpy_pxd;
 static PyObject *__pyx_n_s_unpack;
 static PyObject *__pyx_n_s_val;
 static PyObject *__pyx_n_s_xrange;
-static PyObject *__pyx_n_s_y;
 static PyObject *__pyx_n_s_zeros;
 static PyObject *__pyx_float__5;
 static PyObject *__pyx_float_1eneg_6;
@@ -2977,7 +2975,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_4predict(struct __pyx_
  *         # apply the sigmoid activation function to the output unit
  *         return sigm(p)             # <<<<<<<<<<<<<<
  * 
- *     def update(self, list idx, list val, double p, double y):
+ *     def update(self, list idx, list val, double e):
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_8 = PyFloat_FromDouble(__pyx_f_7kaggler_4util_sigm(__pyx_v_p)); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -3012,19 +3010,18 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_4predict(struct __pyx_
 /* "kaggler/online_model/nn.pyx":114
  *         return sigm(p)
  * 
- *     def update(self, list idx, list val, double p, double y):             # <<<<<<<<<<<<<<
+ *     def update(self, list idx, list val, double e):             # <<<<<<<<<<<<<<
  *         """Update the model.
  * 
  */
 
 /* Python wrapper */
 static PyObject *__pyx_pw_7kaggler_12online_model_2nn_2NN_7update(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_7kaggler_12online_model_2nn_2NN_6update[] = "Update the model.\n\n        Args:\n            idx - a list of index of non-zero features\n            val - a list of values of non-zero features\n            p - prediction of the model\n            y - true target value\n\n        Returns:\n            updated model weights and counts\n        ";
+static char __pyx_doc_7kaggler_12online_model_2nn_2NN_6update[] = "Update the model.\n\n        Args:\n            idx - a list of index of non-zero features\n            val - a list of values of non-zero features\n            e - error between the prediction of the model and target\n\n        Returns:\n            updated model weights and counts\n        ";
 static PyObject *__pyx_pw_7kaggler_12online_model_2nn_2NN_7update(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_idx = 0;
   PyObject *__pyx_v_val = 0;
-  double __pyx_v_p;
-  double __pyx_v_y;
+  double __pyx_v_e;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -3032,13 +3029,12 @@ static PyObject *__pyx_pw_7kaggler_12online_model_2nn_2NN_7update(PyObject *__py
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("update (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_idx,&__pyx_n_s_val,&__pyx_n_s_p,&__pyx_n_s_y,0};
-    PyObject* values[4] = {0,0,0,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_idx,&__pyx_n_s_val,&__pyx_n_s_e,0};
+    PyObject* values[3] = {0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
-        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
         case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
         case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
         case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
@@ -3053,38 +3049,31 @@ static PyObject *__pyx_pw_7kaggler_12online_model_2nn_2NN_7update(PyObject *__py
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_val)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("update", 1, 4, 4, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("update", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
-        if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_p)) != 0)) kw_args--;
+        if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_e)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("update", 1, 4, 4, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-        }
-        case  3:
-        if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_y)) != 0)) kw_args--;
-        else {
-          __Pyx_RaiseArgtupleInvalid("update", 1, 4, 4, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("update", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
         if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "update") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
-    } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
-      values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
     }
     __pyx_v_idx = ((PyObject*)values[0]);
     __pyx_v_val = ((PyObject*)values[1]);
-    __pyx_v_p = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_p == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_y = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_y == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_e = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_e == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("update", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("update", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("kaggler.online_model.nn.NN.update", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3092,7 +3081,7 @@ static PyObject *__pyx_pw_7kaggler_12online_model_2nn_2NN_7update(PyObject *__py
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_idx), (&PyList_Type), 1, "idx", 1))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_val), (&PyList_Type), 1, "val", 1))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_r = __pyx_pf_7kaggler_12online_model_2nn_2NN_6update(((struct __pyx_obj_7kaggler_12online_model_2nn_NN *)__pyx_v_self), __pyx_v_idx, __pyx_v_val, __pyx_v_p, __pyx_v_y);
+  __pyx_r = __pyx_pf_7kaggler_12online_model_2nn_2NN_6update(((struct __pyx_obj_7kaggler_12online_model_2nn_NN *)__pyx_v_self), __pyx_v_idx, __pyx_v_val, __pyx_v_e);
 
   /* function exit code */
   goto __pyx_L0;
@@ -3103,10 +3092,9 @@ static PyObject *__pyx_pw_7kaggler_12online_model_2nn_2NN_7update(PyObject *__py
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_obj_7kaggler_12online_model_2nn_NN *__pyx_v_self, PyObject *__pyx_v_idx, PyObject *__pyx_v_val, double __pyx_v_p, double __pyx_v_y) {
+static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_obj_7kaggler_12online_model_2nn_NN *__pyx_v_self, PyObject *__pyx_v_idx, PyObject *__pyx_v_val, double __pyx_v_e) {
   int __pyx_v_j;
   int __pyx_v_i;
-  double __pyx_v_e;
   double __pyx_v_abs_e;
   double __pyx_v_dl_dy;
   double __pyx_v_dl_dz;
@@ -3147,26 +3135,17 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("update", 0);
 
-  /* "kaggler/online_model/nn.pyx":136
+  /* "kaggler/online_model/nn.pyx":134
  *         # XXX: assuming predict() was called right before with the same idx and
  *         # val inputs.  Otherwise self.z will be incorrect for updates.
- *         e = p - y             # <<<<<<<<<<<<<<
- *         abs_e = fabs(e)
- *         dl_dy = e * self.a      # dl/dy * (learning rate)
- */
-  __pyx_v_e = (__pyx_v_p - __pyx_v_y);
-
-  /* "kaggler/online_model/nn.pyx":137
- *         # val inputs.  Otherwise self.z will be incorrect for updates.
- *         e = p - y
  *         abs_e = fabs(e)             # <<<<<<<<<<<<<<
  *         dl_dy = e * self.a      # dl/dy * (learning rate)
  * 
  */
   __pyx_v_abs_e = fabs(__pyx_v_e);
 
-  /* "kaggler/online_model/nn.pyx":138
- *         e = p - y
+  /* "kaggler/online_model/nn.pyx":135
+ *         # val inputs.  Otherwise self.z will be incorrect for updates.
  *         abs_e = fabs(e)
  *         dl_dy = e * self.a      # dl/dy * (learning rate)             # <<<<<<<<<<<<<<
  * 
@@ -3174,7 +3153,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
  */
   __pyx_v_dl_dy = (__pyx_v_e * __pyx_v_self->a);
 
-  /* "kaggler/online_model/nn.pyx":141
+  /* "kaggler/online_model/nn.pyx":138
  * 
  *         # starting with the bias in the hidden layer
  *         self.w1[self.h] -= dl_dy / (sqrt(self.c) + 1) + self.l2 * self.w1[self.h]             # <<<<<<<<<<<<<<
@@ -3190,27 +3169,27 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
     #ifdef WITH_THREAD
     PyGILState_Release(__pyx_gilstate_save);
     #endif
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 141; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  if (unlikely(!__pyx_v_self->w1.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 141; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  if (unlikely(!__pyx_v_self->w1.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
   __pyx_t_2 = __pyx_v_self->h;
   __pyx_t_3 = -1;
   if (unlikely(__pyx_t_2 >= (size_t)__pyx_v_self->w1.shape[0])) __pyx_t_3 = 0;
   if (unlikely(__pyx_t_3 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_3);
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 141; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  if (unlikely(!__pyx_v_self->w1.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 141; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  if (unlikely(!__pyx_v_self->w1.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
   __pyx_t_4 = __pyx_v_self->h;
   __pyx_t_3 = -1;
   if (unlikely(__pyx_t_4 >= (size_t)__pyx_v_self->w1.shape[0])) __pyx_t_3 = 0;
   if (unlikely(__pyx_t_3 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_3);
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 141; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   *((double *) ( /* dim=0 */ (__pyx_v_self->w1.data + __pyx_t_4 * __pyx_v_self->w1.strides[0]) )) -= ((__pyx_v_dl_dy / __pyx_t_1) + (__pyx_v_self->l2 * (*((double *) ( /* dim=0 */ (__pyx_v_self->w1.data + __pyx_t_2 * __pyx_v_self->w1.strides[0]) )))));
 
-  /* "kaggler/online_model/nn.pyx":142
+  /* "kaggler/online_model/nn.pyx":139
  *         # starting with the bias in the hidden layer
  *         self.w1[self.h] -= dl_dy / (sqrt(self.c) + 1) + self.l2 * self.w1[self.h]
  *         for j in range(self.h):             # <<<<<<<<<<<<<<
@@ -3221,14 +3200,14 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_5; __pyx_t_3+=1) {
     __pyx_v_j = __pyx_t_3;
 
-    /* "kaggler/online_model/nn.pyx":144
+    /* "kaggler/online_model/nn.pyx":141
  *         for j in range(self.h):
  *             # update weights related to non-zero hidden units
  *             if self.z[j] == 0.:             # <<<<<<<<<<<<<<
  *                 continue
  * 
  */
-    if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 141; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_6 = __pyx_v_j;
     __pyx_t_7 = -1;
     if (__pyx_t_6 < 0) {
@@ -3237,12 +3216,12 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
     } else if (unlikely(__pyx_t_6 >= __pyx_v_self->z.shape[0])) __pyx_t_7 = 0;
     if (unlikely(__pyx_t_7 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_7);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 141; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
     __pyx_t_8 = (((*((double *) ( /* dim=0 */ (__pyx_v_self->z.data + __pyx_t_6 * __pyx_v_self->z.strides[0]) ))) == 0.) != 0);
     if (__pyx_t_8) {
 
-      /* "kaggler/online_model/nn.pyx":145
+      /* "kaggler/online_model/nn.pyx":142
  *             # update weights related to non-zero hidden units
  *             if self.z[j] == 0.:
  *                 continue             # <<<<<<<<<<<<<<
@@ -3252,14 +3231,14 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
       goto __pyx_L3_continue;
     }
 
-    /* "kaggler/online_model/nn.pyx":149
+    /* "kaggler/online_model/nn.pyx":146
  *             # update weights between the hidden units and output
  *             # dl/dw1 = dl/dy * dy/dw1 = dl/dy * z
  *             self.w1[j] -= (dl_dy / (sqrt(self.c1[j]) + 1) * self.z[j] +             # <<<<<<<<<<<<<<
  *                            self.l2 * self.w1[j])
  * 
  */
-    if (unlikely(!__pyx_v_self->c1.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_self->c1.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_7 = __pyx_v_j;
     __pyx_t_9 = -1;
     if (__pyx_t_7 < 0) {
@@ -3268,7 +3247,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
     } else if (unlikely(__pyx_t_7 >= __pyx_v_self->c1.shape[0])) __pyx_t_9 = 0;
     if (unlikely(__pyx_t_9 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_9);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
     __pyx_t_1 = (sqrt((*((double *) ( /* dim=0 */ (__pyx_v_self->c1.data + __pyx_t_7 * __pyx_v_self->c1.strides[0]) )))) + 1.0);
     if (unlikely(__pyx_t_1 == 0)) {
@@ -3279,9 +3258,9 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
       #ifdef WITH_THREAD
       PyGILState_Release(__pyx_gilstate_save);
       #endif
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
-    if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_9 = __pyx_v_j;
     __pyx_t_10 = -1;
     if (__pyx_t_9 < 0) {
@@ -3290,17 +3269,17 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
     } else if (unlikely(__pyx_t_9 >= __pyx_v_self->z.shape[0])) __pyx_t_10 = 0;
     if (unlikely(__pyx_t_10 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_10);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
 
-    /* "kaggler/online_model/nn.pyx":150
+    /* "kaggler/online_model/nn.pyx":147
  *             # dl/dw1 = dl/dy * dy/dw1 = dl/dy * z
  *             self.w1[j] -= (dl_dy / (sqrt(self.c1[j]) + 1) * self.z[j] +
  *                            self.l2 * self.w1[j])             # <<<<<<<<<<<<<<
  * 
  *             # starting with the bias in the input layer
  */
-    if (unlikely(!__pyx_v_self->w1.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_self->w1.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_10 = __pyx_v_j;
     __pyx_t_11 = -1;
     if (__pyx_t_10 < 0) {
@@ -3309,17 +3288,17 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
     } else if (unlikely(__pyx_t_10 >= __pyx_v_self->w1.shape[0])) __pyx_t_11 = 0;
     if (unlikely(__pyx_t_11 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_11);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
 
-    /* "kaggler/online_model/nn.pyx":149
+    /* "kaggler/online_model/nn.pyx":146
  *             # update weights between the hidden units and output
  *             # dl/dw1 = dl/dy * dy/dw1 = dl/dy * z
  *             self.w1[j] -= (dl_dy / (sqrt(self.c1[j]) + 1) * self.z[j] +             # <<<<<<<<<<<<<<
  *                            self.l2 * self.w1[j])
  * 
  */
-    if (unlikely(!__pyx_v_self->w1.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_self->w1.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_11 = __pyx_v_j;
     __pyx_t_12 = -1;
     if (__pyx_t_11 < 0) {
@@ -3328,18 +3307,18 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
     } else if (unlikely(__pyx_t_11 >= __pyx_v_self->w1.shape[0])) __pyx_t_12 = 0;
     if (unlikely(__pyx_t_12 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_12);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
     *((double *) ( /* dim=0 */ (__pyx_v_self->w1.data + __pyx_t_11 * __pyx_v_self->w1.strides[0]) )) -= (((__pyx_v_dl_dy / __pyx_t_1) * (*((double *) ( /* dim=0 */ (__pyx_v_self->z.data + __pyx_t_9 * __pyx_v_self->z.strides[0]) )))) + (__pyx_v_self->l2 * (*((double *) ( /* dim=0 */ (__pyx_v_self->w1.data + __pyx_t_10 * __pyx_v_self->w1.strides[0]) )))));
 
-    /* "kaggler/online_model/nn.pyx":154
+    /* "kaggler/online_model/nn.pyx":151
  *             # starting with the bias in the input layer
  *             # dl/dz = dl/dy * dy/dz = dl/dy * w1
  *             dl_dz = dl_dy * self.w1[j]             # <<<<<<<<<<<<<<
  *             self.w0[self.n * self.h + j] -= (dl_dz / (sqrt(self.c1[j]) + 1) +
  *                                              self.l2 * self.w0[self.n * self.h + j])
  */
-    if (unlikely(!__pyx_v_self->w1.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 154; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_self->w1.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_12 = __pyx_v_j;
     __pyx_t_13 = -1;
     if (__pyx_t_12 < 0) {
@@ -3348,18 +3327,18 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
     } else if (unlikely(__pyx_t_12 >= __pyx_v_self->w1.shape[0])) __pyx_t_13 = 0;
     if (unlikely(__pyx_t_13 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_13);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 154; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
     __pyx_v_dl_dz = (__pyx_v_dl_dy * (*((double *) ( /* dim=0 */ (__pyx_v_self->w1.data + __pyx_t_12 * __pyx_v_self->w1.strides[0]) ))));
 
-    /* "kaggler/online_model/nn.pyx":155
+    /* "kaggler/online_model/nn.pyx":152
  *             # dl/dz = dl/dy * dy/dz = dl/dy * w1
  *             dl_dz = dl_dy * self.w1[j]
  *             self.w0[self.n * self.h + j] -= (dl_dz / (sqrt(self.c1[j]) + 1) +             # <<<<<<<<<<<<<<
  *                                              self.l2 * self.w0[self.n * self.h + j])
  *             # update weights related to non-zero input units
  */
-    if (unlikely(!__pyx_v_self->c1.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_self->c1.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 152; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_13 = __pyx_v_j;
     __pyx_t_14 = -1;
     if (__pyx_t_13 < 0) {
@@ -3368,7 +3347,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
     } else if (unlikely(__pyx_t_13 >= __pyx_v_self->c1.shape[0])) __pyx_t_14 = 0;
     if (unlikely(__pyx_t_14 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_14);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 152; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
     __pyx_t_1 = (sqrt((*((double *) ( /* dim=0 */ (__pyx_v_self->c1.data + __pyx_t_13 * __pyx_v_self->c1.strides[0]) )))) + 1.0);
     if (unlikely(__pyx_t_1 == 0)) {
@@ -3379,50 +3358,50 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
       #ifdef WITH_THREAD
       PyGILState_Release(__pyx_gilstate_save);
       #endif
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 152; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
 
-    /* "kaggler/online_model/nn.pyx":156
+    /* "kaggler/online_model/nn.pyx":153
  *             dl_dz = dl_dy * self.w1[j]
  *             self.w0[self.n * self.h + j] -= (dl_dz / (sqrt(self.c1[j]) + 1) +
  *                                              self.l2 * self.w0[self.n * self.h + j])             # <<<<<<<<<<<<<<
  *             # update weights related to non-zero input units
  *             for i, x in izip(idx, val):
  */
-    if (unlikely(!__pyx_v_self->w0.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 156; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_self->w0.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_15 = ((__pyx_v_self->n * __pyx_v_self->h) + __pyx_v_j);
     __pyx_t_14 = -1;
     if (unlikely(__pyx_t_15 >= (size_t)__pyx_v_self->w0.shape[0])) __pyx_t_14 = 0;
     if (unlikely(__pyx_t_14 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_14);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 156; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
 
-    /* "kaggler/online_model/nn.pyx":155
+    /* "kaggler/online_model/nn.pyx":152
  *             # dl/dz = dl/dy * dy/dz = dl/dy * w1
  *             dl_dz = dl_dy * self.w1[j]
  *             self.w0[self.n * self.h + j] -= (dl_dz / (sqrt(self.c1[j]) + 1) +             # <<<<<<<<<<<<<<
  *                                              self.l2 * self.w0[self.n * self.h + j])
  *             # update weights related to non-zero input units
  */
-    if (unlikely(!__pyx_v_self->w0.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_self->w0.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 152; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_16 = ((__pyx_v_self->n * __pyx_v_self->h) + __pyx_v_j);
     __pyx_t_14 = -1;
     if (unlikely(__pyx_t_16 >= (size_t)__pyx_v_self->w0.shape[0])) __pyx_t_14 = 0;
     if (unlikely(__pyx_t_14 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_14);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 152; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
     *((double *) ( /* dim=0 */ (__pyx_v_self->w0.data + __pyx_t_16 * __pyx_v_self->w0.strides[0]) )) -= ((__pyx_v_dl_dz / __pyx_t_1) + (__pyx_v_self->l2 * (*((double *) ( /* dim=0 */ (__pyx_v_self->w0.data + __pyx_t_15 * __pyx_v_self->w0.strides[0]) )))));
 
-    /* "kaggler/online_model/nn.pyx":158
+    /* "kaggler/online_model/nn.pyx":155
  *                                              self.l2 * self.w0[self.n * self.h + j])
  *             # update weights related to non-zero input units
  *             for i, x in izip(idx, val):             # <<<<<<<<<<<<<<
  *                 # update weights between the hidden unit j and input i
  *                 # dl/dw0 = dl/dz * dz/dw0 = dl/dz * x
  */
-    __pyx_t_18 = __Pyx_GetModuleGlobalName(__pyx_n_s_izip); if (unlikely(!__pyx_t_18)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_18 = __Pyx_GetModuleGlobalName(__pyx_n_s_izip); if (unlikely(!__pyx_t_18)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_18);
     __pyx_t_19 = NULL;
     __pyx_t_20 = 0;
@@ -3436,7 +3415,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
         __pyx_t_20 = 1;
       }
     }
-    __pyx_t_21 = PyTuple_New(2+__pyx_t_20); if (unlikely(!__pyx_t_21)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_21 = PyTuple_New(2+__pyx_t_20); if (unlikely(!__pyx_t_21)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_21);
     if (__pyx_t_19) {
       PyTuple_SET_ITEM(__pyx_t_21, 0, __pyx_t_19); __Pyx_GIVEREF(__pyx_t_19); __pyx_t_19 = NULL;
@@ -3447,7 +3426,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
     __Pyx_INCREF(__pyx_v_val);
     PyTuple_SET_ITEM(__pyx_t_21, 1+__pyx_t_20, __pyx_v_val);
     __Pyx_GIVEREF(__pyx_v_val);
-    __pyx_t_17 = __Pyx_PyObject_Call(__pyx_t_18, __pyx_t_21, NULL); if (unlikely(!__pyx_t_17)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_17 = __Pyx_PyObject_Call(__pyx_t_18, __pyx_t_21, NULL); if (unlikely(!__pyx_t_17)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_17);
     __Pyx_DECREF(__pyx_t_21); __pyx_t_21 = 0;
     __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
@@ -3455,9 +3434,9 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
       __pyx_t_18 = __pyx_t_17; __Pyx_INCREF(__pyx_t_18); __pyx_t_20 = 0;
       __pyx_t_22 = NULL;
     } else {
-      __pyx_t_20 = -1; __pyx_t_18 = PyObject_GetIter(__pyx_t_17); if (unlikely(!__pyx_t_18)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_20 = -1; __pyx_t_18 = PyObject_GetIter(__pyx_t_17); if (unlikely(!__pyx_t_18)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_18);
-      __pyx_t_22 = Py_TYPE(__pyx_t_18)->tp_iternext; if (unlikely(!__pyx_t_22)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_22 = Py_TYPE(__pyx_t_18)->tp_iternext; if (unlikely(!__pyx_t_22)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
     __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
     for (;;) {
@@ -3465,16 +3444,16 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
         if (likely(PyList_CheckExact(__pyx_t_18))) {
           if (__pyx_t_20 >= PyList_GET_SIZE(__pyx_t_18)) break;
           #if CYTHON_COMPILING_IN_CPYTHON
-          __pyx_t_17 = PyList_GET_ITEM(__pyx_t_18, __pyx_t_20); __Pyx_INCREF(__pyx_t_17); __pyx_t_20++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_17 = PyList_GET_ITEM(__pyx_t_18, __pyx_t_20); __Pyx_INCREF(__pyx_t_17); __pyx_t_20++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           #else
-          __pyx_t_17 = PySequence_ITEM(__pyx_t_18, __pyx_t_20); __pyx_t_20++; if (unlikely(!__pyx_t_17)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_17 = PySequence_ITEM(__pyx_t_18, __pyx_t_20); __pyx_t_20++; if (unlikely(!__pyx_t_17)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           #endif
         } else {
           if (__pyx_t_20 >= PyTuple_GET_SIZE(__pyx_t_18)) break;
           #if CYTHON_COMPILING_IN_CPYTHON
-          __pyx_t_17 = PyTuple_GET_ITEM(__pyx_t_18, __pyx_t_20); __Pyx_INCREF(__pyx_t_17); __pyx_t_20++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_17 = PyTuple_GET_ITEM(__pyx_t_18, __pyx_t_20); __Pyx_INCREF(__pyx_t_17); __pyx_t_20++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           #else
-          __pyx_t_17 = PySequence_ITEM(__pyx_t_18, __pyx_t_20); __pyx_t_20++; if (unlikely(!__pyx_t_17)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_17 = PySequence_ITEM(__pyx_t_18, __pyx_t_20); __pyx_t_20++; if (unlikely(!__pyx_t_17)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           #endif
         }
       } else {
@@ -3483,7 +3462,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           }
           break;
         }
@@ -3499,7 +3478,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
         if (unlikely(size != 2)) {
           if (size > 2) __Pyx_RaiseTooManyValuesError(2);
           else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-          {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         }
         #if CYTHON_COMPILING_IN_CPYTHON
         if (likely(PyTuple_CheckExact(sequence))) {
@@ -3512,15 +3491,15 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
         __Pyx_INCREF(__pyx_t_21);
         __Pyx_INCREF(__pyx_t_19);
         #else
-        __pyx_t_21 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_21)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_21 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_21)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_21);
-        __pyx_t_19 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_19)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_19 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_19)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_19);
         #endif
         __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
       } else {
         Py_ssize_t index = -1;
-        __pyx_t_23 = PyObject_GetIter(__pyx_t_17); if (unlikely(!__pyx_t_23)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_23 = PyObject_GetIter(__pyx_t_17); if (unlikely(!__pyx_t_23)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_23);
         __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
         __pyx_t_24 = Py_TYPE(__pyx_t_23)->tp_iternext;
@@ -3528,7 +3507,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
         __Pyx_GOTREF(__pyx_t_21);
         index = 1; __pyx_t_19 = __pyx_t_24(__pyx_t_23); if (unlikely(!__pyx_t_19)) goto __pyx_L8_unpacking_failed;
         __Pyx_GOTREF(__pyx_t_19);
-        if (__Pyx_IternextUnpackEndCheck(__pyx_t_24(__pyx_t_23), 2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        if (__Pyx_IternextUnpackEndCheck(__pyx_t_24(__pyx_t_23), 2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __pyx_t_24 = NULL;
         __Pyx_DECREF(__pyx_t_23); __pyx_t_23 = 0;
         goto __pyx_L9_unpacking_done;
@@ -3536,24 +3515,24 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
         __Pyx_DECREF(__pyx_t_23); __pyx_t_23 = 0;
         __pyx_t_24 = NULL;
         if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __pyx_L9_unpacking_done:;
       }
-      __pyx_t_14 = __Pyx_PyInt_As_int(__pyx_t_21); if (unlikely((__pyx_t_14 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_14 = __Pyx_PyInt_As_int(__pyx_t_21); if (unlikely((__pyx_t_14 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_21); __pyx_t_21 = 0;
-      __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_t_19); if (unlikely((__pyx_t_1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_t_19); if (unlikely((__pyx_t_1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
       __pyx_v_i = __pyx_t_14;
       __pyx_v_x = __pyx_t_1;
 
-      /* "kaggler/online_model/nn.pyx":161
+      /* "kaggler/online_model/nn.pyx":158
  *                 # update weights between the hidden unit j and input i
  *                 # dl/dw0 = dl/dz * dz/dw0 = dl/dz * x
  *                 self.w0[i * self.h + j] -= (dl_dz / (sqrt(self.c0[i]) + 1) * x +             # <<<<<<<<<<<<<<
  *                                             self.l2 * self.w0[i * self.h + j])
  * 
  */
-      if (unlikely(!__pyx_v_self->c0.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 161; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+      if (unlikely(!__pyx_v_self->c0.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
       __pyx_t_14 = __pyx_v_i;
       __pyx_t_25 = -1;
       if (__pyx_t_14 < 0) {
@@ -3562,7 +3541,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
       } else if (unlikely(__pyx_t_14 >= __pyx_v_self->c0.shape[0])) __pyx_t_25 = 0;
       if (unlikely(__pyx_t_25 != -1)) {
         __Pyx_RaiseBufferIndexError(__pyx_t_25);
-        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 161; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       }
       __pyx_t_1 = (sqrt((*((double *) ( /* dim=0 */ (__pyx_v_self->c0.data + __pyx_t_14 * __pyx_v_self->c0.strides[0]) )))) + 1.0);
       if (unlikely(__pyx_t_1 == 0)) {
@@ -3573,50 +3552,50 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
         #ifdef WITH_THREAD
         PyGILState_Release(__pyx_gilstate_save);
         #endif
-        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 161; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       }
 
-      /* "kaggler/online_model/nn.pyx":162
+      /* "kaggler/online_model/nn.pyx":159
  *                 # dl/dw0 = dl/dz * dz/dw0 = dl/dz * x
  *                 self.w0[i * self.h + j] -= (dl_dz / (sqrt(self.c0[i]) + 1) * x +
  *                                             self.l2 * self.w0[i * self.h + j])             # <<<<<<<<<<<<<<
  * 
  *                 # update counter for the input i
  */
-      if (unlikely(!__pyx_v_self->w0.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 162; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+      if (unlikely(!__pyx_v_self->w0.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
       __pyx_t_26 = ((__pyx_v_i * __pyx_v_self->h) + __pyx_v_j);
       __pyx_t_25 = -1;
       if (unlikely(__pyx_t_26 >= (size_t)__pyx_v_self->w0.shape[0])) __pyx_t_25 = 0;
       if (unlikely(__pyx_t_25 != -1)) {
         __Pyx_RaiseBufferIndexError(__pyx_t_25);
-        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 162; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       }
 
-      /* "kaggler/online_model/nn.pyx":161
+      /* "kaggler/online_model/nn.pyx":158
  *                 # update weights between the hidden unit j and input i
  *                 # dl/dw0 = dl/dz * dz/dw0 = dl/dz * x
  *                 self.w0[i * self.h + j] -= (dl_dz / (sqrt(self.c0[i]) + 1) * x +             # <<<<<<<<<<<<<<
  *                                             self.l2 * self.w0[i * self.h + j])
  * 
  */
-      if (unlikely(!__pyx_v_self->w0.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 161; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+      if (unlikely(!__pyx_v_self->w0.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
       __pyx_t_27 = ((__pyx_v_i * __pyx_v_self->h) + __pyx_v_j);
       __pyx_t_25 = -1;
       if (unlikely(__pyx_t_27 >= (size_t)__pyx_v_self->w0.shape[0])) __pyx_t_25 = 0;
       if (unlikely(__pyx_t_25 != -1)) {
         __Pyx_RaiseBufferIndexError(__pyx_t_25);
-        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 161; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       }
       *((double *) ( /* dim=0 */ (__pyx_v_self->w0.data + __pyx_t_27 * __pyx_v_self->w0.strides[0]) )) -= (((__pyx_v_dl_dz / __pyx_t_1) * __pyx_v_x) + (__pyx_v_self->l2 * (*((double *) ( /* dim=0 */ (__pyx_v_self->w0.data + __pyx_t_26 * __pyx_v_self->w0.strides[0]) )))));
 
-      /* "kaggler/online_model/nn.pyx":165
+      /* "kaggler/online_model/nn.pyx":162
  * 
  *                 # update counter for the input i
  *                 self.c0[i] += abs_e             # <<<<<<<<<<<<<<
  * 
  *             # update counter for the hidden unit j
  */
-      if (unlikely(!__pyx_v_self->c0.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 165; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+      if (unlikely(!__pyx_v_self->c0.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 162; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
       __pyx_t_25 = __pyx_v_i;
       __pyx_t_28 = -1;
       if (__pyx_t_25 < 0) {
@@ -3625,11 +3604,11 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
       } else if (unlikely(__pyx_t_25 >= __pyx_v_self->c0.shape[0])) __pyx_t_28 = 0;
       if (unlikely(__pyx_t_28 != -1)) {
         __Pyx_RaiseBufferIndexError(__pyx_t_28);
-        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 165; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 162; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       }
       *((double *) ( /* dim=0 */ (__pyx_v_self->c0.data + __pyx_t_25 * __pyx_v_self->c0.strides[0]) )) += __pyx_v_abs_e;
 
-      /* "kaggler/online_model/nn.pyx":158
+      /* "kaggler/online_model/nn.pyx":155
  *                                              self.l2 * self.w0[self.n * self.h + j])
  *             # update weights related to non-zero input units
  *             for i, x in izip(idx, val):             # <<<<<<<<<<<<<<
@@ -3639,14 +3618,14 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
     }
     __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
 
-    /* "kaggler/online_model/nn.pyx":168
+    /* "kaggler/online_model/nn.pyx":165
  * 
  *             # update counter for the hidden unit j
  *             self.c1[j] += abs_e             # <<<<<<<<<<<<<<
  * 
  *         # update overall counter
  */
-    if (unlikely(!__pyx_v_self->c1.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_self->c1.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 165; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_28 = __pyx_v_j;
     __pyx_t_29 = -1;
     if (__pyx_t_28 < 0) {
@@ -3655,13 +3634,13 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
     } else if (unlikely(__pyx_t_28 >= __pyx_v_self->c1.shape[0])) __pyx_t_29 = 0;
     if (unlikely(__pyx_t_29 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_29);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 165; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
     *((double *) ( /* dim=0 */ (__pyx_v_self->c1.data + __pyx_t_28 * __pyx_v_self->c1.strides[0]) )) += __pyx_v_abs_e;
     __pyx_L3_continue:;
   }
 
-  /* "kaggler/online_model/nn.pyx":171
+  /* "kaggler/online_model/nn.pyx":168
  * 
  *         # update overall counter
  *         self.c += abs_e             # <<<<<<<<<<<<<<
@@ -3671,7 +3650,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_2nn_2NN_6update(struct __pyx_o
   /* "kaggler/online_model/nn.pyx":114
  *         return sigm(p)
  * 
- *     def update(self, list idx, list val, double p, double y):             # <<<<<<<<<<<<<<
+ *     def update(self, list idx, list val, double e):             # <<<<<<<<<<<<<<
  *         """Update the model.
  * 
  */
@@ -17188,6 +17167,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_contiguous_and_indirect, __pyx_k_contiguous_and_indirect, sizeof(__pyx_k_contiguous_and_indirect), 0, 0, 1, 0},
   {&__pyx_n_s_dtype, __pyx_k_dtype, sizeof(__pyx_k_dtype), 0, 0, 1, 1},
   {&__pyx_n_s_dtype_is_object, __pyx_k_dtype_is_object, sizeof(__pyx_k_dtype_is_object), 0, 0, 1, 1},
+  {&__pyx_n_s_e, __pyx_k_e, sizeof(__pyx_k_e), 0, 0, 1, 1},
   {&__pyx_n_s_enumerate, __pyx_k_enumerate, sizeof(__pyx_k_enumerate), 0, 0, 1, 1},
   {&__pyx_n_s_error, __pyx_k_error, sizeof(__pyx_k_error), 0, 0, 1, 1},
   {&__pyx_n_s_flags, __pyx_k_flags, sizeof(__pyx_k_flags), 0, 0, 1, 1},
@@ -17218,7 +17198,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_np, __pyx_k_np, sizeof(__pyx_k_np), 0, 0, 1, 1},
   {&__pyx_n_s_numpy, __pyx_k_numpy, sizeof(__pyx_k_numpy), 0, 0, 1, 1},
   {&__pyx_n_s_obj, __pyx_k_obj, sizeof(__pyx_k_obj), 0, 0, 1, 1},
-  {&__pyx_n_s_p, __pyx_k_p, sizeof(__pyx_k_p), 0, 0, 1, 1},
   {&__pyx_n_s_pack, __pyx_k_pack, sizeof(__pyx_k_pack), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_getbuffer, __pyx_k_pyx_getbuffer, sizeof(__pyx_k_pyx_getbuffer), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_vtable, __pyx_k_pyx_vtable, sizeof(__pyx_k_pyx_vtable), 0, 0, 1, 1},
@@ -17243,7 +17222,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_unpack, __pyx_k_unpack, sizeof(__pyx_k_unpack), 0, 0, 1, 1},
   {&__pyx_n_s_val, __pyx_k_val, sizeof(__pyx_k_val), 0, 0, 1, 1},
   {&__pyx_n_s_xrange, __pyx_k_xrange, sizeof(__pyx_k_xrange), 0, 0, 1, 1},
-  {&__pyx_n_s_y, __pyx_k_y, sizeof(__pyx_k_y), 0, 0, 1, 1},
   {&__pyx_n_s_zeros, __pyx_k_zeros, sizeof(__pyx_k_zeros), 0, 0, 1, 1},
   {0, 0, 0, 0, 0, 0, 0}
 };
