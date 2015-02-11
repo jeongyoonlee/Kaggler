@@ -102,3 +102,6 @@ for x, y in clf.read_sparse('train.sparse'):
 for x, _ in clf.read_sparse('test.sparse'):
     p = clf.predict(x)
 ```
+
+# Package Documentation
+Package documentation is available at [here](http://pythonhosted.org//Kaggler).

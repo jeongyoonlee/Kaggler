@@ -6,7 +6,7 @@ import numpy as np
 
 setup(
     name='Kaggler',
-    version='0.3.1',
+    version='0.3.2',
 
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
@@ -15,7 +15,7 @@ setup(
               'kaggler.model',
               'kaggler.online_model',
               'kaggler.test'],
-    url='http://pypi.python.org/pypi/Kaggler/',
+    url='https://github.com/jeongyoonlee/Kaggler'
     license='LICENSE.txt',
 
     description='Code for Kaggle Data Science Competitions.',
