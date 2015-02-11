@@ -13,7 +13,7 @@ Currently algorithms available are as follows:
 * Neural Networks (NN) - with a single (NN) or two (NN_H2) ReLU hidden layers
 
 ## Batch learning algorithm
-* Neural Networks (NN) - with a single hidden layer and L-BGFS optimization
+* Neural Networks (NN) - with a single hidden layer and L-BFGS optimization
 
 # Install
 ## Using pip
