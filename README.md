@@ -5,10 +5,15 @@ It provides online learning algorithms for classification - inspired by Kaggle u
 
 # Algorithms
 Currently algorithms available are as follows:
+
+## Online learning algorithms
 * Stochastic Gradient Descent (SGD)
 * Follow-the-Regularized-Leader (FTRL)
 * Factorization Machine (FM)
-* Neural Networks (NN) - with a single (NN) or two (NN_H2) hidden layers
+* Neural Networks (NN) - with a single (NN) or two (NN_H2) ReLU hidden layers
+
+## Batch learning algorithm
+* Neural Networks (NN) - with a single hidden layer and L-BGFS optimization
 
 # Install
 ## Using pip
