@@ -6,7 +6,7 @@ import numpy as np
 
 setup(
     name='Kaggler',
-    version='0.3.dev',
+    version='0.3.1',
 
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
@@ -19,7 +19,7 @@ setup(
     license='LICENSE.txt',
 
     description='Code for Kaggle Data Science Competitions.',
-    long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
 
     install_requires=[
         'cython',
