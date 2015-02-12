@@ -1,2 +1,2 @@
-include *.txt
+include *.txt README.md
 recursive-include docs *.txt

@@ -3,10 +3,16 @@ from Cython.Distutils import build_ext
 
 import numpy as np
 
+try:
+    from pypandoc import convert
+    read_md = lambda f: convert(f, 'rst')
+except ImportError:
+    print("warning: pypandoc module not found, could not convert Markdown to RST")
+    read_md = lambda f: open(f, 'r').read()
 
 setup(
     name='Kaggler',
-    version='0.3.3',
+    version='0.3.4',
 
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
@@ -19,7 +25,7 @@ setup(
     license='LICENSE.txt',
 
     description='Code for Kaggle Data Science Competitions.',
-    long_description=open('README.md').read(),
+    long_description=read_md('README.md'),
 
     install_requires=[
         'cython',

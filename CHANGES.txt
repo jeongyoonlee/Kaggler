@@ -1,2 +1,3 @@
-v0.1.1, 2014-09-24 -- Fix wrong dependencies
-v0.1.0, 2014-07-22 -- Initial release.
+0.3.4, 2015-02-11 -- Add README.md to MANIFEST.in
+0.1.1, 2014-09-24 -- Fix wrong dependencies
+0.1.0, 2014-07-22 -- Initial release.
