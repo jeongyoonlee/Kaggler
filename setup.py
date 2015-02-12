@@ -12,7 +12,7 @@ except ImportError:
 
 setup(
     name='Kaggler',
-    version='0.3.5',
+    version='0.3.6',
 
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
@@ -62,7 +62,7 @@ setup(
                            include_dirs=[np.get_include(), '.'],
                            extra_compile_args=['-O3']),
                  Extension('kaggler.util',
-                           ['kaggler/util.pyx'],
+                           ['kaggler/util.pyx', 'kaggler/util.pxd'],
                            libraries=[],
                            include_dirs=[np.get_include(), '.'],
                            extra_compile_args=['-O3'])],
