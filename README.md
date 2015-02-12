@@ -19,7 +19,7 @@ Currently algorithms available are as follows:
 ## Using pip
 Python package is available at PyPi for pip installation:
 ```
-sudo pip install Kaggler
+sudo pip install -U Kaggler
 ```
 
 ## From source code
