@@ -11,7 +11,26 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+.. automodule:: kaggler.io
+    :members:
 
+.. automodule:: kaggler.util
+    :members:
+
+.. autoclass:: kaggler.model.NN
+    :members:
+
+.. autoclass:: kaggler.online_model.FM
+    :members:
+
+.. autoclass:: kaggler.online_model.FTRL
+    :members:
+
+.. autoclass:: kaggler.online_model.NN
+    :members:
+
+.. autoclass:: kaggler.online_model.NN_H2
+    :members:
 
 Indices and tables
 ==================
