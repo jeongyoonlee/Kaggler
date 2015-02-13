@@ -1,3 +1,6 @@
+# cython: boundscheck=False
+# cython: wraparound=False
+# cython: cdivision=True
 from scipy import sparse
 from scipy.stats import norm
 from sklearn.preprocessing import OneHotEncoder

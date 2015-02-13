@@ -1,6 +1,8 @@
+# cython: boundscheck=False
+# cython: wraparound=False
+# cython: cdivision=True
 from __future__ import division
 import numpy as np
-import random
 
 cimport cython
 from libc.math cimport sqrt, fabs
@@ -12,7 +14,24 @@ np.import_array()
 
 
 cdef class NN_H2:
-    """Neural Network with 2 ReLU hidden layers online learner."""
+    """Neural Network with 2 ReLU hidden layers online learner.
+
+    Attributes:
+        n (int): number of input units
+        h1 (int): number of the 1st level hidden units
+        h2 (int): number of the 2nd level hidden units
+        a (double): initial learning rate
+        l1 (double): L1 regularization parameter
+        l2 (double): L2 regularization parameter
+        w0 (array of double): weights between the input and 1st hidden layers
+        w1 (array of double): weights between the 1st and 2nd hidden layers
+        w2 (array of double): weights between the 2nd hidden and output layers
+        z1 (array of double): 1st level hidden units
+        z2 (array of double): 2nd level hidden units
+        c (double): counter
+        c1 (array of double): counters for 1st level hidden units
+        c2 (array of double): counters for 2nd level hidden units
+    """
 
     cdef unsigned int n     # number of input units
     cdef unsigned int h1    # number of the 1st level hidden units
@@ -36,10 +55,24 @@ cdef class NN_H2:
                  unsigned int h2=256,
                  double a=0.01,
                  double l1=0.,
-                 double l2=0.):
+                 double l2=0.,
+                 unsigned int seed=0):
+        """Initialize the NN class object.
+
+        Args:
+            n (int): number of input units
+            h1 (int): number of the 1st level hidden units
+            h2 (int): number of the 2nd level hidden units
+            a (double): initial learning rate
+            l1 (double): L1 regularization parameter
+            l2 (double): L2 regularization parameter
+            seed (unsigned int): random seed
+        """
+
         cdef int i
 
-        random.seed(2014)
+        rng = np.random.RandomState(seed)
+
         self.n = n
         self.h1 = h1
         self.h2 = h2
@@ -49,13 +82,13 @@ cdef class NN_H2:
         self.l2 = l2
 
         # weights between the output and 2nd hidden layer
-        self.w2 = (np.random.rand(self.h2 + 1) - .5) * 1e-7
+        self.w2 = (rng.rand(self.h2 + 1) - .5) * 1e-7
 
         # weights between the 2nd hidden layer and 1st hidden layer
-        self.w1 = (np.random.rand((self.h1 + 1) * self.h2) - .5) * 1e-7
+        self.w1 = (rng.rand((self.h1 + 1) * self.h2) - .5) * 1e-7
 
         # weights between the 1st hidden layer and inputs
-        self.w0 = (np.random.rand((self.n + 1) * self.h1) - .5) * 1e-7
+        self.w0 = (rng.rand((self.n + 1) * self.h1) - .5) * 1e-7
 
         # hidden units in the 2nd hidden layer
         self.z2 = np.zeros((self.h2,), dtype=np.float64)
@@ -70,15 +103,15 @@ cdef class NN_H2:
         self.c0 = np.zeros((self.n,), dtype=np.float64)
 
     def read_sparse(self, path):
-        """Apply hashing trick to the libsvm format sparse file.
+        """Read the libsvm format sparse file line by line.
 
         Args:
-            path - a file path to the libsvm format sparse file
+            path (str): a file path to the libsvm format sparse file
 
-        Returns:
-            idx - a list of index of non-zero features
-            val - a list of values of non-zero features
-            y - target value
+        Yields:
+            idx (list of int): a list of index of non-zero features
+            val (list of double): a list of values of non-zero features
+            y (int): target value
         """
         for line in open(path):
             xs = line.rstrip().split(' ')
@@ -97,10 +130,10 @@ cdef class NN_H2:
         """Predict for features.
 
         Args:
-            x - a list of (index, value) of non-zero features
+            x (list of tuple): a list of (index, value) of non-zero features
 
         Returns:
-            p - a prediction for input features
+            p (double): a prediction for input features
         """
         cdef double p
         cdef int k
@@ -142,8 +175,8 @@ cdef class NN_H2:
         """Update the model.
 
         Args:
-            x - a list of (index, value) of non-zero features
-            e - error between the prediction of the model and target
+            x (list of tuple): a list of (index, value) of non-zero features
+            e (double): error between the prediction of the model and target
 
         Returns:
             updated model weights and counts

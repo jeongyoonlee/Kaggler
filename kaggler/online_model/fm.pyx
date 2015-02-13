@@ -1,6 +1,8 @@
+# cython: boundscheck=False
+# cython: wraparound=False
+# cython: cdivision=True
 from __future__ import division
 import numpy as np
-import random
 
 cimport cython
 from libc.math cimport sqrt, fabs
@@ -12,7 +14,18 @@ np.import_array()
 
 
 cdef class FM:
-    """Factorization Machine online learner."""
+    """Factorization Machine online learner.
+
+    Attributes:
+        n (int): number of features after hashing trick
+        k (int): size of factors for interactions
+        a (double): initial learning rate
+        w0 (double): weight for bias
+        c0 (double): counters
+        w (array of double): feature weights
+        c (array of double): counters for weights
+        V (array of double): feature weights for factors
+    """
 
     cdef unsigned int n
     cdef unsigned int k
@@ -23,10 +36,23 @@ cdef class FM:
     cdef double[:] c
     cdef double[:] V
 
-    def __init__(self, unsigned int n, unsigned int dim=4, double a=0.01):
+    def __init__(self,
+                 unsigned int n,
+                 unsigned int dim=4,
+                 double a=0.01,
+                 seed=0):
+        """Initialize the FM class object.
+
+        Args:
+            n (int): number of features after hashing trick
+            dim (int): size of factors for interactions
+            a (double): initial learning rate
+            seed (unsigned int): random seed
+        """
         cdef int i
 
-        random.seed(2014)
+        rng = np.random.RandomState(seed)
+
         self.n = n       # # of features
         self.k = dim
         self.a = a      # learning rate
@@ -36,18 +62,18 @@ cdef class FM:
         self.c0 = 0.
         self.w = np.zeros((self.n,), dtype=np.float64)
         self.c = np.zeros((self.n,), dtype=np.float64)
-        self.V = (np.random.rand(self.n * self.k) - .5) * 1e-6
+        self.V = (rng.rand(self.n * self.k) - .5) * 1e-6
 
     def read_sparse(self, path):
         """Apply hashing trick to the libsvm format sparse file.
 
         Args:
-            path - a file path to the libsvm format sparse file
+            path (str): a file path to the libsvm format sparse file
 
-        Returns:
-            idx - a list of index of non-zero features
-            val - a list of values of non-zero features
-            y - target value
+        Yields:
+            idx (list of int): a list of index of non-zero features
+            val (list of double): a list of values of non-zero features
+            y (int): target value
         """
         for line in open(path):
             xs = line.rstrip().split(' ')
@@ -66,10 +92,10 @@ cdef class FM:
         """Predict for features.
 
         Args:
-            x - a list of (index, value) of non-zero features
+            x (list of tuple): a list of (index, value) of non-zero features
 
         Returns:
-            p - a prediction for input features
+            p (double): a prediction for input features
         """
         cdef int i
         cdef int k
@@ -98,9 +124,9 @@ cdef class FM:
         """Update the model.
 
         Args:
-            idx - a list of index of non-zero features
-            val - a list of values of non-zero features
-            e - error between the prediction of the model and target
+            idx (list of int): a list of index of non-zero features
+            val (list of double): a list of values of non-zero features
+            e (double): error between the prediction of the model and target
 
         Returns:
             updated model weights and counts

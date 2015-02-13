@@ -1,6 +1,8 @@
+# cython: boundscheck=False
+# cython: wraparound=False
+# cython: cdivision=True
 from __future__ import division
 import numpy as np
-import random
 
 cimport cython
 from libc.math cimport sqrt, fabs
@@ -12,7 +14,21 @@ np.import_array()
 
 
 cdef class NN:
-    """Neural Network with a single ReLU hidden layer online learner."""
+    """Neural Network with a single ReLU hidden layer online learner.
+
+    Attributes:
+        n (int): number of input units
+        h (int): number of hidden units
+        a (double): initial learning rate
+        l1 (double): L1 regularization parameter
+        l2 (double): L2 regularization parameter
+        w0 (array of double): weights between the input and hidden layers
+        w1 (array of double): weights between the hidden and output layers
+        z (array of double): hidden units
+        c (double): counter
+        c1 (array of double): counters for hidden units
+        interaction (boolean): whether to use 2nd order interaction or not
+    """
 
     cdef unsigned int n     # number of input units
     cdef unsigned int h     # number of hidden units
@@ -31,18 +47,33 @@ cdef class NN:
                  unsigned int h=10,
                  double a=0.01,
                  double l2=0.,
-                 bint interaction=True):
+                 unsigned int seed=0,
+                 bint interaction=False):
+        """Initialize the NN class object.
+
+        Args:
+            n (int): number of input units
+            h1 (int): number of the 1st level hidden units
+            h2 (int): number of the 2nd level hidden units
+            a (double): initial learning rate
+            l1 (double): L1 regularization parameter
+            l2 (double): L2 regularization parameter
+            seed (unsigned int): random seed
+            interaction (boolean): whether to use 2nd order interaction or not
+        """
+
         cdef int i
 
-        random.seed(2014)
+        rng = np.random.RandomState(seed)
+
         self.n = n
         self.h = h
 
         self.a = a
         self.l2 = l2
 
-        self.w1 = (np.random.rand(self.h + 1) - .5) * 1e-6
-        self.w0 = (np.random.rand((self.n + 1) * self.h) - .5) * 1e-6
+        self.w1 = (rng.rand(self.h + 1) - .5) * 1e-6
+        self.w0 = (rng.rand((self.n + 1) * self.h) - .5) * 1e-6
 
         # hidden units in the hidden layer
         self.z = np.zeros((self.h,), dtype=np.float64)
@@ -59,12 +90,12 @@ cdef class NN:
         """Apply hashing trick to the libsvm format sparse file.
 
         Args:
-            path - a file path to the libsvm format sparse file
+            path (str): a file path to the libsvm format sparse file
 
-        Returns:
-            idx - a list of index of non-zero features
-            val - a list of values of non-zero features
-            y - target value
+        Yields:
+            idx (list of int): a list of index of non-zero features
+            val (list of double): a list of values of non-zero features
+            y (int): target value
         """
         for line in open(path):
             xs = line.rstrip().split(' ')
@@ -83,10 +114,10 @@ cdef class NN:
         """Predict for features.
 
         Args:
-            x - a list of (index, value) of non-zero features
+            x (list of tuple): a list of (index, value) of non-zero features
 
         Returns:
-            p - a prediction for input features
+            p (double): a prediction for input features
         """
         cdef double p
         cdef int j
@@ -117,8 +148,8 @@ cdef class NN:
         """Update the model.
 
         Args:
-            x - a list of (index, value) of non-zero features
-            e - error between the prediction of the model and target
+            x (list of tuple): a list of (index, value) of non-zero features
+            e (double) error between the prediction of the model and target
 
         Returns:
             updated model weights and counts

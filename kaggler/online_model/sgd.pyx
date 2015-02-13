@@ -1,6 +1,8 @@
+# cython: boundscheck=False
+# cython: wraparound=False
+# cython: cdivision=True
 from __future__ import division
 import numpy as np
-import random
 
 cimport cython
 from libc.math cimport sqrt, fabs
@@ -12,6 +14,17 @@ np.import_array()
 
 
 cdef class SGD:
+    """Simple online learner using a hasing trick.
+
+    Attributes:
+        n (int): number of features after hashing trick
+        a (double): initial learning rate
+        l1 (double): L1 regularization parameter
+        l2 (double): L2 regularization parameter
+        w (array of double): feature weights
+        c (array of double): counters for weights
+        interaction (boolean): whether to use 2nd order interaction or not
+    """
     cdef unsigned int n
     cdef double a
     cdef double l1
@@ -20,14 +33,24 @@ cdef class SGD:
     cdef double[:] c
     cdef bint interaction
 
-    """Simple online learner using a hasing trick."""
-
     def __init__(self,
                  unsigned int n=2**20,
                  double a=0.01,
                  double l1=0.0,
                  double l2=0.0,
                  bint interaction=True):
+        """Initialize the SGD class object.
+
+        Args:
+            n (int): number of features after hashing trick
+            a (double): initial learning rate
+            l1 (double): L1 regularization parameter
+            l2 (double): L2 regularization parameter
+            w (array of double): feature weights
+            c (array of double): counters for weights
+            interaction (boolean): whether to use 2nd order interaction or not
+        """
+
         self.n = n      # # of features
         self.a = a      # learning rate
         self.l1 = l1
@@ -60,11 +83,11 @@ cdef class SGD:
         """Apply hashing trick to the libsvm format sparse file.
 
         Args:
-            path - a file path to the libsvm format sparse file
+            path (str): a file path to the libsvm format sparse file
 
-        Returns:
-            x - a list of index of non-zero features
-            y - target value
+        Yields:
+            x (list of int): a list of index of non-zero features
+            y (int): target value
         """
         for line in open(path):
             xs = line.rstrip().split(' ')
@@ -81,10 +104,10 @@ cdef class SGD:
         """Predict for features.
 
         Args:
-            x - a list of index of non-zero features
+            x (list of int): a list of index of non-zero features
 
         Returns:
-            a prediction for input features
+            p (double): a prediction for input features
         """
         cdef int i
         cdef double wTx
@@ -99,8 +122,8 @@ cdef class SGD:
         """Update the model.
 
         Args:
-            x - a list of index of non-zero features
-            e - error between the prediction of the model and target
+            x (list of int): a list of index of non-zero features
+            e (double): error between the prediction of the model and target
 
         Returns:
             updates model weights and counts

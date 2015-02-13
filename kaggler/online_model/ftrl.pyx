@@ -1,3 +1,6 @@
+# cython: boundscheck=False
+# cython: wraparound=False
+# cython: cdivision=True
 from __future__ import division
 import numpy as np
 
@@ -15,6 +18,17 @@ cdef class FTRL:
     
     inspired by Kaggle user tinrtgu's code at http://goo.gl/K8hQBx
     original FTRL paper is available at http://goo.gl/iqIaH0
+
+    Attributes:
+        n (int): number of features after hashing trick
+        a (double): alpha in the per-coordinate rate
+        b (double): beta in the per-coordinate rate
+        l1 (double): L1 regularization parameter
+        l2 (double): L2 regularization parameter
+        w (array of double): feature weights
+        c (array of double): counters for weights
+        z (array of double): lazy weights
+        interaction (boolean): whether to use 2nd order interaction or not
     """
 
     cdef double a      # learning rate
@@ -34,6 +48,17 @@ cdef class FTRL:
                  double l2=1.,
                  unsigned int n=2**20,
                  bint interaction=True):
+        """Initialize the FTRL class object.
+
+        Args:
+            a (double): alpha in the per-coordinate rate
+            b (double): beta in the per-coordinate rate
+            l1 (double): L1 regularization parameter
+            l2 (double): L2 regularization parameter
+            n (int): number of features after hashing trick
+            interaction (boolean): whether to use 2nd order interaction or not
+        """
+
         self.a = a      # learning rate
         self.b = b
         self.l1 = l1
@@ -68,11 +93,11 @@ cdef class FTRL:
         """Apply hashing trick to the libsvm format sparse file.
 
         Args:
-            path - a file path to the libsvm format sparse file
+            path (str): a file path to the libsvm format sparse file
 
-        Returns:
-            x - a list of index of non-zero features
-            y - target value
+        Yields:
+            x (list of int): a list of index of non-zero features
+            y (int): target value
         """
         for line in open(path):
             xs = line.rstrip().split(' ')
@@ -89,9 +114,8 @@ cdef class FTRL:
         """Update the model.
 
         Args:
-            idx - a list of index of non-zero features
-            val - a list of values of non-zero features
-            e - error between prediction of the model and target
+            x (list of int): a list of index of non-zero features
+            e (double): error between prediction of the model and target
 
         Returns:
             updates model weights and counts
@@ -110,10 +134,10 @@ cdef class FTRL:
         """Predict for features.
 
         Args:
-            x - a list of index of non-zero features
+            x (list of int): a list of index of non-zero features
 
         Returns:
-            a prediction for input features
+            p (double): a prediction for input features
         """
         cdef int i
         cdef double sign
