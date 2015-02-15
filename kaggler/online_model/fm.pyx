@@ -5,7 +5,7 @@ from __future__ import division
 import numpy as np
 
 cimport cython
-from libc.math cimport sqrt, fabs
+from libc.math cimport sqrt, abs
 from ..util cimport sigm
 cimport numpy as np
 
@@ -83,7 +83,7 @@ cdef class FM:
             val = []
             for item in xs[1:]:
                 i, v = item.split(':')
-                idx.append(fabs(hash(i)) % self.n)
+                idx.append(abs(hash(i)) % self.n)
                 val.append(float(v))
 
             yield zip(idx, val), y
@@ -135,7 +135,7 @@ cdef class FM:
         cdef int k
         cdef int f
         cdef double v
-        cdef double abs_e
+        cdef double g2
         cdef double dl_dw
         cdef double[:] vx
 
@@ -146,14 +146,16 @@ cdef class FM:
                 vx[k] += self.V[i * self.k + k] * v
 
         # update w0, w, V, c0, and c
-        abs_e = fabs(e)
-        self.c0 += abs_e
+        g2 = e * e
 
         self.w0 -= self.a / (sqrt(self.c0) + 1) * e
         for i, v in x:
             dl_dw = self.a / (sqrt(self.c[i]) + 1) * e * v
             self.w[i] -= dl_dw
-            self.c[i] += abs_e
             for f in range(self.k):
                 self.V[i * self.k + f] -= dl_dw * (vx[f] -
                                                    self.V[i * self.k + f] * v)
+
+            self.c[i] += g2
+
+        self.c0 += g2

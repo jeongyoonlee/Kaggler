@@ -5,7 +5,7 @@ from __future__ import division
 import numpy as np
 
 cimport cython
-from libc.math cimport sqrt, fabs
+from libc.math cimport sqrt, abs
 from ..util cimport sigm
 cimport numpy as np
 
@@ -121,7 +121,7 @@ cdef class NN_H2:
             val = []
             for item in xs[1:]:
                 i, v = item.split(':')
-                idx.append(fabs(hash(i)) % self.n)
+                idx.append(abs(hash(i)) % self.n)
                 val.append(float(v))
 
             yield zip(idx, val), y
@@ -184,19 +184,20 @@ cdef class NN_H2:
         cdef int k
         cdef int j
         cdef int i
-        cdef double abs_e
         cdef double dl_dy
         cdef double dl_dz1
         cdef double dl_dz2
+        cdef double dl_dw0
+        cdef double dl_dw1
+        cdef double dl_dw2
         cdef double v
 
         # XXX: assuming predict() was called right before with the same idx and
         # val inputs.  Otherwise self.z will be incorrect for updates.
-        abs_e = fabs(e)
-        dl_dy = e * self.a      # dl/dy * (learning rate)
+        dl_dy = e      # dl/dy * (initial learning rate)
 
         # starting with the bias in the 2nd hidden layer
-        self.w2[self.h2] -= dl_dy / (sqrt(self.c) + 1) + self.l2 * self.w2[self.h2]
+        self.w2[self.h2] -= (dl_dy + self.l2 * self.w2[self.h2]) * self.a / (sqrt(self.c) + 1)
         for k in range(self.h2):
             # update weights related to non-zero 2nd level hidden units
             if self.z2[k] == 0.:
@@ -204,14 +205,14 @@ cdef class NN_H2:
 
             # update weights between the 2nd hidden units and output
             # dl/dw2 = dl/dy * dy/dw2 = dl/dy * z2
-            self.w2[k] -= (dl_dy / (sqrt(self.c2[k]) + 1) * self.z2[k] +
-                           self.l2 * self.w2[k])
+            dl_dw2 = dl_dy * self.z2[k]
+            self.w2[k] -= (dl_dw2 + self.l2 * self.w2[k]) * self.a / (sqrt(self.c2[k]) + 1)
 
             # starting with the bias in the 1st hidden layer
             # dl/dz2 = dl/dy * dy/dz2 = dl/dy * w2
             dl_dz2 = dl_dy * self.w2[k]
-            self.w1[self.h1 * self.h2 + k] -= (dl_dz2 / (sqrt(self.c2[k]) + 1) +
-                                               self.l2 * self.w1[self.h1 * self.h2 + k])
+            self.w1[self.h1 * self.h2 + k] -= (dl_dz2 +
+                                               self.l2 * self.w1[self.h1 * self.h2 + k]) * self.a / (sqrt(self.c2[k]) + 1)
             for j in range(self.h1):
                 # update weights realted to non-zero hidden units
                 if self.z1[j] == 0.:
@@ -219,29 +220,30 @@ cdef class NN_H2:
 
                 # update weights between the hidden units and output
                 # dl/dw1 = dl/dz2 * dz2/dw1 = dl/dz2 * z1
-                self.w1[j * self.h2 + k] -= (dl_dz2 / (sqrt(self.c1[j]) + 1) * self.z1[j] +
-                                             self.l2 * self.w1[j])
+                dl_dw1 = dl_dz2 * self.z1[j]
+                self.w1[j * self.h2 + k] -= (dl_dw1 + self.l2 * self.w1[j]) * self.a / (sqrt(self.c1[j]) + 1)
 
                 # starting with the bias in the input layer
                 # dl/dz1 = dl/dz2 * dz2/dz1 = dl/dz2 * w1
                 dl_dz1 = dl_dz2 * self.w1[j * self.h2 + k]
-                self.w0[self.n * self.h1 + j] -= (dl_dz1 / (sqrt(self.c1[j]) + 1) +
-                                                    self.l2 * self.w0[self.n * self.h1 + j])
+                self.w0[self.n * self.h1 + j] -= (dl_dz1 +
+                                                  self.l2 * self.w0[self.n * self.h1 + j]) * self.a / (sqrt(self.c1[j]) + 1)
                 # update weights related to non-zero input units
                 for i, v in x:
                     # update weights between the hidden unit j and input i
-                    # dl/dw1 = dl/dz * dz/dw1 = dl/dz * v
-                    self.w0[i * self.h1 + j] -= (dl_dz1 / (sqrt(self.c0[i]) + 1) * v +
-                                                 self.l2 * self.w0[i * self.h1 + j])
+                    # dl/dw0 = dl/dz1 * dz/dw0 = dl/dz1 * v
+                    dl_dw0 = dl_dz1 * v
+                    self.w0[i * self.h1 + j] -= (dl_dw0 +
+                                                 self.l2 * self.w0[i * self.h1 + j]) * self.a / (sqrt(self.c0[i]) + 1)
 
                     # update counter for the input i
-                    self.c0[i] += abs_e
+                    self.c0[i] += dl_dw0 * dl_dw0
 
                 # update counter for the 1st level hidden unit j
-                self.c1[j] += abs_e
+                self.c1[j] += dl_dw1 * dl_dw1
 
             # update counter for the 2nd level hidden unit k
-            self.c2[k] += abs_e
+            self.c2[k] += dl_dw2 * dl_dw2
 
         # update overall counter
-        self.c += abs_e
+        self.c += dl_dy * dl_dy

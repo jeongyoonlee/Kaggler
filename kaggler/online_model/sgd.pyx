@@ -5,7 +5,7 @@ from __future__ import division
 import numpy as np
 
 cimport cython
-from libc.math cimport sqrt, fabs
+from libc.math cimport sqrt, abs
 from ..util cimport sigm
 cimport numpy as np
 
@@ -77,7 +77,7 @@ cdef class SGD:
             x = sorted(x)
             for i in xrange(l):
                 for j in xrange(i + 1, l):
-                    yield fabs(hash('{}_{}'.format(x[i], x[j]))) % self.n
+                    yield abs(hash('{}_{}'.format(x[i], x[j]))) % self.n
 
     def read_sparse(self, path):
         """Apply hashing trick to the libsvm format sparse file.
@@ -96,7 +96,7 @@ cdef class SGD:
             x = []
             for item in xs[1:]:
                 index, _ = item.split(':')
-                x.append(fabs(hash(index)) % self.n)
+                x.append(abs(hash(index)) % self.n)
 
             yield x, y
 
@@ -129,9 +129,11 @@ cdef class SGD:
             updates model weights and counts
         """
         cdef int i
+        cdef double g2
 
+        g2 = e * e
         for i in self._indices(x):
-            self.w[i] -= (e * self.a / (sqrt(self.c[i]) + 1) +
+            self.w[i] -= (e +
                           (self.l1 if self.w[i] >= 0. else -self.l1) +
-                          self.l2 * fabs(self.w[i]))
-            self.c[i] += fabs(e)
+                          self.l2 * self.w[i]) * self.a / (sqrt(self.c[i]) + 1)
+            self.c[i] += g2

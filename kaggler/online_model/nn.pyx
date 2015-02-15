@@ -5,7 +5,7 @@ from __future__ import division
 import numpy as np
 
 cimport cython
-from libc.math cimport sqrt, fabs
+from libc.math cimport sqrt, abs
 from ..util cimport sigm
 cimport numpy as np
 
@@ -105,7 +105,7 @@ cdef class NN:
             val = []
             for item in xs[1:]:
                 i, v = item.split(':')
-                idx.append(fabs(hash(i)) % self.n)
+                idx.append(abs(hash(i)) % self.n)
                 val.append(float(v))
 
             yield zip(idx, val), y
@@ -156,18 +156,18 @@ cdef class NN:
         """
         cdef int j
         cdef int i
-        cdef double abs_e
         cdef double dl_dy
         cdef double dl_dz
+        cdef double dl_dw1
+        cdef double dl_dw0
         cdef double v
 
         # XXX: assuming predict() was called right before with the same idx and
         # val inputs.  Otherwise self.z will be incorrect for updates.
-        abs_e = fabs(e)
-        dl_dy = e * self.a      # dl/dy * (learning rate)
+        dl_dy = e      # dl/dy * (initial learning rate)
 
         # starting with the bias in the hidden layer
-        self.w1[self.h] -= dl_dy / (sqrt(self.c) + 1) + self.l2 * self.w1[self.h]
+        self.w1[self.h] -= (dl_dy + self.l2 * self.w1[self.h]) * self.a / (sqrt(self.c) + 1)
         for j in range(self.h):
             # update weights related to non-zero hidden units
             if self.z[j] == 0.:
@@ -175,26 +175,27 @@ cdef class NN:
 
             # update weights between the hidden units and output
             # dl/dw1 = dl/dy * dy/dw1 = dl/dy * z
-            self.w1[j] -= (dl_dy / (sqrt(self.c1[j]) + 1) * self.z[j] +
-                           self.l2 * self.w1[j])
+            dl_dw1 = dl_dy * self.z[j]
+            self.w1[j] -= (dl_dw1 + self.l2 * self.w1[j]) * self.a / (sqrt(self.c1[j]) + 1)
 
             # starting with the bias in the input layer
             # dl/dz = dl/dy * dy/dz = dl/dy * w1
             dl_dz = dl_dy * self.w1[j]
-            self.w0[self.n * self.h + j] -= (dl_dz / (sqrt(self.c1[j]) + 1) +
-                                             self.l2 * self.w0[self.n * self.h + j])
+            self.w0[self.n * self.h + j] -= (dl_dz +
+                                             self.l2 * self.w0[self.n * self.h + j]) * self.a / (sqrt(self.c1[j]) + 1)
             # update weights related to non-zero input units
             for i, v in x:
                 # update weights between the hidden unit j and input i
                 # dl/dw0 = dl/dz * dz/dw0 = dl/dz * v
-                self.w0[i * self.h + j] -= (dl_dz / (sqrt(self.c0[i]) + 1) * v +
-                                            self.l2 * self.w0[i * self.h + j])
+                dl_dw0 = dl_dz * v
+                self.w0[i * self.h + j] -= (dl_dw0 +
+                                            self.l2 * self.w0[i * self.h + j]) * self.a / (sqrt(self.c0[i]) + 1)
 
                 # update counter for the input i
-                self.c0[i] += abs_e
+                self.c0[i] += dl_dw0 * dl_dw0
 
             # update counter for the hidden unit j
-            self.c1[j] += abs_e
+            self.c1[j] += dl_dw1 * dl_dw1
 
         # update overall counter
-        self.c += abs_e
+        self.c += dl_dy * dl_dy

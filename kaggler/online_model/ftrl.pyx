@@ -5,7 +5,7 @@ from __future__ import division
 import numpy as np
 
 cimport cython
-from libc.math cimport sqrt, fabs
+from libc.math cimport sqrt, abs
 from ..util cimport sigm
 cimport numpy as np
 
@@ -87,7 +87,7 @@ cdef class FTRL:
             x = sorted(x)
             for i in xrange(l):
                 for j in xrange(i + 1, l):
-                    yield fabs(hash('{}_{}'.format(x[i], x[j]))) % self.n
+                    yield abs(hash('{}_{}'.format(x[i], x[j]))) % self.n
 
     def read_sparse(self, path):
         """Apply hashing trick to the libsvm format sparse file.
@@ -106,7 +106,7 @@ cdef class FTRL:
             x = []
             for item in xs[1:]:
                 index, _ = item.split(':')
-                x.append(fabs(hash(index)) % self.n)
+                x.append(abs(hash(index)) % self.n)
 
             yield x, y
 
