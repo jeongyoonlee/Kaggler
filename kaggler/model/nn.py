@@ -1,6 +1,7 @@
+from __future__ import division
 from scipy import sparse
 from scipy.optimize import minimize
-from sklearn import metrics
+from sklearn.metrics import roc_auc_score
 
 import logging
 import numpy as np
@@ -10,34 +11,38 @@ from ..const import SEC_PER_MIN
 
 
 class NN(object):
-    """
-    Implement a neural network with a single hidden layer.
+    """Implement a neural network with a single h layer."""
 
-    Parameters:
-    self.n_h -- number of hidden nodes
-    self.n_b -- number of input examples to be processed together to find the
-                second order gradient for back-propagation
-    self.n_e -- number of epoches
-    self.l_w1 -- regularization parameter for weights between the input and
-                hidden layers
-    self.l_w2 -- regularization parameter for weights between the hidden and
-                output layers.
+    def __init__(self, n=5, h=10, b=1e5, l1=.0, l2=.0, random_state=None):
+        """Initialize the NN class object.
 
-    """
-    def __init__(self, n_iter=5, n_hidden=10, n_batch=100000, l_w1=.0, l_w2=.0,
-                 random_state=None):
+        Args:
+            h (int): number of h nodes
+            b (int): number of input examples to be processed together to find
+                     the second order gradient for back-propagation
+            n (int): number of epoches
+            l1 (float): regularization parameter for weights between the input
+                        and hidden layers
+            l2 (float): regularization parameter for weights between the hidden
+                        and output layers.
+        """
+
         np.random.seed(random_state)
-        self.n_h = n_hidden
-        self.n_b = n_batch
-        self.n_e = n_iter
-        self.l_w1 = l_w1
-        self.l_w2 = l_w2
-        self.epoch_opt = 0
+        self.h = h
+        self.b = b
+        self.n = n
+        self.l1 = l1
+        self.l2 = l2
+        self.n_opt = 0
 
     def fit(self, X, y, X_val=None, y_val=None):
-        """
-        Train a network using back-propagation with the quasi-Newton method.
-
+        """Train a network with the quasi-Newton method.
+        
+        Args:
+            X (np.array of float): feature matrix for training
+            y (np.array of float): target values for training
+            X_val (np.array of float): feature matrix for validation
+            y_val (np.array of float): target values for validation
         """
         y = y.reshape((len(y), 1))
 
@@ -49,16 +54,16 @@ class NN(object):
             y_val = y_val.reshape((n_val, 1))
 
         # Set initial weights randomly.
-        self.n_i = X.shape[1]
-        self.l_w1 = self.l_w1 / self.n_i
-        self.w = (np.random.rand((self.n_i + 2) * self.n_h + 1) - .5) * .0001
+        self.i = X.shape[1]
+        self.l1 = self.l1 / self.i
+        self.w = (np.random.rand((self.i + 2) * self.h + 1) - .5) * 1e-6
         self.w_opt = self.w
-        self.epoch_opt = 0
+        self.n_opt = 0
 
         logging.info('training ...')
         n_obs = X.shape[0]
-        n_batch = self.n_b
-        n_epoch = self.n_e
+        batch = self.b
+        n_epoch = self.n
         idx = range(n_obs)
         self.auc_opt = .5
 
@@ -67,12 +72,12 @@ class NN(object):
         print('\t--------------------------------------------')
 
         # Before training
-        yhat = self.predict_raw(X)
-        auc = metrics.roc_auc_score(y, yhat)
+        p = self.predict_raw(X)
+        auc = roc_auc_score(y, p)
         auc_val = auc
         if X_val is not None:
-            yhat_val = self.predict_raw(X_val)
-            auc_val = metrics.roc_auc_score(y_val, yhat_val)
+            p_val = self.predict_raw(X_val)
+            auc_val = roc_auc_score(y_val, p_val)
 
         print('\t{:3d}:  {:.6f}  {:.6f}  {:.6f}  {:.2f}'.format(
               0, auc, auc_val, self.auc_opt,
@@ -83,20 +88,20 @@ class NN(object):
         epoch = 1
         while epoch <= n_epoch:
             # Shuffle inputs every epoch - it helps avoiding the local optimum
-            # when n_batch < n_obs.
+            # when batch < n_obs.
             np.random.shuffle(idx)
 
-            # Find the optimal weights for n_batch input examples.
-            # If n_batch == 1, it's the stochastic optimization, which is slow
-            # but uses minimal memory.  If n_batch == n_obs, it's the batch
+            # Find the optimal weights for batch input examples.
+            # If batch == 1, it's the stochastic optimization, which is slow
+            # but uses minimal memory.  If batch == n_obs, it's the batch
             # optimization, which is fast but uses maximum memory.
             # Otherwise, it's the mini-batch optimization, which balances the
             # speed and space trade-offs.
-            for i in range(int(n_obs / n_batch) + 1):
-                if (i + 1) * n_batch > n_obs:
-                    sub_idx = idx[n_batch * i:n_obs]
+            for i in range(int(n_obs / batch) + 1):
+                if (i + 1) * batch > n_obs:
+                    sub_idx = idx[batch * i:n_obs]
                 else:
-                    sub_idx = idx[n_batch * i:n_batch * (i + 1)]
+                    sub_idx = idx[batch * i:batch * (i + 1)]
 
                 x = X[sub_idx]
                 neg_idx = [n_idx for n_idx, n_y in enumerate(y[sub_idx]) if n_y == 0.]
@@ -116,18 +121,18 @@ class NN(object):
                                options={'maxiter': 5})
                 self.w = ret.x
 
-            yhat = self.predict_raw(X)
-            auc = metrics.roc_auc_score(y, yhat)
+            p = self.predict_raw(X)
+            auc = roc_auc_score(y, p)
             auc_val = auc
 
             if X_val is not None:
-                yhat_val = self.predict_raw(X_val)
-                auc_val = metrics.roc_auc_score(y_val, yhat_val)
+                p_val = self.predict_raw(X_val)
+                auc_val = roc_auc_score(y_val, p_val)
 
                 if auc_val > self.auc_opt:
                     self.auc_opt = auc_val
                     self.w_opt = self.w
-                    self.epoch_opt = epoch
+                    self.n_opt = epoch
 
                     # If validation auc is still improving after n_epoch,
                     # try 10 more epochs
@@ -141,51 +146,49 @@ class NN(object):
             epoch += 1
 
         if X_val is not None:
-            print('Optimal epoch is {0} ({1:.6f})'.format(self.epoch_opt,
+            print('Optimal epoch is {0} ({1:.6f})'.format(self.n_opt,
                                                           self.auc_opt))
             self.w = self.w_opt
 
         logging.info('done training')
 
     def predict(self, X):
-        """
-        Predict targets for titles and save predictions using the trained
-        neural network.
+        """Predict targets for a feature matrix.
 
+        Args:
+            X (np.array of float): feature matrix for prediction
+
+        Returns:
+            
         """
         logging.info('predicting ...')
-        yhats = self.predict_raw(X)
+        ps = self.predict_raw(X)
 
-        return yhats[:, 0]
+        return sigm(ps[:, 0])
 
     def predict_raw(self, X):
-        """
-        Predict targets for a feature matrix using the trained neural
-        network.
+        """Predict targets for a feature matrix.
 
-        Input argument:
-        X -- feature matrix
-        self.w[:-n_h1] -- weights between the input and hidden layers
-        self.w[-n_h1:] -- weights between the hidden and output layers
-
+        Args:
+            X (np.array of float): feature matrix for prediction
         """
-        # b -- bias for the input and hidden layers
+        # b -- bias for the input and h layers
         b = np.ones((X.shape[0], 1))
-        w2 = self.w[-(self.n_h + 1):].reshape(self.n_h + 1, 1)
-        w1 = self.w[:-(self.n_h + 1)].reshape(self.n_i + 1, self.n_h)
+        w2 = self.w[-(self.h + 1):].reshape(self.h + 1, 1)
+        w1 = self.w[:-(self.h + 1)].reshape(self.i + 1, self.h)
 
-        # Make X to have the same number of columns as self.n_i.
+        # Make X to have the same number of columns as self.i.
         # Because of the sparse matrix representation, X for prediction can
         # have a different number of columns.
-        if X.shape[1] > self.n_i:
+        if X.shape[1] > self.i:
             # If X has more columns, cut extra columns.
-            X = X[:, :self.n_i]
-        elif X.shape[1] < self.n_i:
+            X = X[:, :self.i]
+        elif X.shape[1] < self.i:
             # If X has less columns, cut the rows of the weight matrix between
-            # the input and hidden layers instead of X itself because the SciPy
+            # the input and h layers instead of X itself because the SciPy
             # sparse matrix does not support .set_shape() yet.
             idx = range(X.shape[1])
-            idx.append(self.n_i)        # Include the last row for the bias
+            idx.append(self.i)        # Include the last row for the bias
             w1 = w1[idx, :]
 
         if sparse.issparse(X):
@@ -194,15 +197,16 @@ class NN(object):
             return np.hstack((sigm(np.hstack((X, b)).dot(w1)), b)).dot(w2)
 
     def func(self, w, *args):
-        """
-        Return the costs of the neural network for predictions.
+        """Return the costs of the neural network for predictions.
 
-        Input arguments:
-        w -- weight vectors such that:
-            w[:-n_h1] -- weights between the input and hidden layers
-            w[-n_h1:] -- weights between the hidden and output layers
-        args -- features (args[0]) and target (args[1])
+        Args:
+            w (array of float): weight vectors such that:
+                w[:-h1] -- weights between the input and h layers
+                w[-h1:] -- weights between the h and output layers
+            args: features (args[0]) and target (args[1])
 
+        Returns:
+            combined cost of RMSE, L1, and L2 regularization
         """
         x0 = args[0]
         x1 = args[1]
@@ -215,48 +219,50 @@ class NN(object):
         idx0 = np.random.choice(range(n0), size=n)
         idx1 = np.random.choice(range(n1), size=n)
 
-        # b -- bias for the input and hidden layers
+        # b -- bias for the input and h layers
         b0 = np.ones((n0, 1))
         b1 = np.ones((n1, 1))
-        n_i1 = self.n_i + 1
-        n_h = self.n_h
-        n_h1 = n_h + 1
+        i1 = self.i + 1
+        h = self.h
+        h1 = h + 1
 
         # Predict for features -- cannot use predict_raw() because here
         # different weights can be used.
         if sparse.issparse(x0):
-            yhat0 = np.hstack((sigm(sparse.hstack((x0, b0)).dot(w[:-n_h1].reshape(
-                               n_i1, n_h))), b0)).dot(w[-n_h1:].reshape(n_h1, 1))
-            yhat1 = np.hstack((sigm(sparse.hstack((x1, b1)).dot(w[:-n_h1].reshape(
-                               n_i1, n_h))), b1)).dot(w[-n_h1:].reshape(n_h1, 1))
+            p0 = np.hstack((sigm(sparse.hstack((x0, b0)).dot(w[:-h1].reshape(
+                               i1, h))), b0)).dot(w[-h1:].reshape(h1, 1))
+            p1 = np.hstack((sigm(sparse.hstack((x1, b1)).dot(w[:-h1].reshape(
+                               i1, h))), b1)).dot(w[-h1:].reshape(h1, 1))
         else:
-            yhat0 = np.hstack((sigm(np.hstack((x0, b0)).dot(w[:-n_h1].reshape(
-                               n_i1, n_h))), b0)).dot(w[-n_h1:].reshape(n_h1, 1))
-            yhat1 = np.hstack((sigm(np.hstack((x1, b1)).dot(w[:-n_h1].reshape(
-                               n_i1, n_h))), b1)).dot(w[-n_h1:].reshape(n_h1, 1))
+            p0 = np.hstack((sigm(np.hstack((x0, b0)).dot(w[:-h1].reshape(
+                               i1, h))), b0)).dot(w[-h1:].reshape(h1, 1))
+            p1 = np.hstack((sigm(np.hstack((x1, b1)).dot(w[:-h1].reshape(
+                               i1, h))), b1)).dot(w[-h1:].reshape(h1, 1))
 
-        yhat0 = yhat0[idx0]
-        yhat1 = yhat1[idx1]
+        p0 = p0[idx0]
+        p1 = p1[idx1]
 
         # Return the cost that consists of the sum of squared error +
-        # L2-regularization for weights between the input and hidden layers +
-        # L2-regularization for weights between the hidden and output layers.
-        #return .5 * (sum((1 - sigm(yhat1 - yhat0)) ** 2) + self.l_w1 * sum(w[:-n_h1] ** 2) +
-        return .5 * (sum((1 - yhat1 + yhat0) ** 2) / n +
-                     self.l_w1 * sum(w[:-n_h1] ** 2) / (n_i1 * n_h) +
-                     self.l_w2 * sum(w[-n_h1:] ** 2) / n_h1)
+        # L2-regularization for weights between the input and h layers +
+        # L2-regularization for weights between the h and output layers.
+        #return .5 * (sum((1 - sigm(p1 - p0)) ** 2) + self.l1 * sum(w[:-h1] ** 2) +
+        return .5 * (sum((1 - p1 + p0) ** 2) / n +
+                     self.l1 * sum(w[:-h1] ** 2) / (i1 * h) +
+                     self.l2 * sum(w[-h1:] ** 2) / h1)
 
     def fprime(self, w, *args):
-        """
-        Return the derivatives of the cost function for predictions.
+        """Return the derivatives of the cost function for predictions.
 
-        Input arguments:
-        w -- weight vectors such that:
-            w[:-n_h1] -- weights between the input and hidden layers
-            w[-n_h1:] -- weights between the hidden and output layers
-        args -- features (args[0]) and target (args[1])
+        Args:
+            w (array of float): weight vectors such that:
+                w[:-h1] -- weights between the input and h layers
+                w[-h1:] -- weights between the h and output layers
+            args: features (args[0]) and target (args[1])
 
+        Returns:
+            gradients of the cost function for predictions
         """
+
         x0 = args[0]
         x1 = args[1]
 
@@ -268,14 +274,14 @@ class NN(object):
         idx0 = np.random.choice(range(n0), size=n)
         idx1 = np.random.choice(range(n1), size=n)
 
-        # b -- bias for the input and hidden layers
+        # b -- bias for the input and h layers
         b = np.ones((n, 1))
-        n_i1 = self.n_i + 1
-        n_h = self.n_h
-        n_h1 = n_h + 1
+        i1 = self.i + 1
+        h = self.h
+        h1 = h + 1
 
-        w2 = w[-n_h1:].reshape(n_h1, 1)
-        w1 = w[:-n_h1].reshape(n_i1, n_h)
+        w2 = w[-h1:].reshape(h1, 1)
+        w1 = w[:-h1].reshape(i1, h)
 
         if sparse.issparse(x0):
             x0 = x0.tocsr()[idx0]
@@ -299,18 +305,25 @@ class NN(object):
         dy = e / n
 
         # Calculate the derivative of the cost function w.r.t. F and w2 where:
-        # F -- weights between the input and hidden layers
-        # w2 -- weights between the hidden and output layers
-        dw1 = -(xb1.T.dot(dy.dot(w2[:-1].reshape(1, n_h)) * dsigm(xb1.dot(w1))) -
-               xb0.T.dot(dy.dot(w2[:-1].reshape(1, n_h)) * dsigm(xb0.dot(w1)))
-                       ).reshape(n_i1 * n_h) + self.l_w1 * w[:-n_h1] / (n_i1 * n_h)
-        dw2 = -(z1 - z0).T.dot(dy).reshape(n_h1) + self.l_w2 * w[-n_h1:] / n_h1
+        # F -- weights between the input and h layers
+        # w2 -- weights between the h and output layers
+        dw1 = -(xb1.T.dot(dy.dot(w2[:-1].reshape(1, h)) * dsigm(xb1.dot(w1))) -
+               xb0.T.dot(dy.dot(w2[:-1].reshape(1, h)) * dsigm(xb0.dot(w1)))
+                       ).reshape(i1 * h) + self.l1 * w[:-h1] / (i1 * h)
+        dw2 = -(z1 - z0).T.dot(dy).reshape(h1) + self.l2 * w[-h1:] / h1
 
         return np.append(dw1, dw2)
 
 
 def sigm(x):
-    """Return the value of the sigmoid function at x."""
+    """Return the value of the sigmoid function at x.
+
+    Args:
+        x (np.array of float or float)
+
+    Returns:
+        value(s) of the sigmoid function for x.
+    """
 
     # Avoid numerical overflow by capping the input to the exponential
     # function - doesn't affect the return value.
@@ -318,6 +331,12 @@ def sigm(x):
 
 
 def dsigm(x):
-    """Return the value of derivative of sigmoid function w.r.t. x."""
+    """Return the value of derivative of sigmoid function w.r.t. x.
+    Args:
+        x (np.array of float or float)
+
+    Returns:
+        derivative(s) of the sigmoid function w.r.t. x.
+    """
 
     return sigm(x) * (1 - sigm(x))

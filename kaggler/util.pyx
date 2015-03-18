@@ -7,6 +7,7 @@ from sklearn.preprocessing import OneHotEncoder
 from statsmodels.distributions.empirical_distribution import ECDF
 
 import numpy as np
+import pandas as pd
 
 cimport cython
 from libc.math cimport exp, log
@@ -79,7 +80,17 @@ def normalize_numerical_feature2(feature, n=None):
     return norm.ppf(ecdf(feature) * .998 + .001)
 
 
-def get_label_encoder(feature, min_obs=10):
+def get_label_encoder(feature, min_obs=10, nan_as_var=False):
+    """Return a mapping from values of features to integer labels.
+
+    Args:
+        feature (pandas.Series): categorical feature column to encode
+        min_obs (int): minimum number of observation to assign a label
+        nan_as_var (bool): whether to create a dummy variable for NaN or not
+
+    Returns:
+        label_encoder (dict): mapping from values of features to integer labels
+    """
     label_count = {}
     for label in feature:
         try:
@@ -90,6 +101,10 @@ def get_label_encoder(feature, min_obs=10):
     label_encoder = {}
     label_index = 1
     for label in label_count.keys():
+        # skip NaN or None label if nan_as_var is False
+        if (not nan_as_var) and pd.isnull(label):
+            continue
+
         if label_count[label] >= min_obs:
             label_encoder[label] = label_index
             label_index += 1
@@ -97,13 +112,24 @@ def get_label_encoder(feature, min_obs=10):
     return label_encoder
 
 
-def encode_categorical_feature(feature, min_obs=10, n=None):
-    """Encode the Pandas column into sparse matrix with one-hot-encoding."""
+def encode_categorical_feature(feature, min_obs=10, n=None, nan_as_var=False):
+    """Encode the Pandas column into sparse matrix with one-hot-encoding.
+
+    Args:
+        feature (pandas.Series): categorical feature column to encode
+        min_obs (int): minimum number of observation to create a dummy variable
+        n (int): number of observation to be used to create dummy variables
+        nan_as_var (bool): whether to create a dummy variable for NaN or not
+
+    Returns:
+        X (scipy.sparse.coo_matrix): sparse matrix encoding a categorical
+                                     variable into dummy variables
+    """
 
     if not n:
         n = len(feature)
 
-    label_encoder = get_label_encoder(feature[:n], min_obs)
+    label_encoder = get_label_encoder(feature[:n], min_obs, nan_as_var)
     labels = feature.apply(lambda x: label_encoder.get(x, 0))
     enc = OneHotEncoder()
 
