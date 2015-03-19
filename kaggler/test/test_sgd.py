@@ -8,7 +8,7 @@ DUMMY_SPARSE_STR = """0 1:1 3:1 10:1
 0 3:1 5:1
 1 4:1 6:1 8:1 10:1"""
 
-DUMMY_Y = DUMMY_SPARSE_STR.strip()
+DUMMY_Y = [0, 0, 1]
 DUMMY_LEN_X = [3, 2, 4]
 
 class TestSGD(unittest.TestCase):
