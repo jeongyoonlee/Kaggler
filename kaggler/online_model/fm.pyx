@@ -83,7 +83,7 @@ cdef class FM:
             val = []
             for item in xs[1:]:
                 i, v = item.split(':')
-                idx.append(abs(hash(i)) % self.n)
+                idx.append(int(i))
                 val.append(float(v))
 
             yield zip(idx, val), y

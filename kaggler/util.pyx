@@ -6,6 +6,7 @@ from scipy.stats import norm
 from sklearn.preprocessing import OneHotEncoder
 from statsmodels.distributions.empirical_distribution import ECDF
 
+import logging
 import numpy as np
 import pandas as pd
 
@@ -49,16 +50,28 @@ def get_downsampled_index0(x, rate=0., threshold=0.):
     return idx
 
 
-def normalize_numerical_feature(feature):
-    """Normalize the Pandas column based on cumulative distribution."""
+def normalize_numerical_features(df, n=None):
+    """Normalize numerical Pandas columns.
+    
+    Args:
+        df (pandas.DataFrame) : numerical columns
+        n: number of observations to use for deriving probability distribution
+           of the feature.  Observations beyond first n observations will be
+           normalized based on the probability distribution found from the
+           first n observations. 
 
-    # add one to the numerator and denominator to avoid +-inf.
-    p = (1 + rank(np.array(feature.astype(np.float64)))) / (1 + len(feature))
-    return norm.ppf(p)
+    Returns:
+        df (pandas.DataFrame): normalized numerical Pandas columns
+    """
+
+    for col in df.columns:
+        df[col] = normalize_numerical_feature(df[col], n)
+        
+    return df
 
 
-def normalize_numerical_feature2(feature, n=None):
-    """Normalize the Pandas column based on cumulative distribution.
+def normalize_numerical_feature(feature, n=None):
+    """Normalize a numerical Pandas column.
     
     Args:
         feature: feature vector to normalize.
@@ -112,11 +125,11 @@ def get_label_encoder(feature, min_obs=10, nan_as_var=False):
     return label_encoder
 
 
-def encode_categorical_feature(feature, min_obs=10, n=None, nan_as_var=False):
-    """Encode the Pandas column into sparse matrix with one-hot-encoding.
+def encode_categorical_features(df, min_obs=10, n=None, nan_as_var=False):
+    """Encode Pandas columns into sparse matrix with one-hot-encoding.
 
     Args:
-        feature (pandas.Series): categorical feature column to encode
+        df (pandas.DataFrame): categorical feature columns to encode
         min_obs (int): minimum number of observation to create a dummy variable
         n (int): number of observation to be used to create dummy variables
         nan_as_var (bool): whether to create a dummy variable for NaN or not
@@ -126,14 +139,51 @@ def encode_categorical_feature(feature, min_obs=10, n=None, nan_as_var=False):
                                      variable into dummy variables
     """
 
+    n_feature = 0
+    for i, col in enumerate(df.columns):
+        X_col = encode_categorical_feature(df[col], min_obs, n, nan_as_var)
+        if X_col is not None:
+            if i == 0:
+                X = X_col
+            else:
+                X = sparse.hstack((X, X_col))
+
+        logging.debug('{} --> {} features'.format(col, X.shape[1] - n_feature))
+        n_feature = X.shape[1]
+
+    return X
+
+
+def encode_categorical_feature(feature, min_obs=10, n=None, nan_as_var=False):
+    """Encode a Pandas column into sparse matrix with one-hot-encoding.
+
+    Args:
+        feature (pandas.Series): categorical feature column to encode
+        min_obs (int): minimum number of observation to create a dummy variable
+        n (int): number of observation to be used to create dummy variables
+        nan_as_var (bool): whether to create a dummy variable for NaN or not
+
+    Returns:
+        X (scipy.sparse.coo_matrix): sparse matrix encoding a categorical
+                                     variable into dummy variables.
+    """
+
+    n_obs = len(feature)
     if not n:
-        n = len(feature)
+        n = n_obs
 
     label_encoder = get_label_encoder(feature[:n], min_obs, nan_as_var)
-    labels = feature.apply(lambda x: label_encoder.get(x, 0))
-    enc = OneHotEncoder()
 
-    return enc.fit_transform(np.matrix(labels).reshape(len(labels), 1))
+    labels = feature.apply(lambda x: label_encoder.get(x, 0))
+    labels.index = range(len(labels))
+
+    i = labels.index[labels > 0].values
+    j = labels[labels > 0].values
+    if len(i) > 0:
+        return sparse.coo_matrix((np.ones_like(i), (i, j - 1)),
+                                 shape=(n_obs, len(label_encoder)))
+    else:
+        return None
 
 
 def set_column_width(X, n_col):
