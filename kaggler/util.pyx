@@ -15,6 +15,7 @@ from libc.math cimport exp, log
 cimport numpy as np
 
 
+NAN_STR = '__Kaggler_NaN__'
 np.import_array()
 
 cdef inline double fmax(double a, double b): return a if a >= b else b
@@ -114,11 +115,9 @@ def get_label_encoder(feature, min_obs=10, nan_as_var=False):
     label_encoder = {}
     label_index = 1
     for label in label_count.keys():
-        # skip NaN or None label if nan_as_var is False
-        if (not nan_as_var) and pd.isnull(label):
-            continue
-
-        if label_count[label] >= min_obs:
+        if (not nan_as_var) and label == NAN_STR:
+            label_encoder[label] = -1
+        elif label_count[label] >= min_obs:
             label_encoder[label] = label_index
             label_index += 1
 
@@ -168,6 +167,10 @@ def encode_categorical_feature(feature, min_obs=10, n=None, nan_as_var=False):
                                      variable into dummy variables.
     """
 
+    # impute missing values with a custom string so that we can count number of
+    # NaN
+    feature.fillna(NAN_STR, inplace=True)
+
     n_obs = len(feature)
     if not n:
         n = n_obs
@@ -176,12 +179,16 @@ def encode_categorical_feature(feature, min_obs=10, n=None, nan_as_var=False):
 
     labels = feature.apply(lambda x: label_encoder.get(x, 0))
     labels.index = range(len(labels))
+    if labels[labels == 0].count() >= min_obs:
+        i = labels.index[labels >= 0].values
+        j = labels[labels >= 0].values
+    else:
+        i = labels.index[labels > 0].values
+        j = labels[labels > 0].values - 1
 
-    i = labels.index[labels > 0].values
-    j = labels[labels > 0].values
     if len(i) > 0:
-        return sparse.coo_matrix((np.ones_like(i), (i, j - 1)),
-                                 shape=(n_obs, len(label_encoder)))
+        return sparse.coo_matrix((np.ones_like(i), (i, j)),
+                                 shape=(n_obs, j.max() + 1))
     else:
         return None
 
