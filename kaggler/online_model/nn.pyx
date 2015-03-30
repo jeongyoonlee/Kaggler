@@ -27,7 +27,6 @@ cdef class NN:
         z (array of double): hidden units
         c (double): counter
         c1 (array of double): counters for hidden units
-        interaction (boolean): whether to use 2nd order interaction or not
     """
 
     cdef unsigned int n     # number of input units
@@ -40,15 +39,13 @@ cdef class NN:
     cdef double c           # counter
     cdef double[:] c0       # counters for input units
     cdef double[:] c1       # counters for hidden units
-    cdef bint interaction   # use interaction between features
 
     def __init__(self,
                  unsigned int n,
                  unsigned int h=10,
                  double a=0.01,
                  double l2=0.,
-                 unsigned int seed=0,
-                 bint interaction=False):
+                 unsigned int seed=0):
         """Initialize the NN class object.
 
         Args:
@@ -59,7 +56,6 @@ cdef class NN:
             l1 (double): L1 regularization parameter
             l2 (double): L2 regularization parameter
             seed (unsigned int): random seed
-            interaction (boolean): whether to use 2nd order interaction or not
         """
 
         cdef int i
@@ -83,9 +79,6 @@ cdef class NN:
         self.c1 = np.zeros((self.h,), dtype=np.float64)
         self.c0 = np.zeros((self.n,), dtype=np.float64)
 
-        # feature interaction
-        self.interaction = interaction
-
     def read_sparse(self, path):
         """Apply hashing trick to the libsvm format sparse file.
 
@@ -105,7 +98,7 @@ cdef class NN:
             val = []
             for item in xs[1:]:
                 i, v = item.split(':')
-                idx.append(abs(hash(i)) % self.n)
+                idx.append(int(i) % self.n)
                 val.append(float(v))
 
             yield zip(idx, val), y
@@ -162,8 +155,6 @@ cdef class NN:
         cdef double dl_dw0
         cdef double v
 
-        # XXX: assuming predict() was called right before with the same idx and
-        # val inputs.  Otherwise self.z will be incorrect for updates.
         dl_dy = e      # dl/dy * (initial learning rate)
 
         # starting with the bias in the hidden layer
