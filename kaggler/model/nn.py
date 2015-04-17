@@ -13,7 +13,7 @@ from ..const import SEC_PER_MIN
 class NN(object):
     """Implement a neural network with a single h layer."""
 
-    def __init__(self, n=5, h=10, b=1e5, l1=.0, l2=.0, random_state=None):
+    def __init__(self, n=5, h=10, b=100000, l1=.0, l2=.0, random_state=None):
         """Initialize the NN class object.
 
         Args:
