@@ -19,6 +19,7 @@ setup(
 
     packages=['kaggler',
               'kaggler.model',
+              'kaggler.metrics',
               'kaggler.online_model',
               'kaggler.preprocessing',
               'kaggler.test'],
