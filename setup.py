@@ -12,7 +12,7 @@ except ImportError:
 
 setup(
     name='Kaggler',
-    version='0.3.8',
+    version='0.4.0',
 
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
@@ -20,6 +20,7 @@ setup(
     packages=['kaggler',
               'kaggler.model',
               'kaggler.online_model',
+              'kaggler.preprocessing',
               'kaggler.test'],
     url='https://github.com/jeongyoonlee/Kaggler',
     license='LICENSE.txt',
