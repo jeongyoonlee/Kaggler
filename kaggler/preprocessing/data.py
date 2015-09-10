@@ -1,4 +1,6 @@
 from scipy import sparse
+from scipy.stats import norm
+from statsmodels.distributions.empirical_distribution import ECDF
 import logging
 import numpy as np
 import pandas as pd
@@ -7,12 +9,73 @@ import pandas as pd
 NAN_STR = '__KAGGLER_NAN_STR__'
 
 
+class Normalizer(object):
+    """Normalizer that transforms numerical columns into normal distribution.
+
+    Attributes:
+        ecdfs (list of empirical CDF): empirical CDFs for columns
+    """
+
+    def fit(self, X, y=None):
+        self.ecdfs = [None] * X.shape[1]
+
+        for col in range(X.shape[1]):
+            self.ecdfs[col] = ECDF(X[:, col])
+
+    def transform(self, X):
+        """Normalize numerical columns.
+        
+        Args:
+            X (numpy.array) : numerical columns to normalize
+
+        Returns:
+            X (numpy.array): normalized numerical columns
+        """
+
+        for col in X.shape[1]:
+            X[:, col] = self._transform_col(X[:, col], col)
+            
+        return X
+
+    def fit_transform(self, X, y=None):
+        """Normalize numerical columns.
+        
+        Args:
+            X (numpy.array) : numerical columns to normalize
+
+        Returns:
+            X (numpy.array): normalized numerical columns
+        """
+
+        self.ecdfs = [None] * X.shape[1]
+
+        for col in range(X.shape[1]):
+            self.ecdfs[col] = ECDF(X[:, col])
+            X[:, col] = self._transform_col(X[:, col], col)
+
+        return X
+
+    def _transform_col(self, x, col):
+        """Normalize one numerical column.
+        
+        Args:
+            x (numpy.array): a numerical column to normalize
+            col (int): column index
+
+        Returns:
+            A normalized feature vector.
+        """
+
+        return norm.ppf(self.ecdfs[col](x) * .998 + .001)
+
+
 class OneHotEncoder(object):
     """One-Hot-Encoder that groups infrequent values into one dummy variable.
 
     Attributes:
         min_obs (int): minimum number of observation to create a dummy variable
         nan_as_var (bool): whether to create a dummy variable for NaN or not
+        label_encoders (list of dict): label encoders for columns
     """
 
     def __init__(self, min_obs=10, nan_as_var=False):
@@ -27,7 +90,7 @@ class OneHotEncoder(object):
         self.nan_as_var = nan_as_var
 
     def _get_label_encoder(self, x):
-        """Return a mapping from values of features to integer labels.
+        """Return a mapping from values of a column to integer labels.
 
         Args:
             x (numpy.array): a categorical column to encode
@@ -62,6 +125,7 @@ class OneHotEncoder(object):
 
         Args:
             x (numpy.array): a categorical column to encode
+            col (int): column index
 
         Returns:
             X (scipy.sparse.coo_matrix): sparse matrix encoding a categorical
@@ -87,11 +151,11 @@ class OneHotEncoder(object):
         else:
             return None
 
-    def fit(self, X):
+    def fit(self, X, y=None):
         self.label_encoders = [None] * X.shape[1]
 
-        for i_col in range(X.shape[1]):
-            self.label_encoders[i_col] = self._get_label_encoder(X[:, i_col])
+        for col in range(X.shape[1]):
+            self.label_encoders[col] = self._get_label_encoder(X[:, col])
 
         return self
 
@@ -107,20 +171,20 @@ class OneHotEncoder(object):
         """
 
         n_feature = 0
-        for i_col in range(X.shape[1]):
-            X_col = self._transform_col(X[:, i_col], i_col)
+        for col in range(X.shape[1]):
+            X_col = self._transform_col(X[:, col], col)
             if X_col is not None:
-                if i_col == 0:
+                if col == 0:
                     X_new = X_col
                 else:
                     X_new = sparse.hstack((X_new, X_col))
 
-            logging.debug('{} --> {} features'.format(i_col, X_new.shape[1] - n_feature))
+            logging.debug('{} --> {} features'.format(col, X_new.shape[1] - n_feature))
             n_feature = X_new.shape[1]
 
         return X_new
 
-    def fit_transform(self, X):
+    def fit_transform(self, X, y=None):
         """Encode categorical columns into sparse matrix with one-hot-encoding.
 
         Args:
@@ -134,17 +198,17 @@ class OneHotEncoder(object):
         self.label_encoders = [None] * X.shape[1]
 
         n_feature = 0
-        for i_col in range(X.shape[1]):
-            self.label_encoders[i_col] = self._get_label_encoder(X[:, i_col])
+        for col in range(X.shape[1]):
+            self.label_encoders[col] = self._get_label_encoder(X[:, col])
 
-            X_col = self._transform_col(X[:, i_col], i_col)
+            X_col = self._transform_col(X[:, col], col)
             if X_col is not None:
-                if i_col == 0:
+                if col == 0:
                     X_new = X_col
                 else:
                     X_new = sparse.hstack((X_new, X_col))
 
-            logging.debug('{} --> {} features'.format(i_col, X_new.shape[1] - n_feature))
+            logging.debug('{} --> {} features'.format(col, X_new.shape[1] - n_feature))
             n_feature = X_new.shape[1]
 
         return X_new

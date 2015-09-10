@@ -2,20 +2,15 @@
 # cython: wraparound=False
 # cython: cdivision=True
 from scipy import sparse
-from scipy.stats import norm
-from sklearn.preprocessing import OneHotEncoder
-from statsmodels.distributions.empirical_distribution import ECDF
 
 import logging
 import numpy as np
-import pandas as pd
 
 cimport cython
 from libc.math cimport exp, log
 cimport numpy as np
 
 
-NAN_STR = '__Kaggler_NaN__'
 np.import_array()
 
 cdef inline double fmax(double a, double b): return a if a >= b else b
@@ -49,49 +44,6 @@ def get_downsampled_index0(x, rate=0., threshold=0.):
     np.random.shuffle(idx)
 
     return idx
-
-
-def normalize_numerical_features(df, n=None):
-    """Normalize numerical Pandas columns.
-    
-    Args:
-        df (pandas.DataFrame) : numerical columns
-        n: number of observations to use for deriving probability distribution
-           of the feature.  Observations beyond first n observations will be
-           normalized based on the probability distribution found from the
-           first n observations. 
-
-    Returns:
-        df (pandas.DataFrame): normalized numerical Pandas columns
-    """
-
-    for col in df.columns:
-        df[col] = normalize_numerical_feature(df[col], n)
-        
-    return df
-
-
-def normalize_numerical_feature(feature, n=None):
-    """Normalize a numerical Pandas column.
-    
-    Args:
-        feature: feature vector to normalize.
-        n: number of observations to use for deriving probability distribution
-           of the feature.  Observations beyond first n observations will be
-           normalized based on the probability distribution found from the
-           first n observations. 
-
-    Returns:
-        A normalized feature vector.
-    """
-
-    if not n:
-        n = len(feature)
-
-    # add one to the numerator and denominator to avoid +-inf.
-    ecdf = ECDF(feature[:n])
-
-    return norm.ppf(ecdf(feature) * .998 + .001)
 
 
 def set_column_width(X, n_col):
