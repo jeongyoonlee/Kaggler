@@ -13,18 +13,10 @@ cimport numpy as np
 
 np.import_array()
 
-cdef inline double fmax(double a, double b): return a if a >= b else b
-cdef inline double fmin(double a, double b): return a if a <= b else b
-
 
 cdef double sigm(double x):
     """Bounded sigmoid function."""
     return 1 / (1 + exp(-fmax(fmin(x, 20.0), -20.0)))
-
-
-def logloss(double p, double y):
-    p = fmax(fmin(p, 1. -1e-15), 1e-15)
-    return -log(p) if y == 1. else -log(1. - p)
 
 
 def get_downsampled_index(n, rate=0.):

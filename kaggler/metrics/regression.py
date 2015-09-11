@@ -1,5 +1,5 @@
 from __future__ import division
-from sklearn.metrics import mean_squared_error as MSE
+from sklearn.metrics import mean_squared_error
 
 import numpy as np
 
@@ -18,7 +18,7 @@ def rmse(y, p):
     # check and get number of samples
     assert y.shape == p.shape
 
-    return np.sqrt(MSE(y, p))
+    return np.sqrt(mean_squared_error(y, p))
 
 
 def gini(y, p):
