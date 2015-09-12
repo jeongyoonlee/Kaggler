@@ -18,9 +18,9 @@ def load_data(path, dense=False):
     """Load data from a CSV or libsvm format file.
     
     Args:
-        path: A path to the CSV or libsvm format file containing data.
-        dense: An optional variable indicating if the return matrix should be
-            dense.  By default, it is false.
+        path (str): A path to the CSV or libsvm format file containing data.
+        dense (boolean): An optional variable indicating if the return matrix
+                         should be dense.  By default, it is false.
     """
 
     with open(path, 'r') as f:

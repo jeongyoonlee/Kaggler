@@ -18,10 +18,10 @@ cdef class NN_H2:
 
     Attributes:
         n (int): number of input units
+        epoch (int): number of epochs
         h1 (int): number of the 1st level hidden units
         h2 (int): number of the 2nd level hidden units
         a (double): initial learning rate
-        l1 (double): L1 regularization parameter
         l2 (double): L2 regularization parameter
         w0 (array of double): weights between the input and 1st hidden layers
         w1 (array of double): weights between the 1st and 2nd hidden layers
@@ -37,7 +37,6 @@ cdef class NN_H2:
     cdef unsigned int h1    # number of the 1st level hidden units
     cdef unsigned int h2    # number of the 2nd level hidden units
     cdef double a           # learning rate
-    cdef double l1          # L1 regularization parameter
     cdef double l2          # L2 regularization parameter
     cdef double[:] w0       # weights between the input and 1st hidden layers
     cdef double[:] w1       # weights between the 1st and 2nd hidden layers
@@ -51,20 +50,20 @@ cdef class NN_H2:
 
     def __init__(self,
                  unsigned int n,
+                 unsigned int epoch=10,
                  unsigned int h1=128,
                  unsigned int h2=256,
                  double a=0.01,
-                 double l1=0.,
                  double l2=0.,
                  unsigned int seed=0):
         """Initialize the NN class object.
 
         Args:
             n (int): number of input units
+            epoch (int): number of epochs
             h1 (int): number of the 1st level hidden units
             h2 (int): number of the 2nd level hidden units
             a (double): initial learning rate
-            l1 (double): L1 regularization parameter
             l2 (double): L2 regularization parameter
             seed (unsigned int): random seed
         """
@@ -74,11 +73,11 @@ cdef class NN_H2:
         rng = np.random.RandomState(seed)
 
         self.n = n
+        self.epoch = epoch
         self.h1 = h1
         self.h2 = h2
 
         self.a = a
-        self.l1 = l1
         self.l2 = l2
 
         # weights between the output and 2nd hidden layer
@@ -101,6 +100,11 @@ cdef class NN_H2:
         self.c2 = np.zeros((self.h2,), dtype=np.float64)
         self.c1 = np.zeros((self.h1,), dtype=np.float64)
         self.c0 = np.zeros((self.n,), dtype=np.float64)
+
+    def __repr__(self):                                                         
+        return ('NN_H2(n={}, epoch={}, h1={}, h2={}, a={}, l2={})').format(
+            self.n, self.epoch, self.h1, self.h2, self.a, self.l2
+        )
 
     def read_sparse(self, path):
         """Read the libsvm format sparse file line by line.
@@ -126,7 +130,38 @@ cdef class NN_H2:
 
             yield zip(idx, val), y
 
-    def predict(self, list x):
+    def fit(self, X, y):
+        """Update the model with a sparse input feature matrix and its targets.
+
+        Args:
+            X (scipy.sparse.csr_matrix): a list of (index, value) of non-zero features
+            y (numpy.array): targets
+
+        Returns:
+            updated model weights and counts
+        """
+        for epoch in range(self.epoch):
+            for row in range(X.shape[0]):
+                x = zip(X[row].indices, X[row].data)
+                self.update_one(x, self.predict_one(x) - y[row])
+
+    def predict(self, X):
+        """Predict for a sparse matrix X.
+
+        Args:
+            X (scipy.sparse.csr_matrix): a sparse matrix for input features
+
+        Returns:
+            p (numpy.array): predictions for input features
+        """
+
+        p = np.zeros((X.shape[0], ), dtype=np.float64)
+        for row in range(X.shape[0]):
+            p[row] = self.predict_one(zip(X[row].indices, X[row].data))
+
+        return p
+
+    def predict_one(self, list x):
         """Predict for features.
 
         Args:
@@ -171,7 +206,7 @@ cdef class NN_H2:
         # apply the sigmoid activation function to the output unit
         return sigm(p)
 
-    def update(self, list x, double e):
+    def update_one(self, list x, double e):
         """Update the model.
 
         Args:

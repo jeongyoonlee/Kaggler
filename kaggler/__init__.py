@@ -1,3 +1,8 @@
-__version__ = '0.3.8'
-__all__ = ['const', 'util', 'data_io',
-           'model', 'online_model']
+__version__ = '0.4.0'
+__all__ = ['const',
+           'data_io',
+           'metrics',
+           'model',
+           'online_model',
+           'preprocessing',
+           'util']

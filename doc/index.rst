@@ -6,8 +6,9 @@ Subpackages
 
 .. toctree::
 
-    kaggler.model
+    kaggler.metrics
     kaggler.online_model
+    kaggler.preprocessing
     kaggler.test
 
 Submodules
@@ -21,10 +22,10 @@ kaggler.const module
     :undoc-members:
     :show-inheritance:
 
-kaggler.io module
+kaggler.data_io module
 -----------------
 
-.. automodule:: kaggler.io
+.. automodule:: kaggler.data_io
     :members:
     :undoc-members:
     :show-inheritance:
