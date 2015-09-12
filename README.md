@@ -31,7 +31,7 @@ sudo python setup.py install
 ```
 
 # Input Format
-libsvm style sparse file format is used for an input.
+libsvm style sparse file format is used.
 ```
 1 1:1 4:1 5:0.5
 0 2:1 5:1
@@ -73,11 +73,11 @@ clf = NN(n=1e5,                 # number of features
 
 # online training and prediction directly with a libsvm file
 for x, y in clf.read_sparse('train.sparse'):
-    p = clf.predict(x)          # predict for an input
-    clf.update(x, p - y)        # update the model with the target using error
+    p = clf.predict_one(x)      # predict for an input
+    clf.update_one(x, p - y)    # update the model with the target using error
 
 for x, _ in clf.read_sparse('test.sparse'):
-    p = clf.predict(x)
+    p = clf.predict_one(x)
 
 # online training and prediction with a scipy sparse matrix
 from sklearn.datasets import load_svmlight_file
