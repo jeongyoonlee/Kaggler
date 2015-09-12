@@ -17,7 +17,8 @@ cdef class FM:
     """Factorization Machine online learner.
 
     Attributes:
-        n (int): number of features after hashing trick
+        n (int): number of input features
+        epoch (int): number of epochs
         k (int): size of factors for interactions
         a (double): initial learning rate
         w0 (double): weight for bias
@@ -27,6 +28,7 @@ cdef class FM:
         V (array of double): feature weights for factors
     """
 
+    cdef unsigned int epoch
     cdef unsigned int n
     cdef unsigned int k
     cdef double a
@@ -38,24 +40,27 @@ cdef class FM:
 
     def __init__(self,
                  unsigned int n,
+                 unsigned int epoch=100,
                  unsigned int dim=4,
                  double a=0.01,
                  seed=0):
         """Initialize the FM class object.
 
         Args:
-            n (int): number of features after hashing trick
+            n (int): number of input features
+            epoch (int): number of epochs
             dim (int): size of factors for interactions
             a (double): initial learning rate
-            seed (unsigned int): random seed
+            seed (int): random seed
         """
         cdef int i
 
         rng = np.random.RandomState(seed)
 
-        self.n = n       # # of features
-        self.k = dim
-        self.a = a      # learning rate
+        self.n = n          # # of features
+        self.epoch = epoch  # # of epochs
+        self.k = dim        # interaction dimension
+        self.a = a          # learning rate
 
         # initialize weights, factorized interactions, and counts
         self.w0 = 0.
@@ -63,6 +68,11 @@ cdef class FM:
         self.w = np.zeros((self.n,), dtype=np.float64)
         self.c = np.zeros((self.n,), dtype=np.float64)
         self.V = (rng.rand(self.n * self.k) - .5) * 1e-6
+
+    def __repr__(self):                                                         
+        return ('FM(n={}, epoch={}, dim={}, a={})').format(
+            self.n, self.epoch, self.dim, self.a
+        )
 
     def read_sparse(self, path):
         """Apply hashing trick to the libsvm format sparse file.
@@ -88,7 +98,38 @@ cdef class FM:
 
             yield zip(idx, val), y
 
-    def predict(self, list x):
+    def fit(self, X, y):
+        """Update the model with a sparse input feature matrix and its targets.
+
+        Args:
+            X (scipy.sparse.csr_matrix): a list of (index, value) of non-zero features
+            y (numpy.array): targets
+
+        Returns:
+            updated model weights and counts
+        """
+        for epoch in range(self.epoch):
+            for row in range(X.shape[0]):
+                x = zip(X[row].indices, X[row].data)
+                self.update_one(x, self.predict_one(x) - y[row])
+
+    def predict(self, X):
+        """Predict for a sparse matrix X.
+
+        Args:
+            X (scipy.sparse.csr_matrix): a sparse matrix for input features
+
+        Returns:
+            p (numpy.array): predictions for input features
+        """
+
+        p = np.zeros((X.shape[0], ), dtype=np.float64)
+        for row in range(X.shape[0]):
+            p[row] = self.predict_one(zip(X[row].indices, X[row].data))
+
+        return p
+
+    def predict_one(self, list x):
         """Predict for features.
 
         Args:
@@ -120,7 +161,7 @@ cdef class FM:
 
         return sigm(p)
 
-    def update(self, list x, double e):
+    def update_one(self, list x, double e):
         """Update the model.
 
         Args:

@@ -89,6 +89,10 @@ class OneHotEncoder(object):
         self.min_obs = min_obs
         self.nan_as_var = nan_as_var
 
+    def __repr__(self):
+        return ('OneHotEncoder(min_obs={}, nan_as_var={})').format(
+            self.min_obs, self.nan_as_var
+        )
     def _get_label_encoder(self, x):
         """Return a mapping from values of a column to integer labels.
 
@@ -131,7 +135,6 @@ class OneHotEncoder(object):
             X (scipy.sparse.coo_matrix): sparse matrix encoding a categorical
                                              variable into dummy variables
         """
-
 
         labels = np.zeros((x.shape[0], ))
         for label in self.label_encoders[col]:

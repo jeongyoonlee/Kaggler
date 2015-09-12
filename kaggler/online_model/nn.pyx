@@ -18,9 +18,9 @@ cdef class NN:
 
     Attributes:
         n (int): number of input units
+        epoch (int): number of epochs
         h (int): number of hidden units
         a (double): initial learning rate
-        l1 (double): L1 regularization parameter
         l2 (double): L2 regularization parameter
         w0 (array of double): weights between the input and hidden layers
         w1 (array of double): weights between the hidden and output layers
@@ -29,6 +29,7 @@ cdef class NN:
         c1 (array of double): counters for hidden units
     """
 
+    cdef unsigned int epoch # number of epochs
     cdef unsigned int n     # number of input units
     cdef unsigned int h     # number of hidden units
     cdef double a           # learning rate
@@ -42,6 +43,7 @@ cdef class NN:
 
     def __init__(self,
                  unsigned int n,
+                 unsigned int epoch=10,
                  unsigned int h=10,
                  double a=0.01,
                  double l2=0.,
@@ -50,10 +52,9 @@ cdef class NN:
 
         Args:
             n (int): number of input units
-            h1 (int): number of the 1st level hidden units
-            h2 (int): number of the 2nd level hidden units
+            epoch (int): number of epochs
+            h (int): number of the hidden units
             a (double): initial learning rate
-            l1 (double): L1 regularization parameter
             l2 (double): L2 regularization parameter
             seed (unsigned int): random seed
         """
@@ -62,6 +63,7 @@ cdef class NN:
 
         rng = np.random.RandomState(seed)
 
+        self.epoch = epoch
         self.n = n
         self.h = h
 
@@ -79,8 +81,13 @@ cdef class NN:
         self.c1 = np.zeros((self.h,), dtype=np.float64)
         self.c0 = np.zeros((self.n,), dtype=np.float64)
 
+    def __repr__(self):
+        return ('NN(n={}, epoch={}, h={}, a={}, l2={})').format(
+            self.n, self.epoch, self.h, self.a, self.l2
+        )
+
     def read_sparse(self, path):
-        """Apply hashing trick to the libsvm format sparse file.
+        """Read a libsvm format sparse file line by line.
 
         Args:
             path (str): a file path to the libsvm format sparse file
@@ -103,7 +110,38 @@ cdef class NN:
 
             yield zip(idx, val), y
 
-    def predict(self, list x):
+    def fit(self, X, y):
+        """Update the model with a sparse input feature matrix and its targets.
+
+        Args:
+            X (scipy.sparse.csr_matrix): a list of (index, value) of non-zero features
+            y (numpy.array): targets
+
+        Returns:
+            updated model weights and counts
+        """
+        for epoch in range(self.epoch):
+            for row in range(X.shape[0]):
+                x = zip(X[row].indices, X[row].data)
+                self.update_one(x, self.predict_one(x) - y[row])
+
+    def predict(self, X):
+        """Predict for a sparse matrix X.
+
+        Args:
+            X (scipy.sparse.csr_matrix): a sparse matrix for input features
+
+        Returns:
+            p (numpy.array): predictions for input features
+        """
+
+        p = np.zeros((X.shape[0], ), dtype=np.float64)
+        for row in range(X.shape[0]):
+            p[row] = self.predict_one(zip(X[row].indices, X[row].data))
+
+        return p
+
+    def predict_one(self, list x):
         """Predict for features.
 
         Args:
@@ -137,12 +175,12 @@ cdef class NN:
         # apply the sigmoid activation function to the output unit
         return sigm(p)
 
-    def update(self, list x, double e):
-        """Update the model.
+    def update_one(self, list x, double e):
+        """Update the model with one observation.
 
         Args:
             x (list of tuple): a list of (index, value) of non-zero features
-            e (double) error between the prediction of the model and target
+            e (double): error between the prediction of the model and target
 
         Returns:
             updated model weights and counts

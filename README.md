@@ -11,6 +11,7 @@ Currently algorithms available are as follows:
 * Follow-the-Regularized-Leader (FTRL)
 * Factorization Machine (FM)
 * Neural Networks (NN) - with a single (NN) or two (NN_H2) ReLU hidden layers
+* Decision Tree
 
 ## Batch learning algorithm
 * Neural Networks (NN) - with a single hidden layer and L-BFGS optimization
@@ -37,75 +38,54 @@ libsvm style sparse file format is used for an input.
 ```
 
 # Example
-## SGD
 ```
-from kaggler.online_model import SGD
+from kaggler.online_model import SGD, FTRL, FM, NN
 
-clf = SGD(n=2**20,              # number of hashed features
-          a=.01,                # learning rate
+# SGD
+clf = SGD(a=.01,                # learning rate
           l1=1e-6,              # L1 regularization parameter
           l2=1e-6,              # L2 regularization parameter
+          n=2**20,              # number of hashed features
+          epoch=10,             # number of epochs
           interaction=True)     # use feature interaction or not
 
-for x, y in clf.read_sparse('train.sparse'):
-    p = clf.predict(x)          # predict for an input
-    clf.update(x, p - y)        # update the model with the target using error
-
-for x, _ in clf.read_sparse('test.sparse'):
-    p = clf.predict(x)
-```
-
-
-## FTRL
-```
-from kaggler.online_model import FTRL
-
-clf = FTRL(n=2**20,             # number of hashed features
-           a=.1,                # alpha in the per-coordinate rate
+# FTRL
+clf = FTRL(a=.1,                # alpha in the per-coordinate rate
            b=1,                 # beta in the per-coordinate rate
            l1=1.,               # L1 regularization parameter
            l2=1.,               # L2 regularization parameter
+           n=2**20,             # number of hashed features
+           epoch=1,             # number of epochs
            interaction=True)    # use feature interaction or not
 
-for x, y in clf.read_sparse('train.sparse'):
-    p = clf.predict(x)          # predict for an input
-    clf.update(x, p - y)        # update the model with the target using error
-
-for x, _ in clf.read_sparse('test.sparse'):
-    p = clf.predict(x)
-```
-
-## FM
-```
-from kaggler.online_model import FM
-
+# FM
 clf = FM(n=1e5,                 # number of features
+         epoch=100,             # number of epochs
          dim=4,                 # size of factors for interactions
          a=.01)                 # learning rate
 
-for x, y in clf.read_sparse('train.sparse'):
-    p = clf.predict(x)          # predict for an input
-    clf.update(x, p - y)        # update the model with the target using error
-
-for x, _ in clf.read_sparse('test.sparse'):
-    p = clf.predict(x)
-```
-
-## NN with a single hidden layer
-```
-from kaggler.online_model import NN
-
+# NN
 clf = NN(n=1e5,                 # number of features
+         epoch=10,              # number of epochs
          h=16,                  # number of hidden units
          a=.1,                  # learning rate
          l2=1e-6)               # L2 regularization parameter
 
+# online training and prediction directly with a libsvm file
 for x, y in clf.read_sparse('train.sparse'):
     p = clf.predict(x)          # predict for an input
     clf.update(x, p - y)        # update the model with the target using error
 
 for x, _ in clf.read_sparse('test.sparse'):
     p = clf.predict(x)
+
+# online training and prediction with a scipy sparse matrix
+from sklearn.datasets import load_svmlight_file
+
+X, y = load_svmlight_file('train.sparse')
+
+clf.fit(X, y)
+p = clf.predict(X)
 ```
 
 # Package Documentation

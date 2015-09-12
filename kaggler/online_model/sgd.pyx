@@ -17,6 +17,7 @@ cdef class SGD:
     """Simple online learner using a hasing trick.
 
     Attributes:
+        epoch (int): number of epochs
         n (int): number of features after hashing trick
         a (double): initial learning rate
         l1 (double): L1 regularization parameter
@@ -25,6 +26,7 @@ cdef class SGD:
         c (array of double): counters for weights
         interaction (boolean): whether to use 2nd order interaction or not
     """
+    cdef unsigned int epoch
     cdef unsigned int n
     cdef double a
     cdef double l1
@@ -34,14 +36,16 @@ cdef class SGD:
     cdef bint interaction
 
     def __init__(self,
-                 unsigned int n=2**20,
                  double a=0.01,
                  double l1=0.0,
                  double l2=0.0,
+                 unsigned int n=2**20,
+                 unsigned int epoch=10,
                  bint interaction=True):
         """Initialize the SGD class object.
 
         Args:
+            epoch (int): number of epochs
             n (int): number of features after hashing trick
             a (double): initial learning rate
             l1 (double): L1 regularization parameter
@@ -51,15 +55,21 @@ cdef class SGD:
             interaction (boolean): whether to use 2nd order interaction or not
         """
 
+        self.epoch = epoch
         self.n = n      # # of features
         self.a = a      # learning rate
         self.l1 = l1
         self.l2 = l2
 
         # initialize weights and counts
-        self.w = np.zeros((self.n,), dtype=np.float64)
-        self.c = np.zeros((self.n,), dtype=np.float64)
+        self.w = np.zeros((self.n + 1,), dtype=np.float64)
+        self.c = np.zeros((self.n + 1,), dtype=np.float64)
         self.interaction = interaction
+
+    def __repr__(self):
+        return ('SGD(a={}, l1={}, l2={}, n={}, epoch={}, interaction={})').format(
+            self.a, self.l1, self.l2, self.n, self.epoch, self.interaction
+        )
 
     def _indices(self, list x):
         cdef unsigned int index
@@ -67,10 +77,10 @@ cdef class SGD:
         cdef int i
         cdef int j
 
-        yield 0
+        yield self.n
 
         for index in x:
-            yield index
+            yield abs(hash(index)) % self.n
 
         if self.interaction:
             l = len(x)
@@ -100,7 +110,37 @@ cdef class SGD:
 
             yield x, y
 
-    def predict(self, list x):
+    def fit(self, X, y):
+        """Update the model with a sparse input feature matrix and its targets.
+
+        Args:
+            X (scipy.sparse.csr_matrix): a list of (index, value) of non-zero features
+            y (numpy.array): targets
+
+        Returns:
+            updated model weights and counts
+        """
+        for epoch in range(self.epoch):
+            for row in range(X.shape[0]):
+                x = list(X[row].indices)
+                self.update_one(x, self.predict_one(x) - y[row])
+
+    def predict(self, X):
+        """Predict for a sparse matrix X.
+
+        Args:
+            X (scipy.sparse.csr_matrix): a sparse matrix for input features
+
+        Returns:
+            p (numpy.array): predictions for input features
+        """
+        p = np.zeros((X.shape[0], ), dtype=np.float64)
+        for row in range(X.shape[0]):
+            p[row] = self.predict_one(list(X[row].indices))
+
+        return p
+
+    def predict_one(self, list x):
         """Predict for features.
 
         Args:
@@ -118,7 +158,7 @@ cdef class SGD:
 
         return sigm(wTx)
 
-    def update(self, list x, double e):
+    def update_one(self, list x, double e):
         """Update the model.
 
         Args:
