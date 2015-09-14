@@ -76,6 +76,9 @@ class OneHotEncoder(object):
         min_obs (int): minimum number of observation to create a dummy variable
         nan_as_var (bool): whether to create a dummy variable for NaN or not
         label_encoders (list of dict): label encoders for columns
+        include_zeros (list of boolean): flags for columns whether to include a
+                                         dummy variable for infrequent
+                                         variables or not
     """
 
     def __init__(self, min_obs=10, nan_as_var=False):
@@ -93,6 +96,7 @@ class OneHotEncoder(object):
         return ('OneHotEncoder(min_obs={}, nan_as_var={})').format(
             self.min_obs, self.nan_as_var
         )
+
     def _get_label_encoder(self, x):
         """Return a mapping from values of a column to integer labels.
 
@@ -124,12 +128,13 @@ class OneHotEncoder(object):
 
         return label_encoder
 
-    def _transform_col(self, x, col):
+    def _transform_col(self, x, col, is_training=True):
         """Encode one categorical column into sparse matrix with one-hot-encoding.
 
         Args:
             x (numpy.array): a categorical column to encode
             col (int): column index
+            is_training (boolean): a flag to indicate if it's for training.
 
         Returns:
             X (scipy.sparse.coo_matrix): sparse matrix encoding a categorical
@@ -141,7 +146,13 @@ class OneHotEncoder(object):
             labels[x == label] = self.label_encoders[col][label]
 
         index = np.array(range(len(labels)))
-        if len(labels[labels == 0]) >= self.min_obs:
+        if is_training:
+            include_zero = len(labels[labels == 0]) >= self.min_obs
+            self.include_zeros[col] = include_zero
+        else:
+            include_zero = self.include_zeros[col]
+
+        if include_zero:
             i = index[labels >= 0]
             j = labels[labels >= 0]
         else:
@@ -156,6 +167,7 @@ class OneHotEncoder(object):
 
     def fit(self, X, y=None):
         self.label_encoders = [None] * X.shape[1]
+        self.include_zeros = [False] * X.shape[1]
 
         for col in range(X.shape[1]):
             self.label_encoders[col] = self._get_label_encoder(X[:, col])
@@ -175,7 +187,7 @@ class OneHotEncoder(object):
 
         n_feature = 0
         for col in range(X.shape[1]):
-            X_col = self._transform_col(X[:, col], col)
+            X_col = self._transform_col(X[:, col], col, is_training=False)
             if X_col is not None:
                 if col == 0:
                     X_new = X_col
@@ -199,12 +211,13 @@ class OneHotEncoder(object):
         """
 
         self.label_encoders = [None] * X.shape[1]
+        self.include_zeros = [False] * X.shape[1]
 
         n_feature = 0
         for col in range(X.shape[1]):
             self.label_encoders[col] = self._get_label_encoder(X[:, col])
 
-            X_col = self._transform_col(X[:, col], col)
+            X_col = self._transform_col(X[:, col], col, is_training=True)
             if X_col is not None:
                 if col == 0:
                     X_new = X_col
