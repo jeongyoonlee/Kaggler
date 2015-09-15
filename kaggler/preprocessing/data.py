@@ -79,6 +79,8 @@ class OneHotEncoder(object):
         include_zeros (list of boolean): flags for columns whether to include a
                                          dummy variable for infrequent
                                          variables or not
+        n_features (list of int): the numbers of dummy variables created for
+                                  columns 
     """
 
     def __init__(self, min_obs=10, nan_as_var=False):
@@ -91,6 +93,8 @@ class OneHotEncoder(object):
 
         self.min_obs = min_obs
         self.nan_as_var = nan_as_var
+        self.include_zeros = []
+        self.n_featuers = []
 
     def __repr__(self):
         return ('OneHotEncoder(min_obs={}, nan_as_var={})').format(
@@ -138,7 +142,7 @@ class OneHotEncoder(object):
 
         Returns:
             X (scipy.sparse.coo_matrix): sparse matrix encoding a categorical
-                                             variable into dummy variables
+                                         variable into dummy variables
         """
 
         labels = np.zeros((x.shape[0], ))
@@ -159,18 +163,25 @@ class OneHotEncoder(object):
             i = index[labels > 0]
             j = labels[labels > 0] - 1
 
+        if is_training:
+            self.n_features[col] = j.max() + 1
+
         if len(i) > 0:
             return sparse.coo_matrix((np.ones_like(i), (i, j)),
-                                     shape=(x.shape[0], j.max() + 1))
+                                     shape=(x.shape[0], self.n_features[col]))
         else:
             return None
 
     def fit(self, X, y=None):
         self.label_encoders = [None] * X.shape[1]
         self.include_zeros = [False] * X.shape[1]
+        self.n_features = [0] * X.shape[1]
 
         for col in range(X.shape[1]):
             self.label_encoders[col] = self._get_label_encoder(X[:, col])
+
+            # call _transform_col to set include_zeros and n_features.
+            self._transform_col(X[:, col], col, is_training=True)
 
         return self
 
@@ -185,7 +196,6 @@ class OneHotEncoder(object):
                                              variables into dummy variables
         """
 
-        n_feature = 0
         for col in range(X.shape[1]):
             X_col = self._transform_col(X[:, col], col, is_training=False)
             if X_col is not None:
@@ -194,8 +204,7 @@ class OneHotEncoder(object):
                 else:
                     X_new = sparse.hstack((X_new, X_col))
 
-            logging.debug('{} --> {} features'.format(col, X_new.shape[1] - n_feature))
-            n_feature = X_new.shape[1]
+            logging.debug('{} --> {} features'.format(col, self.n_features[col]))
 
         return X_new
 
@@ -212,8 +221,8 @@ class OneHotEncoder(object):
 
         self.label_encoders = [None] * X.shape[1]
         self.include_zeros = [False] * X.shape[1]
+        self.n_features = [0] * X.shape[1]
 
-        n_feature = 0
         for col in range(X.shape[1]):
             self.label_encoders[col] = self._get_label_encoder(X[:, col])
 
@@ -224,7 +233,6 @@ class OneHotEncoder(object):
                 else:
                     X_new = sparse.hstack((X_new, X_col))
 
-            logging.debug('{} --> {} features'.format(col, X_new.shape[1] - n_feature))
-            n_feature = X_new.shape[1]
+            logging.debug('{} --> {} features'.format(col, self.n_features[col]))
 
         return X_new
