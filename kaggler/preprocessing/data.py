@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 
-NAN_STR = '__KAGGLER_NAN_STR__'
+NAN_INT = 7535805
 
 
 class Normalizer(object):
@@ -74,100 +74,91 @@ class OneHotEncoder(object):
 
     Attributes:
         min_obs (int): minimum number of observation to create a dummy variable
-        nan_as_var (bool): whether to create a dummy variable for NaN or not
-        label_encoders (list of dict): label encoders for columns
-        include_zeros (list of boolean): flags for columns whether to include a
-                                         dummy variable for infrequent
-                                         variables or not
+        label_encoders (list of (dict, int)): label encoders and their maximums
+                                              for columns
     """
 
-    def __init__(self, min_obs=10, nan_as_var=False):
+    def __init__(self, min_obs=10):
         """Initialize the OneHotEncoder class object.
 
         Args:
             min_obs (int): minimum number of observation to create a dummy variable
-            nan_as_var (bool): whether to create a dummy variable for NaN or not
         """
 
         self.min_obs = min_obs
-        self.nan_as_var = nan_as_var
 
     def __repr__(self):
-        return ('OneHotEncoder(min_obs={}, nan_as_var={})').format(
-            self.min_obs, self.nan_as_var
-        )
+        return ('OneHotEncoder(min_obs={})').format(self.min_obs)
 
     def _get_label_encoder(self, x):
         """Return a mapping from values of a column to integer labels.
 
         Args:
-            x (numpy.array): a categorical column to encode
+            x (numpy.array): a categorical column to encode.
 
         Returns:
-            label_encoder (dict): mapping from values of features to integer labels
+            label_encoder (dict, int): mapping from values of features to
+                                       integer labels, and its maximum.
         """
+
+        # NaN cannot be used as a key for dict. So replace it with a random integer.
+        x[pd.isnull(x)] = NAN_INT
+
+        # count each unique value
         label_count = {}
         for label in x:
-            # NaN cannot be used as a key for dict. So replace it with str.
-            if pd.isnull(label):
-                label = NAN_STR
-
             try:
                 label_count[label] += 1
             except KeyError:
                 label_count[label] = 1
 
+        # add unique values appearing more than min_obs to the encoder.
         label_encoder = {}
         label_index = 1
         for label in label_count.keys():
-            if (not self.nan_as_var) and label == NAN_STR:
-                label_encoder[label] = -1
-            elif label_count[label] >= self.min_obs:
+            if label_count[label] >= self.min_obs:
                 label_encoder[label] = label_index
                 label_index += 1
 
-        return label_encoder
+        return label_encoder, label_index
 
-    def _transform_col(self, x, col, is_training=True):
+    def _transform_col(self, x, col):
         """Encode one categorical column into sparse matrix with one-hot-encoding.
 
         Args:
             x (numpy.array): a categorical column to encode
             col (int): column index
-            is_training (boolean): a flag to indicate if it's for training.
 
         Returns:
             X (scipy.sparse.coo_matrix): sparse matrix encoding a categorical
-                                             variable into dummy variables
+                                         variable into dummy variables
         """
 
+        label_encoder, label_max = self.label_encoders[col]
+
+        # replace NaNs with the pre-defined random integer
+        x[pd.isnull(x)] = NAN_INT
+
         labels = np.zeros((x.shape[0], ))
-        for label in self.label_encoders[col]:
-            labels[x == label] = self.label_encoders[col][label]
+        for label in label_encoder:
+            labels[x == label] = label_encoder[label]
 
+        # build row and column index for non-zero values of a sparse matrix
         index = np.array(range(len(labels)))
-        if is_training:
-            include_zero = len(labels[labels == 0]) >= self.min_obs
-            self.include_zeros[col] = include_zero
-        else:
-            include_zero = self.include_zeros[col]
-
-        if include_zero:
-            i = index[labels >= 0]
-            j = labels[labels >= 0]
-        else:
-            i = index[labels > 0]
-            j = labels[labels > 0] - 1
+        i = index[labels > 0]
+        j = labels[labels > 0] - 1  # column index starts from 0
 
         if len(i) > 0:
             return sparse.coo_matrix((np.ones_like(i), (i, j)),
-                                     shape=(x.shape[0], j.max() + 1))
+                                     shape=(x.shape[0], label_max))
         else:
+            # if there is no non-zero value, return no matrix
             return None
 
     def fit(self, X, y=None):
         self.label_encoders = [None] * X.shape[1]
         self.include_zeros = [False] * X.shape[1]
+        self.n_features = [0] * X.shape[1]
 
         for col in range(X.shape[1]):
             self.label_encoders[col] = self._get_label_encoder(X[:, col])
@@ -185,17 +176,15 @@ class OneHotEncoder(object):
                                              variables into dummy variables
         """
 
-        n_feature = 0
         for col in range(X.shape[1]):
-            X_col = self._transform_col(X[:, col], col, is_training=False)
+            X_col = self._transform_col(X[:, col], col)
             if X_col is not None:
                 if col == 0:
                     X_new = X_col
                 else:
                     X_new = sparse.hstack((X_new, X_col))
 
-            logging.debug('{} --> {} features'.format(col, X_new.shape[1] - n_feature))
-            n_feature = X_new.shape[1]
+            logging.debug('{} --> {} features'.format(col, self.label_encoders[col][1]))
 
         return X_new
 
@@ -212,19 +201,18 @@ class OneHotEncoder(object):
 
         self.label_encoders = [None] * X.shape[1]
         self.include_zeros = [False] * X.shape[1]
+        self.n_features = [0] * X.shape[1]
 
-        n_feature = 0
         for col in range(X.shape[1]):
             self.label_encoders[col] = self._get_label_encoder(X[:, col])
 
-            X_col = self._transform_col(X[:, col], col, is_training=True)
+            X_col = self._transform_col(X[:, col], col)
             if X_col is not None:
                 if col == 0:
                     X_new = X_col
                 else:
                     X_new = sparse.hstack((X_new, X_col))
 
-            logging.debug('{} --> {} features'.format(col, X_new.shape[1] - n_feature))
-            n_feature = X_new.shape[1]
+            logging.debug('{} --> {} features'.format(col, self.label_encoders[col][1]))
 
         return X_new
