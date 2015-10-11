@@ -226,6 +226,7 @@ class OneHotEncoder(object):
                                          variable into dummy variables
         """
 
+        labels = self.label_encoder._transform_col(x, col)
         label_max = self.label_encoder.label_maxes[col]
 
         # build row and column index for non-zero values of a sparse matrix
