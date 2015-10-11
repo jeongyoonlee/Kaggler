@@ -214,19 +214,19 @@ class OneHotEncoder(object):
     def __repr__(self):
         return ('OneHotEncoder(min_obs={})').format(self.min_obs)
 
-    def _transform_col(self, x, col, is_training=True):
+    def _transform_col(self, x, col):
         """Encode one categorical column into sparse matrix with one-hot-encoding.
 
         Args:
             x (numpy.array): a categorical column to encode
             col (int): column index
-            is_training (boolean): a flag to indicate if it's for training.
 
         Returns:
             X (scipy.sparse.coo_matrix): sparse matrix encoding a categorical
                                          variable into dummy variables
         """
 
+        labels = self.label_encoder._transform_col(x, col)
         label_max = self.label_encoder.label_maxes[col]
 
         # build row and column index for non-zero values of a sparse matrix
@@ -258,7 +258,7 @@ class OneHotEncoder(object):
         """
 
         for col in range(X.shape[1]):
-            X_col = self._transform_col(X[:, col], col, is_training=False)
+            X_col = self._transform_col(X[:, col], col)
             if X_col is not None:
                 if col == 0:
                     X_new = X_col
