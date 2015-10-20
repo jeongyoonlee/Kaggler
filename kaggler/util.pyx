@@ -1,6 +1,7 @@
 # cython: boundscheck=False
 # cython: wraparound=False
 # cython: cdivision=True
+from __future__ import division
 from scipy import sparse
 
 import logging
@@ -79,3 +80,19 @@ def set_min_max(x, lb, ub):
     x[x > ub] = ub
 
     return x
+
+
+def point(rank, n_team, n_teammate=1, t=0):
+    """Calculate Kaggle points to earn after a competition.
+
+    Args:
+        rank (int): final ranking in the private leaderboard.
+        n_team (int): the number of teams participated in the competition.
+        n_teammate (int): the number of team members in my team.
+        t (int): the number of days since the competition ends.
+
+    Returns:
+        returns Kaggle points to earn after a compeittion.
+    """
+    return (1e5 / np.sqrt(n_teammate) * (rank ** -.75) *
+            np.log10(1 + np.log10(n_team)) * np.exp(-t / 500))
