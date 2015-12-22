@@ -97,8 +97,8 @@ class LabelEncoder(object):
             x (numpy.array): a categorical column to encode.
 
         Returns:
-            label_encoder (dict, int): mapping from values of features to
-                                       integer labels and its maximum.
+            label_encoder (dict): mapping from values of features to integers
+            max_label (int): maximum label
         """
 
         # NaN cannot be used as a key for dict. So replace it with a random integer.
@@ -115,12 +115,29 @@ class LabelEncoder(object):
         # add unique values appearing more than min_obs to the encoder.
         label_encoder = {}
         label_index = 1
+        labels_not_encoded = 0
         for label in label_count.keys():
             if label_count[label] >= self.min_obs:
                 label_encoder[label] = label_index
                 label_index += 1
+            else:
+                labels_not_encoded += 1
 
-        return label_encoder, label_index
+        max_label = label_index - 1
+
+        # if every label is encoded, then replace the maximum label with 0 so
+        # that total number of labels encoded is (# of total labels - 1).
+        if labels_not_encoded == 0:
+            for label in label_encoder:
+                # find the label with the maximum encoded value
+                if label_encoder[label] == max_label:
+                    # set the value of the label to 0 and decrease the maximum
+                    # by 1.
+                    label_encoder[label] = 0
+                    max_label -= 1
+                    break
+
+        return label_encoder, max_label
 
     def _transform_col(self, x, col):
         """Encode one categorical column into labels.
