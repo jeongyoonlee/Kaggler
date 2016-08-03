@@ -12,7 +12,7 @@ except ImportError:
 
 setup(
     name='Kaggler',
-    version='0.4.1',
+    version='0.4.2',
 
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
@@ -31,7 +31,10 @@ setup(
 
     install_requires=[
         'cython',
+        'h5py',
+        'ml_metrics',
         'numpy',
+        'pandas',
         'scipy >= 0.14.0',
         'scikit-learn >= 0.15.0',
         'statsmodels >= 0.5.0',

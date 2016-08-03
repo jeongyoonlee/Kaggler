@@ -1,5 +1,8 @@
+from __future__ import division
 from scipy import sparse
+from scipy.signal import butter, lfilter
 from scipy.stats import norm
+from sklearn import base
 from statsmodels.distributions.empirical_distribution import ECDF
 import logging
 import numpy as np
@@ -9,7 +12,7 @@ import pandas as pd
 NAN_INT = 7535805
 
 
-class Normalizer(object):
+class Normalizer(base.BaseEstimator):
     """Normalizer that transforms numerical columns into normal distribution.
 
     Attributes:
@@ -21,6 +24,8 @@ class Normalizer(object):
 
         for col in range(X.shape[1]):
             self.ecdfs[col] = ECDF(X[:, col])
+
+        return self
 
     def transform(self, X):
         """Normalize numerical columns.
@@ -69,7 +74,7 @@ class Normalizer(object):
         return norm.ppf(self.ecdfs[col](x) * .998 + .001)
 
 
-class LabelEncoder(object):
+class LabelEncoder(base.BaseEstimator):
     """Label Encoder that groups infrequent values into one label.
 
     Attributes:
@@ -208,7 +213,7 @@ class LabelEncoder(object):
         return X
 
 
-class OneHotEncoder(object):
+class OneHotEncoder(base.BaseEstimator):
     """One-Hot-Encoder that groups infrequent values into one dummy variable.
 
     Attributes:
@@ -301,3 +306,35 @@ class OneHotEncoder(object):
         self.label_encoder.fit(X)
 
         return self.transform(X)
+
+
+class BandpassFilter(base.BaseEstimator):
+
+    def __init__(self, fs=10., lowcut=.5, highcut=3., order=3):
+        self.fs = 10.
+        self.lowcut = .5
+        self.highcut = 3.
+        self.order = 3
+        b, a = _butter_bandpass()
+        self.a = a
+        self.b = b
+
+    def _butter_bandpass(self):
+        nyq = .5 * self.fs
+        low = lowcut / nyq
+        high = highcut / nyq
+        b, a = butter(self.order, [low, high], btype='band']
+
+        return b, a
+
+    def _butter_bandpass_filter(self, x):
+        return lfilter(self.b, self.a, x)
+
+    def fit(self, X):
+        return self
+
+    def transform(self, X, y=None):
+        for col in range(X.shape[1]):
+            X[:, col] = self._butter_bandpass_filter(X[:, col])
+
+        return X
