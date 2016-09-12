@@ -323,7 +323,7 @@ class BandpassFilter(base.BaseEstimator):
         nyq = .5 * self.fs
         low = lowcut / nyq
         high = highcut / nyq
-        b, a = butter(self.order, [low, high], btype='band']
+        b, a = butter(self.order, [low, high], btype='band')
 
         return b, a
 
