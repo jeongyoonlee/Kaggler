@@ -1,0 +1,8 @@
+cython
+h5py
+ml_metrics
+numpy
+pandas
+scikit-learn>=0.15.0
+scipy>=0.14.0
+statsmodels>=0.5.0

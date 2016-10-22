@@ -16,7 +16,16 @@ Currently algorithms available are as follows:
 ## Batch learning algorithm
 * Neural Networks (NN) - with a single hidden layer and L-BFGS optimization
 
-# Install
+# Dependencies
+Python packages required are listed in `requirements.txt`
+* cython
+* h5py
+* numpy/scipy
+* pandas
+* scikit-learn
+* ml_metrics
+
+# Installation
 ## Using pip
 Python package is available at PyPi for pip installation:
 ```
