@@ -1,5 +1,4 @@
 from io import open
-from matplotlib import pyplot as plt
 from sklearn.datasets import load_svmlight_file
 from scipy import sparse
 
@@ -29,8 +28,37 @@ def is_number(s):
         return False
 
 
+def save_data(X, y, path):
+    catalog = {'.csv': save_csv, '.sps': save_libsvm, '.h5': save_hdf5}
+
+    ext = os.path.splitext(path)[1]
+    func = catalog[ext]
+
+    func(X, y, path)
+
+
+def save_csv(X, y, path):
+    if sparse.issparse(X):
+        X = X.todense()
+
+    np.savetxt(path, np.hstack((y.reshape((-1, 1)), X)))
+
+
+def save_libsvm(X, y, path):
+    dump_svmlight_file(X, y, path, zero_based=False)
+
+
+def save_hdf5(X, y, path):
+    with h5py.File(path, 'w') as f:
+        f['shape'] = np.array(X.shape)
+        f['data'] = X.data
+        f['indices'] = X.indices
+        f['indptr'] = X.indptr
+        f['target'] = y
+ 
+
 def load_data(path, dense=False):
-    """Load data from a CSV or libsvm format file.
+    """Load data from a CSV, LibSVM or HDF5 file.
     
     Args:
         path (str): A path to the CSV or libsvm format file containing data.
@@ -38,21 +66,40 @@ def load_data(path, dense=False):
                          should be dense.  By default, it is false.
     """
 
+    catalog = {'.csv': load_csv, '.sps': load_svmlight_file, '.h5': load_hdf5}
+
+    ext = os.path.splitext(path)[1]
+    func = catalog[ext]
+    X, y = func(path)
+
+    if dense and sparse.issparse(X):
+        X = X.todense()
+
+    return X, y
+
+
+def load_csv(path):
     with open(path) as f:
         line = f.readline().strip()
 
-    if ':' in line:
-        X, y = load_svmlight_file(path)
-        X = X.astype(np.float32)
-        if dense:
-            X = X.todense()
-    elif ',' in line:
-        X = np.loadtxt(path, delimiter=',',
-                       skiprows=0 if is_number(line.split(',')[0]) else 1)
-        y = X[:, 0]
-        X = X[:, 1:]
-    else:
-        raise NotImplementedError, "Neither CSV nor LibSVM formatted file."
+    X = np.loadtxt(path, delimiter=',',
+                   skiprows=0 if is_number(line.split(',')[0]) else 1)
+
+    y = np.array(X[:, 0]).flatten()
+    X = X[:, 1:]
+
+    return X, y
+
+
+def load_hdf5(path):
+    with h5py.File(path, 'r') as f:
+        shape = tuple(f['shape'][...])
+        data = f['data'][...]
+        indices = f['indices'][...]
+        indptr = f['indptr'][...]
+        y = f['target'][...]
+
+    X = sparse.csr_matrix((data, indices, indptr), shape=shape)
 
     return X, y
 
@@ -217,7 +264,9 @@ def print_shape_type(*objs):
             logging.error(obj.shape, type(obj))
 
 
+"""
 def plot_maxed():
     manager = plt.get_current_fig_manager()
     manager.resize(*manager.window.maxsize())
     plt.show()
+"""
