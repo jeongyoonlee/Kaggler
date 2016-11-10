@@ -160,7 +160,7 @@ class LabelEncoder(base.BaseEstimator):
         # replace NaNs with the pre-defined random integer
         x[pd.isnull(x)] = NAN_INT
 
-        labels = np.zeros((x.shape[0], ))
+        labels = np.zeros((x.shape[0], ), dtype=np.int64)
         for label in label_encoder:
             labels[x == label] = label_encoder[label]
 

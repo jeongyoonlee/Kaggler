@@ -41,7 +41,7 @@ def save_data(X, y, path):
     ext = os.path.splitext(path)[1]
     func = catalog[ext]
 
-    if not y:
+    if y is None:
         y = np.zeros((X.shape[0], ))
 
     func(X, y, path)
