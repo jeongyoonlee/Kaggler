@@ -29,15 +29,33 @@ def is_number(s):
 
 
 def save_data(X, y, path):
+    """Save data as a CSV, LibSVM or HDF5 file based on the file extension.
+
+    Args:
+        X (numpy or scipy sparse matrix): Data matrix
+        y (numpy array): Target vector. If None, all zero vector will be saved.
+        path (str): Path to the CSV, LibSVM or HDF5 file to save data.
+    """
     catalog = {'.csv': save_csv, '.sps': save_libsvm, '.h5': save_hdf5}
 
     ext = os.path.splitext(path)[1]
     func = catalog[ext]
 
+    if not y:
+        y = np.zeros((X.shape[0], ))
+
     func(X, y, path)
 
 
 def save_csv(X, y, path):
+    """Save data as a CSV file.
+
+    Args:
+        X (numpy or scipy sparse matrix): Data matrix
+        y (numpy array): Target vector.
+        path (str): Path to the CSV file to save data.
+    """
+
     if sparse.issparse(X):
         X = X.todense()
 
@@ -45,25 +63,50 @@ def save_csv(X, y, path):
 
 
 def save_libsvm(X, y, path):
+    """Save data as a LibSVM file.
+
+    Args:
+        X (numpy or scipy sparse matrix): Data matrix
+        y (numpy array): Target vector.
+        path (str): Path to the CSV file to save data.
+    """
+
     dump_svmlight_file(X, y, path, zero_based=False)
 
 
 def save_hdf5(X, y, path):
+    """Save data as a HDF5 file.
+
+    Args:
+        X (numpy or scipy sparse matrix): Data matrix
+        y (numpy array): Target vector.
+        path (str): Path to the HDF5 file to save data.
+    """
+
     with h5py.File(path, 'w') as f:
-        f['shape'] = np.array(X.shape)
-        f['data'] = X.data
-        f['indices'] = X.indices
-        f['indptr'] = X.indptr
+        is_sparse = 1 if sparse.issparse(X) else 0
+        f['issparse'] = is_sparse
         f['target'] = y
+
+        if is_sparse:
+            f['shape'] = np.array(X.shape)
+            f['data'] = X.data
+            f['indices'] = X.indices
+            f['indptr'] = X.indptr
+        else:
+            f['data'] = X
  
 
 def load_data(path, dense=False):
-    """Load data from a CSV, LibSVM or HDF5 file.
+    """Load data from a CSV, LibSVM or HDF5 file based on the file extension.
     
     Args:
-        path (str): A path to the CSV or libsvm format file containing data.
+        path (str): A path to the CSV, LibSVM or HDF5 format file containing data.
         dense (boolean): An optional variable indicating if the return matrix
                          should be dense.  By default, it is false.
+
+    Returns:
+        Data matrix X and target vector y
     """
 
     catalog = {'.csv': load_csv, '.sps': load_svmlight_file, '.h5': load_hdf5}
@@ -79,6 +122,17 @@ def load_data(path, dense=False):
 
 
 def load_csv(path):
+    """Load data from a CSV file.
+
+    Args:
+        path (str): A path to the CSV format file containing data.
+        dense (boolean): An optional variable indicating if the return matrix
+                         should be dense.  By default, it is false.
+
+    Returns:
+        Data matrix X and target vector y
+    """
+
     with open(path) as f:
         line = f.readline().strip()
 
@@ -92,19 +146,43 @@ def load_csv(path):
 
 
 def load_hdf5(path):
-    with h5py.File(path, 'r') as f:
-        shape = tuple(f['shape'][...])
-        data = f['data'][...]
-        indices = f['indices'][...]
-        indptr = f['indptr'][...]
-        y = f['target'][...]
+    """Load data from a HDF5 file.
 
-    X = sparse.csr_matrix((data, indices, indptr), shape=shape)
+    Args:
+        path (str): A path to the HDF5 format file containing data.
+        dense (boolean): An optional variable indicating if the return matrix
+                         should be dense.  By default, it is false.
+
+    Returns:
+        Data matrix X and target vector y
+    """
+
+    with h5py.File(path, 'r') as f:
+        is_sparse = f['issparse'][...]
+        if is_sparse:
+            shape = tuple(f['shape'][...])
+            data = f['data'][...]
+            indices = f['indices'][...]
+            indptr = f['indptr'][...]
+            X = sparse.csr_matrix((data, indices, indptr), shape=shape)
+        else:
+            X = f['data'][...]
+
+        y = f['target'][...]
 
     return X, y
 
 
 def read_sps(path):
+    """Read a LibSVM file line-by-line.
+
+    Args:
+        path (str): A path to the LibSVM file to read.
+
+    Yields:
+        data (list) and target (int).
+    """
+
     for line in open(path):
         # parse x
         xs = line.rstrip().split(' ')
