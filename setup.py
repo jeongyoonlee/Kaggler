@@ -18,6 +18,7 @@ setup(
     author_email='jeongyoon.lee1@gmail.com',
 
     packages=['kaggler',
+              'kaggler.feature_selection',
               'kaggler.model',
               'kaggler.metrics',
               'kaggler.online_model',
