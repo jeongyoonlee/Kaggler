@@ -1,5 +1,5 @@
 from io import open
-from sklearn.datasets import load_svmlight_file
+from sklearn.datasets import load_svmlight_file, dump_svmlight_file
 from scipy import sparse
 
 import csv
