@@ -47,7 +47,7 @@ libsvm style sparse file format is used.
 ```
 
 # Example
-```
+```python
 from kaggler.online_model import SGD, FTRL, FM, NN
 
 # SGD
