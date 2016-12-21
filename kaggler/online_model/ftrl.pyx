@@ -117,7 +117,7 @@ cdef class FTRL:
             x = []
             for item in xs[1:]:
                 index, _ = item.split(':')
-                x.append(index)
+                x.append(int(index))
 
             yield x, y
 
