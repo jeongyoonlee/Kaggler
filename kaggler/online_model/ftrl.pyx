@@ -13,6 +13,39 @@ cimport numpy as np
 np.import_array()
 
 
+cdef inline list gen_indices(unsigned int feat_num, list x, bint interaction):
+    """
+    Update the model with a sparse input feature matrix and its targets.
+
+    Args:
+        feat_num (unsigned integer): Feature hashing size
+        x (list): a list of (index) for non-zero featres
+        interaction (bool): use interaction or not
+
+    Returns:
+        indices (list): hashed feature indexes
+    """
+    cdef unsigned int index
+    cdef int x_len
+    cdef int i
+    cdef int j
+    # return the index of the bias term
+    indices = []
+    indices.append(feat_num)
+
+    x_len = len(x)
+    for i in range(x_len):
+        index = x[i]
+        indices.append(abs(hash(index)) % feat_num)
+
+    if interaction:
+        x = sorted(x)
+        for i in range(x_len):
+            for j in range(i + 1, x_len):
+                indices.append(abs(hash('{}_{}'.format(x[i], x[j]))) % feat_num)
+    return indices
+
+
 cdef class FTRL:
     """FTRL online learner with the hasing trick using liblinear format data.
     
@@ -81,25 +114,6 @@ cdef class FTRL:
             self.a, self.b, self.l1, self.l2, self.n, self.epoch, self.interaction
         )
 
-    def _indices(self, list x):
-        cdef unsigned int index
-        cdef int l
-        cdef int i
-        cdef int j
-
-        # return the index of the bias term
-        yield self.n
-
-        for index in x:
-            yield abs(hash(index)) % self.n
-
-        if self.interaction:
-            l = len(x)
-            x = sorted(x)
-            for i in xrange(l):
-                for j in xrange(i + 1, l):
-                    yield abs(hash('{}_{}'.format(x[i], x[j]))) % self.n
-
     def read_sparse(self, path):
         """Apply hashing trick to the libsvm format sparse file.
 
@@ -131,12 +145,39 @@ cdef class FTRL:
         Returns:
             updated model weights and counts
         """
+        self._fit(X, y)
+
+    cdef void _fit(self, X, y):
+        """Update the model with a sparse input feature matrix and its targets.
+
+        Args:
+            X (scipy.sparse.csr_matrix): a list of (index, value) of non-zero features
+            y (numpy.array): targets
+
+        Returns:
+            updated model weights and counts
+        """
+        cdef int row
+        cdef int epoch
+        cdef int row_num = X.shape[0]
         for epoch in range(self.epoch):
-            for row in range(X.shape[0]):
+        # for epoch in range(X.shape[0]):
+            for row in range(row_num):
                 x = list(X[row].indices)
                 self.update_one(x, self.predict_one(x) - y[row])
 
     def predict(self, X):
+        """Predict for a sparse matrix X.
+
+        Args:
+            X (scipy.sparse.csr_matrix): a sparse matrix for input features
+
+        Returns:
+            p (numpy.array): predictions for input features
+        """
+        return self._predict(X)
+
+    cdef _predict(self, X):
         """Predict for a sparse matrix X.
 
         Args:
@@ -151,7 +192,7 @@ cdef class FTRL:
 
         return p
 
-    def update_one(self, list x, double e):
+    cdef void update_one(self, list x, double e):
         """Update the model.
 
         Args:
@@ -162,16 +203,21 @@ cdef class FTRL:
             updates model weights and counts
         """
         cdef int i
+        cdef int j
+        cdef int k
         cdef double e2
         cdef double s
 
         e2 = e * e
-        for i in self._indices(x):
+        indices = gen_indices(self.n, x, self.interaction)
+        j = len(indices)
+        for k in range(j):
+            i = indices[k]
             s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a
             self.w[i] += e - s * self.z[i]
             self.c[i] += e2
 
-    def predict_one(self, list x):
+    cdef double predict_one(self, list x):
         """Predict for features.
 
         Args:
@@ -181,11 +227,17 @@ cdef class FTRL:
             p (double): a prediction for input features
         """
         cdef int i
+        cdef int j
+        cdef int k
         cdef double sign
         cdef double wTx
 
         wTx = 0.
-        for i in self._indices(x):
+        # for i in self._indices(x):
+        indices = gen_indices(self.n, x, self.interaction)
+        j = len(indices)
+        for k in range(j):
+            i = indices[k]
             sign = -1. if self.w[i] < 0 else 1.
             if sign * self.w[i] <= self.l1:
                 self.z[i] = 0.
