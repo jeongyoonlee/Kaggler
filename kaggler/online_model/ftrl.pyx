@@ -147,7 +147,8 @@ cdef class FTRL:
         """
         p = np.zeros((X.shape[0], ), dtype=np.float64)
         for row in range(X.shape[0]):
-            p[row] = self.predict_one(list(X[row].indices))
+            x = list(X.indices[X.indptr[row] : X.indptr[row + 1]])
+            p[row] = self.predict_one(x)
 
         return p
 

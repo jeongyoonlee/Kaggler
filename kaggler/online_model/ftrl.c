@@ -4070,6 +4070,7 @@ static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_13predict(PyObject
 static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_12predict(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, PyObject *__pyx_v_X) {
   PyObject *__pyx_v_p = NULL;
   PyObject *__pyx_v_row = NULL;
+  PyObject *__pyx_v_x = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -4087,7 +4088,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_12predict(struct _
  *         """
  *         p = np.zeros((X.shape[0], ), dtype=np.float64)             # <<<<<<<<<<<<<<
  *         for row in range(X.shape[0]):
- *             p[row] = self.predict_one(list(X[row].indices))
+ *             x = list(X.indices[X.indptr[row] : X.indptr[row + 1]])
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 148, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -4130,8 +4131,8 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_12predict(struct _
  *         """
  *         p = np.zeros((X.shape[0], ), dtype=np.float64)
  *         for row in range(X.shape[0]):             # <<<<<<<<<<<<<<
- *             p[row] = self.predict_one(list(X[row].indices))
- * 
+ *             x = list(X.indices[X.indptr[row] : X.indptr[row + 1]])
+ *             p[row] = self.predict_one(x)
  */
   __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_X, __pyx_n_s_shape); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 149, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
@@ -4192,81 +4193,103 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_12predict(struct _
     /* "kaggler/online_model/ftrl.pyx":150
  *         p = np.zeros((X.shape[0], ), dtype=np.float64)
  *         for row in range(X.shape[0]):
- *             p[row] = self.predict_one(list(X[row].indices))             # <<<<<<<<<<<<<<
+ *             x = list(X.indices[X.indptr[row] : X.indptr[row + 1]])             # <<<<<<<<<<<<<<
+ *             p[row] = self.predict_one(x)
+ * 
+ */
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_X, __pyx_n_s_indices_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 150, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_X, __pyx_n_s_indptr); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 150, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_2 = PyObject_GetItem(__pyx_t_3, __pyx_v_row); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 150, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_X, __pyx_n_s_indptr); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 150, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_4 = __Pyx_PyInt_AddObjC(__pyx_v_row, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 150, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_8 = PyObject_GetItem(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 150, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_t_4 = __Pyx_PyObject_GetSlice(__pyx_t_1, 0, 0, &__pyx_t_2, &__pyx_t_8, NULL, 0, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 150, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    __pyx_t_8 = PySequence_List(__pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 150, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_x, ((PyObject*)__pyx_t_8));
+    __pyx_t_8 = 0;
+
+    /* "kaggler/online_model/ftrl.pyx":151
+ *         for row in range(X.shape[0]):
+ *             x = list(X.indices[X.indptr[row] : X.indptr[row + 1]])
+ *             p[row] = self.predict_one(x)             # <<<<<<<<<<<<<<
  * 
  *         return p
  */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_predict_one); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 150, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_2 = PyObject_GetItem(__pyx_v_X, __pyx_v_row); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 150, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_indices_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 150, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_predict_one); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 151, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PySequence_List(__pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 150, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = NULL;
-    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
-      if (likely(__pyx_t_4)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-        __Pyx_INCREF(__pyx_t_4);
+    __pyx_t_2 = NULL;
+    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
+      __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_4);
+      if (likely(__pyx_t_2)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
+        __Pyx_INCREF(__pyx_t_2);
         __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_3, function);
+        __Pyx_DECREF_SET(__pyx_t_4, function);
       }
     }
-    if (!__pyx_t_4) {
-      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 150, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __Pyx_GOTREF(__pyx_t_1);
+    if (!__pyx_t_2) {
+      __pyx_t_8 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_x); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 151, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
     } else {
       #if CYTHON_FAST_PYCALL
-      if (PyFunction_Check(__pyx_t_3)) {
-        PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-        __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 150, __pyx_L1_error)
-        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      if (PyFunction_Check(__pyx_t_4)) {
+        PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_v_x};
+        __pyx_t_8 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 151, __pyx_L1_error)
+        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __Pyx_GOTREF(__pyx_t_8);
       } else
       #endif
       #if CYTHON_FAST_PYCCALL
-      if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
-        PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-        __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 150, __pyx_L1_error)
-        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
+        PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_v_x};
+        __pyx_t_8 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 151, __pyx_L1_error)
+        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __Pyx_GOTREF(__pyx_t_8);
       } else
       #endif
       {
-        __pyx_t_8 = PyTuple_New(1+1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 150, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_8);
-        __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_4); __pyx_t_4 = NULL;
-        __Pyx_GIVEREF(__pyx_t_2);
-        PyTuple_SET_ITEM(__pyx_t_8, 0+1, __pyx_t_2);
-        __pyx_t_2 = 0;
-        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 150, __pyx_L1_error)
+        __pyx_t_1 = PyTuple_New(1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+        __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_2); __pyx_t_2 = NULL;
+        __Pyx_INCREF(__pyx_v_x);
+        __Pyx_GIVEREF(__pyx_v_x);
+        PyTuple_SET_ITEM(__pyx_t_1, 0+1, __pyx_v_x);
+        __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_1, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 151, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_8);
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       }
     }
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_v_p, __pyx_v_row, __pyx_t_1) < 0)) __PYX_ERR(0, 150, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    if (unlikely(PyObject_SetItem(__pyx_v_p, __pyx_v_row, __pyx_t_8) < 0)) __PYX_ERR(0, 151, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
     /* "kaggler/online_model/ftrl.pyx":149
  *         """
  *         p = np.zeros((X.shape[0], ), dtype=np.float64)
  *         for row in range(X.shape[0]):             # <<<<<<<<<<<<<<
- *             p[row] = self.predict_one(list(X[row].indices))
- * 
+ *             x = list(X.indices[X.indptr[row] : X.indptr[row + 1]])
+ *             p[row] = self.predict_one(x)
  */
   }
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-  /* "kaggler/online_model/ftrl.pyx":152
- *             p[row] = self.predict_one(list(X[row].indices))
+  /* "kaggler/online_model/ftrl.pyx":153
+ *             p[row] = self.predict_one(x)
  * 
  *         return p             # <<<<<<<<<<<<<<
  * 
@@ -4298,12 +4321,13 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_12predict(struct _
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_p);
   __Pyx_XDECREF(__pyx_v_row);
+  __Pyx_XDECREF(__pyx_v_x);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "kaggler/online_model/ftrl.pyx":154
+/* "kaggler/online_model/ftrl.pyx":155
  *         return p
  * 
  *     def update_one(self, list x, double e):             # <<<<<<<<<<<<<<
@@ -4340,11 +4364,11 @@ static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_15update_one(PyObj
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_e)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("update_one", 1, 2, 2, 1); __PYX_ERR(0, 154, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("update_one", 1, 2, 2, 1); __PYX_ERR(0, 155, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "update_one") < 0)) __PYX_ERR(0, 154, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "update_one") < 0)) __PYX_ERR(0, 155, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -4353,17 +4377,17 @@ static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_15update_one(PyObj
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
     __pyx_v_x = ((PyObject*)values[0]);
-    __pyx_v_e = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_e == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 154, __pyx_L3_error)
+    __pyx_v_e = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_e == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 155, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("update_one", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 154, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("update_one", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 155, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("kaggler.online_model.ftrl.FTRL.update_one", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_x), (&PyList_Type), 1, "x", 1))) __PYX_ERR(0, 154, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_x), (&PyList_Type), 1, "x", 1))) __PYX_ERR(0, 155, __pyx_L1_error)
   __pyx_r = __pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_14update_one(((struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self), __pyx_v_x, __pyx_v_e);
 
   /* function exit code */
@@ -4395,7 +4419,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_14update_one(struc
   Py_ssize_t __pyx_t_12;
   __Pyx_RefNannySetupContext("update_one", 0);
 
-  /* "kaggler/online_model/ftrl.pyx":168
+  /* "kaggler/online_model/ftrl.pyx":169
  *         cdef double s
  * 
  *         e2 = e * e             # <<<<<<<<<<<<<<
@@ -4404,14 +4428,14 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_14update_one(struc
  */
   __pyx_v_e2 = (__pyx_v_e * __pyx_v_e);
 
-  /* "kaggler/online_model/ftrl.pyx":169
+  /* "kaggler/online_model/ftrl.pyx":170
  * 
  *         e2 = e * e
  *         for i in self._indices(x):             # <<<<<<<<<<<<<<
  *             s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a
  *             self.w[i] += e - s * self.z[i]
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_indices); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 169, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_indices); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 170, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -4424,13 +4448,13 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_14update_one(struc
     }
   }
   if (!__pyx_t_3) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_x); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_x); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 170, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_2)) {
       PyObject *__pyx_temp[2] = {__pyx_t_3, __pyx_v_x};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 170, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_GOTREF(__pyx_t_1);
     } else
@@ -4438,19 +4462,19 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_14update_one(struc
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
       PyObject *__pyx_temp[2] = {__pyx_t_3, __pyx_v_x};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 170, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_GOTREF(__pyx_t_1);
     } else
     #endif
     {
-      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 169, __pyx_L1_error)
+      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 170, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_3); __pyx_t_3 = NULL;
       __Pyx_INCREF(__pyx_v_x);
       __Pyx_GIVEREF(__pyx_v_x);
       PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_v_x);
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 170, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
@@ -4460,9 +4484,9 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_14update_one(struc
     __pyx_t_2 = __pyx_t_1; __Pyx_INCREF(__pyx_t_2); __pyx_t_5 = 0;
     __pyx_t_6 = NULL;
   } else {
-    __pyx_t_5 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 169, __pyx_L1_error)
+    __pyx_t_5 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 170, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 169, __pyx_L1_error)
+    __pyx_t_6 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 170, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   for (;;) {
@@ -4470,17 +4494,17 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_14update_one(struc
       if (likely(PyList_CheckExact(__pyx_t_2))) {
         if (__pyx_t_5 >= PyList_GET_SIZE(__pyx_t_2)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_5); __Pyx_INCREF(__pyx_t_1); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 169, __pyx_L1_error)
+        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_5); __Pyx_INCREF(__pyx_t_1); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 170, __pyx_L1_error)
         #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L1_error)
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 170, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         #endif
       } else {
         if (__pyx_t_5 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_5); __Pyx_INCREF(__pyx_t_1); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 169, __pyx_L1_error)
+        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_5); __Pyx_INCREF(__pyx_t_1); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 170, __pyx_L1_error)
         #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L1_error)
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 170, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         #endif
       }
@@ -4490,54 +4514,54 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_14update_one(struc
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 169, __pyx_L1_error)
+          else __PYX_ERR(0, 170, __pyx_L1_error)
         }
         break;
       }
       __Pyx_GOTREF(__pyx_t_1);
     }
-    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 169, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 170, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_v_i = __pyx_t_7;
 
-    /* "kaggler/online_model/ftrl.pyx":170
+    /* "kaggler/online_model/ftrl.pyx":171
  *         e2 = e * e
  *         for i in self._indices(x):
  *             s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a             # <<<<<<<<<<<<<<
  *             self.w[i] += e - s * self.z[i]
  *             self.c[i] += e2
  */
-    if (unlikely(!__pyx_v_self->c.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 170, __pyx_L1_error)}
+    if (unlikely(!__pyx_v_self->c.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 171, __pyx_L1_error)}
     __pyx_t_8 = __pyx_v_i;
-    if (unlikely(!__pyx_v_self->c.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 170, __pyx_L1_error)}
+    if (unlikely(!__pyx_v_self->c.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 171, __pyx_L1_error)}
     __pyx_t_9 = __pyx_v_i;
     __pyx_v_s = ((sqrt(((*((double *) ( /* dim=0 */ (__pyx_v_self->c.data + __pyx_t_8 * __pyx_v_self->c.strides[0]) ))) + __pyx_v_e2)) - sqrt((*((double *) ( /* dim=0 */ (__pyx_v_self->c.data + __pyx_t_9 * __pyx_v_self->c.strides[0]) ))))) / __pyx_v_self->a);
 
-    /* "kaggler/online_model/ftrl.pyx":171
+    /* "kaggler/online_model/ftrl.pyx":172
  *         for i in self._indices(x):
  *             s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a
  *             self.w[i] += e - s * self.z[i]             # <<<<<<<<<<<<<<
  *             self.c[i] += e2
  * 
  */
-    if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 171, __pyx_L1_error)}
+    if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 172, __pyx_L1_error)}
     __pyx_t_10 = __pyx_v_i;
-    if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 171, __pyx_L1_error)}
+    if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 172, __pyx_L1_error)}
     __pyx_t_11 = __pyx_v_i;
     *((double *) ( /* dim=0 */ (__pyx_v_self->w.data + __pyx_t_11 * __pyx_v_self->w.strides[0]) )) += (__pyx_v_e - (__pyx_v_s * (*((double *) ( /* dim=0 */ (__pyx_v_self->z.data + __pyx_t_10 * __pyx_v_self->z.strides[0]) )))));
 
-    /* "kaggler/online_model/ftrl.pyx":172
+    /* "kaggler/online_model/ftrl.pyx":173
  *             s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a
  *             self.w[i] += e - s * self.z[i]
  *             self.c[i] += e2             # <<<<<<<<<<<<<<
  * 
  *     def predict_one(self, list x):
  */
-    if (unlikely(!__pyx_v_self->c.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 172, __pyx_L1_error)}
+    if (unlikely(!__pyx_v_self->c.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 173, __pyx_L1_error)}
     __pyx_t_12 = __pyx_v_i;
     *((double *) ( /* dim=0 */ (__pyx_v_self->c.data + __pyx_t_12 * __pyx_v_self->c.strides[0]) )) += __pyx_v_e2;
 
-    /* "kaggler/online_model/ftrl.pyx":169
+    /* "kaggler/online_model/ftrl.pyx":170
  * 
  *         e2 = e * e
  *         for i in self._indices(x):             # <<<<<<<<<<<<<<
@@ -4547,7 +4571,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_14update_one(struc
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "kaggler/online_model/ftrl.pyx":154
+  /* "kaggler/online_model/ftrl.pyx":155
  *         return p
  * 
  *     def update_one(self, list x, double e):             # <<<<<<<<<<<<<<
@@ -4571,7 +4595,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_14update_one(struc
   return __pyx_r;
 }
 
-/* "kaggler/online_model/ftrl.pyx":174
+/* "kaggler/online_model/ftrl.pyx":175
  *             self.c[i] += e2
  * 
  *     def predict_one(self, list x):             # <<<<<<<<<<<<<<
@@ -4586,7 +4610,7 @@ static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_17predict_one(PyOb
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("predict_one (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_x), (&PyList_Type), 1, "x", 1))) __PYX_ERR(0, 174, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_x), (&PyList_Type), 1, "x", 1))) __PYX_ERR(0, 175, __pyx_L1_error)
   __pyx_r = __pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_16predict_one(((struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self), ((PyObject*)__pyx_v_x));
 
   /* function exit code */
@@ -4622,7 +4646,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_16predict_one(stru
   Py_ssize_t __pyx_t_16;
   __Pyx_RefNannySetupContext("predict_one", 0);
 
-  /* "kaggler/online_model/ftrl.pyx":187
+  /* "kaggler/online_model/ftrl.pyx":188
  *         cdef double wTx
  * 
  *         wTx = 0.             # <<<<<<<<<<<<<<
@@ -4631,14 +4655,14 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_16predict_one(stru
  */
   __pyx_v_wTx = 0.;
 
-  /* "kaggler/online_model/ftrl.pyx":188
+  /* "kaggler/online_model/ftrl.pyx":189
  * 
  *         wTx = 0.
  *         for i in self._indices(x):             # <<<<<<<<<<<<<<
  *             sign = -1. if self.w[i] < 0 else 1.
  *             if sign * self.w[i] <= self.l1:
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_indices); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 188, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_indices); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 189, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -4651,13 +4675,13 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_16predict_one(stru
     }
   }
   if (!__pyx_t_3) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_x); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_x); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_2)) {
       PyObject *__pyx_temp[2] = {__pyx_t_3, __pyx_v_x};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_GOTREF(__pyx_t_1);
     } else
@@ -4665,19 +4689,19 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_16predict_one(stru
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
       PyObject *__pyx_temp[2] = {__pyx_t_3, __pyx_v_x};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_GOTREF(__pyx_t_1);
     } else
     #endif
     {
-      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 188, __pyx_L1_error)
+      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 189, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_3); __pyx_t_3 = NULL;
       __Pyx_INCREF(__pyx_v_x);
       __Pyx_GIVEREF(__pyx_v_x);
       PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_v_x);
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
@@ -4687,9 +4711,9 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_16predict_one(stru
     __pyx_t_2 = __pyx_t_1; __Pyx_INCREF(__pyx_t_2); __pyx_t_5 = 0;
     __pyx_t_6 = NULL;
   } else {
-    __pyx_t_5 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 188, __pyx_L1_error)
+    __pyx_t_5 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 189, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 188, __pyx_L1_error)
+    __pyx_t_6 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 189, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   for (;;) {
@@ -4697,17 +4721,17 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_16predict_one(stru
       if (likely(PyList_CheckExact(__pyx_t_2))) {
         if (__pyx_t_5 >= PyList_GET_SIZE(__pyx_t_2)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_5); __Pyx_INCREF(__pyx_t_1); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 188, __pyx_L1_error)
+        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_5); __Pyx_INCREF(__pyx_t_1); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 189, __pyx_L1_error)
         #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         #endif
       } else {
         if (__pyx_t_5 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_5); __Pyx_INCREF(__pyx_t_1); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 188, __pyx_L1_error)
+        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_5); __Pyx_INCREF(__pyx_t_1); __pyx_t_5++; if (unlikely(0 < 0)) __PYX_ERR(0, 189, __pyx_L1_error)
         #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         #endif
       }
@@ -4717,24 +4741,24 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_16predict_one(stru
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 188, __pyx_L1_error)
+          else __PYX_ERR(0, 189, __pyx_L1_error)
         }
         break;
       }
       __Pyx_GOTREF(__pyx_t_1);
     }
-    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 188, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 189, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_v_i = __pyx_t_7;
 
-    /* "kaggler/online_model/ftrl.pyx":189
+    /* "kaggler/online_model/ftrl.pyx":190
  *         wTx = 0.
  *         for i in self._indices(x):
  *             sign = -1. if self.w[i] < 0 else 1.             # <<<<<<<<<<<<<<
  *             if sign * self.w[i] <= self.l1:
  *                 self.z[i] = 0.
  */
-    if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 189, __pyx_L1_error)}
+    if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 190, __pyx_L1_error)}
     __pyx_t_9 = __pyx_v_i;
     if ((((*((double *) ( /* dim=0 */ (__pyx_v_self->w.data + __pyx_t_9 * __pyx_v_self->w.strides[0]) ))) < 0.0) != 0)) {
       __pyx_t_8 = -1.;
@@ -4743,30 +4767,30 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_16predict_one(stru
     }
     __pyx_v_sign = __pyx_t_8;
 
-    /* "kaggler/online_model/ftrl.pyx":190
+    /* "kaggler/online_model/ftrl.pyx":191
  *         for i in self._indices(x):
  *             sign = -1. if self.w[i] < 0 else 1.
  *             if sign * self.w[i] <= self.l1:             # <<<<<<<<<<<<<<
  *                 self.z[i] = 0.
  *             else:
  */
-    if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 190, __pyx_L1_error)}
+    if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 191, __pyx_L1_error)}
     __pyx_t_10 = __pyx_v_i;
     __pyx_t_11 = (((__pyx_v_sign * (*((double *) ( /* dim=0 */ (__pyx_v_self->w.data + __pyx_t_10 * __pyx_v_self->w.strides[0]) )))) <= __pyx_v_self->l1) != 0);
     if (__pyx_t_11) {
 
-      /* "kaggler/online_model/ftrl.pyx":191
+      /* "kaggler/online_model/ftrl.pyx":192
  *             sign = -1. if self.w[i] < 0 else 1.
  *             if sign * self.w[i] <= self.l1:
  *                 self.z[i] = 0.             # <<<<<<<<<<<<<<
  *             else:
  *                 self.z[i] = (sign * self.l1 - self.w[i]) / \
  */
-      if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 191, __pyx_L1_error)}
+      if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 192, __pyx_L1_error)}
       __pyx_t_12 = __pyx_v_i;
       *((double *) ( /* dim=0 */ (__pyx_v_self->z.data + __pyx_t_12 * __pyx_v_self->z.strides[0]) )) = 0.;
 
-      /* "kaggler/online_model/ftrl.pyx":190
+      /* "kaggler/online_model/ftrl.pyx":191
  *         for i in self._indices(x):
  *             sign = -1. if self.w[i] < 0 else 1.
  *             if sign * self.w[i] <= self.l1:             # <<<<<<<<<<<<<<
@@ -4776,7 +4800,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_16predict_one(stru
       goto __pyx_L5;
     }
 
-    /* "kaggler/online_model/ftrl.pyx":193
+    /* "kaggler/online_model/ftrl.pyx":194
  *                 self.z[i] = 0.
  *             else:
  *                 self.z[i] = (sign * self.l1 - self.w[i]) / \             # <<<<<<<<<<<<<<
@@ -4784,44 +4808,44 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_16predict_one(stru
  * 
  */
     /*else*/ {
-      if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 193, __pyx_L1_error)}
+      if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 194, __pyx_L1_error)}
       __pyx_t_13 = __pyx_v_i;
 
-      /* "kaggler/online_model/ftrl.pyx":194
+      /* "kaggler/online_model/ftrl.pyx":195
  *             else:
  *                 self.z[i] = (sign * self.l1 - self.w[i]) / \
  *                             ((self.b + sqrt(self.c[i])) / self.a + self.l2)             # <<<<<<<<<<<<<<
  * 
  *             wTx += self.z[i]
  */
-      if (unlikely(!__pyx_v_self->c.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 194, __pyx_L1_error)}
+      if (unlikely(!__pyx_v_self->c.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 195, __pyx_L1_error)}
       __pyx_t_14 = __pyx_v_i;
 
-      /* "kaggler/online_model/ftrl.pyx":193
+      /* "kaggler/online_model/ftrl.pyx":194
  *                 self.z[i] = 0.
  *             else:
  *                 self.z[i] = (sign * self.l1 - self.w[i]) / \             # <<<<<<<<<<<<<<
  *                             ((self.b + sqrt(self.c[i])) / self.a + self.l2)
  * 
  */
-      if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 193, __pyx_L1_error)}
+      if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 194, __pyx_L1_error)}
       __pyx_t_15 = __pyx_v_i;
       *((double *) ( /* dim=0 */ (__pyx_v_self->z.data + __pyx_t_15 * __pyx_v_self->z.strides[0]) )) = (((__pyx_v_sign * __pyx_v_self->l1) - (*((double *) ( /* dim=0 */ (__pyx_v_self->w.data + __pyx_t_13 * __pyx_v_self->w.strides[0]) )))) / (((__pyx_v_self->b + sqrt((*((double *) ( /* dim=0 */ (__pyx_v_self->c.data + __pyx_t_14 * __pyx_v_self->c.strides[0]) ))))) / __pyx_v_self->a) + __pyx_v_self->l2));
     }
     __pyx_L5:;
 
-    /* "kaggler/online_model/ftrl.pyx":196
+    /* "kaggler/online_model/ftrl.pyx":197
  *                             ((self.b + sqrt(self.c[i])) / self.a + self.l2)
  * 
  *             wTx += self.z[i]             # <<<<<<<<<<<<<<
  * 
  *         return sigm(wTx)
  */
-    if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 196, __pyx_L1_error)}
+    if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 197, __pyx_L1_error)}
     __pyx_t_16 = __pyx_v_i;
     __pyx_v_wTx = (__pyx_v_wTx + (*((double *) ( /* dim=0 */ (__pyx_v_self->z.data + __pyx_t_16 * __pyx_v_self->z.strides[0]) ))));
 
-    /* "kaggler/online_model/ftrl.pyx":188
+    /* "kaggler/online_model/ftrl.pyx":189
  * 
  *         wTx = 0.
  *         for i in self._indices(x):             # <<<<<<<<<<<<<<
@@ -4831,19 +4855,19 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_16predict_one(stru
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "kaggler/online_model/ftrl.pyx":198
+  /* "kaggler/online_model/ftrl.pyx":199
  *             wTx += self.z[i]
  * 
  *         return sigm(wTx)             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_f_7kaggler_4util_sigm(__pyx_v_wTx)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 198, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_f_7kaggler_4util_sigm(__pyx_v_wTx)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 199, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "kaggler/online_model/ftrl.pyx":174
+  /* "kaggler/online_model/ftrl.pyx":175
  *             self.c[i] += e2
  * 
  *     def predict_one(self, list x):             # <<<<<<<<<<<<<<
@@ -4861,57 +4885,6 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_16predict_one(stru
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "util.pxd":1
- * cdef inline double fmax(double a, double b): return a if a >= b else b             # <<<<<<<<<<<<<<
- * cdef inline double fmin(double a, double b): return a if a <= b else b
- * 
- */
-
-static CYTHON_INLINE double __pyx_f_7kaggler_4util_fmax(double __pyx_v_a, double __pyx_v_b) {
-  double __pyx_r;
-  __Pyx_RefNannyDeclarations
-  double __pyx_t_1;
-  __Pyx_RefNannySetupContext("fmax", 0);
-  if (((__pyx_v_a >= __pyx_v_b) != 0)) {
-    __pyx_t_1 = __pyx_v_a;
-  } else {
-    __pyx_t_1 = __pyx_v_b;
-  }
-  __pyx_r = __pyx_t_1;
-  goto __pyx_L0;
-
-  /* function exit code */
-  __pyx_L0:;
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "util.pxd":2
- * cdef inline double fmax(double a, double b): return a if a >= b else b
- * cdef inline double fmin(double a, double b): return a if a <= b else b             # <<<<<<<<<<<<<<
- * 
- * cdef double sigm(double x)
- */
-
-static CYTHON_INLINE double __pyx_f_7kaggler_4util_fmin(double __pyx_v_a, double __pyx_v_b) {
-  double __pyx_r;
-  __Pyx_RefNannyDeclarations
-  double __pyx_t_1;
-  __Pyx_RefNannySetupContext("fmin", 0);
-  if (((__pyx_v_a <= __pyx_v_b) != 0)) {
-    __pyx_t_1 = __pyx_v_a;
-  } else {
-    __pyx_t_1 = __pyx_v_b;
-  }
-  __pyx_r = __pyx_t_1;
-  goto __pyx_L0;
-
-  /* function exit code */
-  __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -7425,6 +7398,57 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
   __Pyx_XDECREF(__pyx_t_8);
   __Pyx_AddTraceback("numpy.import_ufunc", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "util.pxd":1
+ * cdef inline double fmax(double a, double b): return a if a >= b else b             # <<<<<<<<<<<<<<
+ * cdef inline double fmin(double a, double b): return a if a <= b else b
+ * 
+ */
+
+static CYTHON_INLINE double __pyx_f_7kaggler_4util_fmax(double __pyx_v_a, double __pyx_v_b) {
+  double __pyx_r;
+  __Pyx_RefNannyDeclarations
+  double __pyx_t_1;
+  __Pyx_RefNannySetupContext("fmax", 0);
+  if (((__pyx_v_a >= __pyx_v_b) != 0)) {
+    __pyx_t_1 = __pyx_v_a;
+  } else {
+    __pyx_t_1 = __pyx_v_b;
+  }
+  __pyx_r = __pyx_t_1;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "util.pxd":2
+ * cdef inline double fmax(double a, double b): return a if a >= b else b
+ * cdef inline double fmin(double a, double b): return a if a <= b else b             # <<<<<<<<<<<<<<
+ * 
+ * cdef double sigm(double x)
+ */
+
+static CYTHON_INLINE double __pyx_f_7kaggler_4util_fmin(double __pyx_v_a, double __pyx_v_b) {
+  double __pyx_r;
+  __Pyx_RefNannyDeclarations
+  double __pyx_t_1;
+  __Pyx_RefNannySetupContext("fmin", 0);
+  if (((__pyx_v_a <= __pyx_v_b) != 0)) {
+    __pyx_t_1 = __pyx_v_a;
+  } else {
+    __pyx_t_1 = __pyx_v_b;
+  }
+  __pyx_r = __pyx_t_1;
+  goto __pyx_L0;
+
+  /* function exit code */
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
