@@ -133,7 +133,7 @@ cdef class FTRL:
         """
         for epoch in range(self.epoch):
             for row in range(X.shape[0]):
-                x = list(X[row].indices)
+                x = list(X.indices[X.indptr[row] : X.indptr[row + 1]])
                 self.update_one(x, self.predict_one(x) - y[row])
 
     def predict(self, X):
@@ -147,7 +147,8 @@ cdef class FTRL:
         """
         p = np.zeros((X.shape[0], ), dtype=np.float64)
         for row in range(X.shape[0]):
-            p[row] = self.predict_one(list(X[row].indices))
+            x = list(X.indices[X.indptr[row] : X.indptr[row + 1]])
+            p[row] = self.predict_one(x)
 
         return p
 
