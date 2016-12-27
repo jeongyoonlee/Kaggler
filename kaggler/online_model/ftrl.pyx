@@ -97,11 +97,11 @@ cdef class FTRL:
             # indices.append(index % self.n)
 
         if self.interaction:
-         for i in range(x_len):
-             for j in range(i + 1, x_len):
-                 indices.append(abs(hash('{}_{}'.format(x[i], x[j]))) % self.n)
-                 # a much faster and also reasonable way:
-                 # indices.append((x[i] * x[j]) % self.n)
+            for i in range(x_len):
+                for j in range(i + 1, x_len):
+                    indices.append(abs(hash('{}_{}'.format(x[i], x[j]))) % self.n)
+                    # a much faster and also reasonable way:
+                    # indices.append((x[i] * x[j]) % self.n)
         return indices
 
     def read_sparse(self, path):
