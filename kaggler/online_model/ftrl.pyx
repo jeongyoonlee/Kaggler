@@ -93,15 +93,14 @@ cdef class FTRL:
         for i in range(x_len):
             index = x[i]
             indices.append(abs(hash(index)) % self.n)
-            # a much faster and also reasonable way:
-            # indices.append(index % self.n)
 
         if self.interaction:
-            for i in range(x_len):
+            for i in range(x_len - 1):
                 for j in range(i + 1, x_len):
                     indices.append(abs(hash('{}_{}'.format(x[i], x[j]))) % self.n)
-                    # a much faster and also reasonable way:
-                    # indices.append((x[i] * x[j]) % self.n)
+                    # The hash function is bottleneck.
+                    # Chekout the following link for some idea of hash function:
+                    # http://stackoverflow.com/questions/664014/what-integer-hash-function-are-good-that-accepts-an-integer-hash-key
         return indices
 
     def read_sparse(self, path):
