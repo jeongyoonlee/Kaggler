@@ -1,6 +1,7 @@
 # cython: boundscheck=False
 # cython: wraparound=False
 # cython: cdivision=True
+# cython: linetrace=False
 from __future__ import division
 import numpy as np
 
@@ -36,8 +37,8 @@ cdef class FTRL:
     cdef double b
     cdef double l1
     cdef double l2
-    cdef unsigned int epoch
-    cdef unsigned int n
+    cdef int epoch
+    cdef int n
     cdef bint interaction
     cdef double[:] w
     cdef double[:] c
@@ -48,8 +49,8 @@ cdef class FTRL:
                  double b=1.,
                  double l1=1.,
                  double l2=1.,
-                 unsigned int n=2**20,
-                 unsigned int epoch=1,
+                 int n=2**20,
+                 int epoch=1,
                  bint interaction=True):
         """Initialize the FTRL class object.
 
@@ -81,24 +82,26 @@ cdef class FTRL:
             self.a, self.b, self.l1, self.l2, self.n, self.epoch, self.interaction
         )
 
-    def _indices(self, list x):
-        cdef unsigned int index
-        cdef int l
+    cdef list _indices(self, int[:] x):
+        cdef int x_len = x.shape[0]
+        cdef int index
         cdef int i
         cdef int j
+        cdef list indices = []
+        indices.append(self.n)
 
-        # return the index of the bias term
-        yield self.n
-
-        for index in x:
-            yield abs(hash(index)) % self.n
+        for i in range(x_len):
+            index = x[i]
+            indices.append(abs(hash(index)) % self.n)
 
         if self.interaction:
-            l = len(x)
-            x = sorted(x)
-            for i in xrange(l):
-                for j in xrange(i + 1, l):
-                    yield abs(hash('{}_{}'.format(x[i], x[j]))) % self.n
+            for i in range(x_len - 1):
+                for j in range(i + 1, x_len):
+                    indices.append(abs(hash('{}_{}'.format(x[i], x[j]))) % self.n)
+                    # The hash function is bottleneck.
+                    # Chekout the following link for some idea of hash function:
+                    # http://stackoverflow.com/questions/664014/what-integer-hash-function-are-good-that-accepts-an-integer-hash-key
+        return indices
 
     def read_sparse(self, path):
         """Apply hashing trick to the libsvm format sparse file.
@@ -131,9 +134,30 @@ cdef class FTRL:
         Returns:
             updated model weights and counts
         """
+        if y.dtype != np.float64:
+            y = y.astype(np.float64)
+        self._fit(X, y)
+
+    cdef void _fit(self, X, double[:] y):
+        """Update the model with a sparse input feature matrix and its targets.
+
+        Args:
+            X (scipy.sparse.csr_matrix): a list of (index, value) of non-zero features
+            y (numpy.array): targets
+
+        Returns:
+            updated model weights and counts
+        """
+        cdef int row
+        cdef int row_num = X.shape[0]
+
+        cdef int[:] x
+        cdef int[:] indices = X.indices
+        cdef int[:] indptr = X.indptr
+
         for epoch in range(self.epoch):
-            for row in range(X.shape[0]):
-                x = list(X.indices[X.indptr[row] : X.indptr[row + 1]])
+            for row in range(row_num):
+                x = indices[indptr[row] : indptr[row + 1]]
                 self.update_one(x, self.predict_one(x) - y[row])
 
     def predict(self, X):
@@ -145,14 +169,30 @@ cdef class FTRL:
         Returns:
             p (numpy.array): predictions for input features
         """
-        p = np.zeros((X.shape[0], ), dtype=np.float64)
-        for row in range(X.shape[0]):
-            x = list(X.indices[X.indptr[row] : X.indptr[row + 1]])
-            p[row] = self.predict_one(x)
+        return self._predict(X)
 
+    cdef _predict(self, X):
+        """Predict for a sparse matrix X.
+
+        Args:
+            X (scipy.sparse.csr_matrix): a sparse matrix for input features
+
+        Returns:
+            p (numpy.array): predictions for input features
+        """
+        cdef int row
+        cdef int row_num = X.shape[0]
+        cdef int[:] x
+        cdef int[:] indices = X.indices
+        cdef int[:] indptr = X.indptr
+
+        p = np.zeros((row_num, ), dtype=np.float64)
+        for row in range(row_num):
+            x = indices[indptr[row] : indptr[row + 1]]
+            p[row] = self.predict_one(x)
         return p
 
-    def update_one(self, list x, double e):
+    cpdef void update_one(self, int[:] x, double e):
         """Update the model.
 
         Args:
@@ -163,16 +203,20 @@ cdef class FTRL:
             updates model weights and counts
         """
         cdef int i
+        cdef int j
         cdef double e2
         cdef double s
+        cdef list indices = self._indices(x)
+        cdef int indices_num = len(indices)
 
         e2 = e * e
-        for i in self._indices(x):
+        for j in range(indices_num):
+            i = indices[j]
             s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a
             self.w[i] += e - s * self.z[i]
             self.c[i] += e2
 
-    def predict_one(self, list x):
+    cpdef double predict_one(self, int[:] x):
         """Predict for features.
 
         Args:
@@ -182,11 +226,15 @@ cdef class FTRL:
             p (double): a prediction for input features
         """
         cdef int i
+        cdef int j
         cdef double sign
         cdef double wTx
+        cdef list indices = self._indices(x)
+        cdef int indices_num = len(indices)
 
         wTx = 0.
-        for i in self._indices(x):
+        for j in range(indices_num):
+            i = indices[j]
             sign = -1. if self.w[i] < 0 else 1.
             if sign * self.w[i] <= self.l1:
                 self.z[i] = 0.
