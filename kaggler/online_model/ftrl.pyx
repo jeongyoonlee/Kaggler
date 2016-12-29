@@ -1,7 +1,7 @@
 # cython: boundscheck=False
 # cython: wraparound=False
 # cython: cdivision=True
-# cython: linetrace=True
+# cython: linetrace=False
 from __future__ import division
 import numpy as np
 
