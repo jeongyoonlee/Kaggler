@@ -10,6 +10,15 @@ from libc.math cimport sqrt, abs
 from ..util cimport sigm
 cimport numpy as np
 
+cdef extern from "murmurhash/MurmurHash3.h":
+    void MurmurHash3_x86_32(void *key, int len, np.uint32_t seed, void *out)
+
+cdef int murmurhash3_int_s32(int key, unsigned int seed):
+    """Compute the 32bit murmurhash3 of a int key at seed."""
+    cdef int out
+    MurmurHash3_x86_32(&key, sizeof(int), seed, &out)
+    return out
+
 
 np.import_array()
 
@@ -92,15 +101,13 @@ cdef class FTRL:
 
         for i in range(x_len):
             index = x[i]
-            indices.append(abs(hash(index)) % self.n)
+            indices.append(index % self.n)
 
         if self.interaction:
             for i in range(x_len - 1):
                 for j in range(i + 1, x_len):
-                    indices.append(abs(hash('{}_{}'.format(x[i], x[j]))) % self.n)
-                    # The hash function is bottleneck.
-                    # Chekout the following link for some idea of hash function:
-                    # http://stackoverflow.com/questions/664014/what-integer-hash-function-are-good-that-accepts-an-integer-hash-key
+                    index = abs(murmurhash3_int_s32(x[i] * x[j], seed=0))
+                    indices.append(index % self.n)
         return indices
 
     def read_sparse(self, path):

@@ -43,7 +43,8 @@ setup(
 
     cmdclass={'build_ext': build_ext},
     ext_modules=[Extension('kaggler.online_model.ftrl',
-                           ['kaggler/online_model/ftrl.pyx'],
+                           ['kaggler/online_model/ftrl.pyx',
+                            'kaggler/online_model/murmurhash/MurmurHash3.cpp'],
                            libraries=[],
                            include_dirs=[np.get_include(), '.'],
                            extra_compile_args=['-O3']),
