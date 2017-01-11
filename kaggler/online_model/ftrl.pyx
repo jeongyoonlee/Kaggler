@@ -165,7 +165,7 @@ cdef class FTRL:
         for epoch in range(self.epoch):
             for row in range(row_num):
                 x = indices[indptr[row] : indptr[row + 1]]
-                self.update_one(x, self.predict_one(x) - y[row])
+                self._update_one(x, self._predict_one(x) - y[row])
 
     def predict(self, X):
         """Predict for a sparse matrix X.
@@ -196,10 +196,14 @@ cdef class FTRL:
         p = np.zeros((row_num, ), dtype=np.float64)
         for row in range(row_num):
             x = indices[indptr[row] : indptr[row + 1]]
-            p[row] = self.predict_one(x)
+            p[row] = self._predict_one(x)
         return p
 
-    cpdef void update_one(self, int[:] x, double e):
+    def update_one(self, x, e):
+        x = np.array(x, dtype=int)
+        self._update_one(x, e)
+
+    cpdef void _update_one(self, int[:] x, double e):
         """Update the model.
 
         Args:
@@ -223,7 +227,11 @@ cdef class FTRL:
             self.w[i] += e - s * self.z[i]
             self.c[i] += e2
 
-    cpdef double predict_one(self, int[:] x):
+    def predict_one(self, x):
+        x = np.array(x, dtype=int)
+        return self._predict_one(x)
+
+    cpdef double _predict_one(self, int[:] x):
         """Predict for features.
 
         Args:

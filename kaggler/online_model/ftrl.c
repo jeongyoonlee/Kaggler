@@ -1150,8 +1150,8 @@ struct __pyx_vtabstruct_7kaggler_12online_model_4ftrl_FTRL {
   PyObject *(*_indices)(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *, __Pyx_memviewslice);
   void (*_fit)(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *, PyObject *, __Pyx_memviewslice);
   PyObject *(*_predict)(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *, PyObject *);
-  void (*update_one)(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *, __Pyx_memviewslice, double, int __pyx_skip_dispatch);
-  double (*predict_one)(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *, __Pyx_memviewslice, int __pyx_skip_dispatch);
+  void (*_update_one)(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *, __Pyx_memviewslice, double, int __pyx_skip_dispatch);
+  double (*_predict_one)(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *, __Pyx_memviewslice, int __pyx_skip_dispatch);
 };
 static struct __pyx_vtabstruct_7kaggler_12online_model_4ftrl_FTRL *__pyx_vtabptr_7kaggler_12online_model_4ftrl_FTRL;
 
@@ -1913,8 +1913,8 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 static PyObject *__pyx_f_7kaggler_12online_model_4ftrl_4FTRL__indices(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x); /* proto*/
 static void __pyx_f_7kaggler_12online_model_4ftrl_4FTRL__fit(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, PyObject *__pyx_v_X, __Pyx_memviewslice __pyx_v_y); /* proto*/
 static PyObject *__pyx_f_7kaggler_12online_model_4ftrl_4FTRL__predict(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, PyObject *__pyx_v_X); /* proto*/
-static void __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_update_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x, double __pyx_v_e, int __pyx_skip_dispatch); /* proto*/
-static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x, int __pyx_skip_dispatch); /* proto*/
+static void __pyx_f_7kaggler_12online_model_4ftrl_4FTRL__update_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x, double __pyx_v_e, int __pyx_skip_dispatch); /* proto*/
+static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL__predict_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x, int __pyx_skip_dispatch); /* proto*/
 static PyObject *__pyx_array_get_memview(struct __pyx_array_obj *__pyx_v_self); /* proto*/
 static char *__pyx_memoryview_get_item_pointer(struct __pyx_memoryview_obj *__pyx_v_self, PyObject *__pyx_v_index); /* proto*/
 static PyObject *__pyx_memoryview_is_slice(struct __pyx_memoryview_obj *__pyx_v_self, PyObject *__pyx_v_obj); /* proto*/
@@ -2059,6 +2059,7 @@ static const char __pyx_k_step[] = "step";
 static const char __pyx_k_stop[] = "stop";
 static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_ASCII[] = "ASCII";
+static const char __pyx_k_array[] = "array";
 static const char __pyx_k_class[] = "__class__";
 static const char __pyx_k_close[] = "close";
 static const char __pyx_k_dtype[] = "dtype";
@@ -2092,11 +2093,11 @@ static const char __pyx_k_enumerate[] = "enumerate";
 static const char __pyx_k_IndexError[] = "IndexError";
 static const char __pyx_k_ValueError[] = "ValueError";
 static const char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
-static const char __pyx_k_update_one[] = "update_one";
+static const char __pyx_k_update_one[] = "_update_one";
 static const char __pyx_k_ImportError[] = "ImportError";
 static const char __pyx_k_MemoryError[] = "MemoryError";
 static const char __pyx_k_interaction[] = "interaction";
-static const char __pyx_k_predict_one[] = "predict_one";
+static const char __pyx_k_predict_one[] = "_predict_one";
 static const char __pyx_k_read_sparse[] = "read_sparse";
 static const char __pyx_k_RuntimeError[] = "RuntimeError";
 static const char __pyx_k_pyx_getbuffer[] = "__pyx_getbuffer";
@@ -2164,6 +2165,7 @@ static PyObject *__pyx_kp_s__4;
 static PyObject *__pyx_n_s_a;
 static PyObject *__pyx_n_s_allocate_buffer;
 static PyObject *__pyx_n_s_args;
+static PyObject *__pyx_n_s_array;
 static PyObject *__pyx_n_s_astype;
 static PyObject *__pyx_n_s_b;
 static PyObject *__pyx_n_s_base;
@@ -2244,8 +2246,10 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_2__repr__(struct _
 static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_4read_sparse(CYTHON_UNUSED struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, PyObject *__pyx_v_path); /* proto */
 static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_7fit(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, PyObject *__pyx_v_X, PyObject *__pyx_v_y); /* proto */
 static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_9predict(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, PyObject *__pyx_v_X); /* proto */
-static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_11update_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x, double __pyx_v_e); /* proto */
-static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_13predict_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x); /* proto */
+static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_11update_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, PyObject *__pyx_v_x, PyObject *__pyx_v_e); /* proto */
+static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_13_update_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x, double __pyx_v_e); /* proto */
+static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_15predict_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, PyObject *__pyx_v_x); /* proto */
+static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_17_predict_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __pyx_array_obj *__pyx_v_self, PyObject *__pyx_v_shape, Py_ssize_t __pyx_v_itemsize, PyObject *__pyx_v_format, PyObject *__pyx_v_mode, int __pyx_v_allocate_buffer); /* proto */
@@ -3881,7 +3885,7 @@ static void __pyx_f_7kaggler_12online_model_4ftrl_4FTRL__fit(struct __pyx_obj_7k
  *         for epoch in range(self.epoch):
  *             for row in range(row_num):             # <<<<<<<<<<<<<<
  *                 x = indices[indptr[row] : indptr[row + 1]]
- *                 self.update_one(x, self.predict_one(x) - y[row])
+ *                 self._update_one(x, self._predict_one(x) - y[row])
  */
     __pyx_t_6 = __pyx_v_row_num;
     for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
@@ -3891,7 +3895,7 @@ static void __pyx_f_7kaggler_12online_model_4ftrl_4FTRL__fit(struct __pyx_obj_7k
  *         for epoch in range(self.epoch):
  *             for row in range(row_num):
  *                 x = indices[indptr[row] : indptr[row + 1]]             # <<<<<<<<<<<<<<
- *                 self.update_one(x, self.predict_one(x) - y[row])
+ *                 self._update_one(x, self._predict_one(x) - y[row])
  * 
  */
       __pyx_t_8 = __pyx_v_row;
@@ -3925,12 +3929,12 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_x, 1);
       /* "kaggler/online_model/ftrl.pyx":168
  *             for row in range(row_num):
  *                 x = indices[indptr[row] : indptr[row + 1]]
- *                 self.update_one(x, self.predict_one(x) - y[row])             # <<<<<<<<<<<<<<
+ *                 self._update_one(x, self._predict_one(x) - y[row])             # <<<<<<<<<<<<<<
  * 
  *     def predict(self, X):
  */
       __pyx_t_11 = __pyx_v_row;
-      ((struct __pyx_vtabstruct_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self->__pyx_vtab)->update_one(__pyx_v_self, __pyx_v_x, (((struct __pyx_vtabstruct_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self->__pyx_vtab)->predict_one(__pyx_v_self, __pyx_v_x, 0) - (*((double *) ( /* dim=0 */ (__pyx_v_y.data + __pyx_t_11 * __pyx_v_y.strides[0]) )))), 0);
+      ((struct __pyx_vtabstruct_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self->__pyx_vtab)->_update_one(__pyx_v_self, __pyx_v_x, (((struct __pyx_vtabstruct_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self->__pyx_vtab)->_predict_one(__pyx_v_self, __pyx_v_x, 0) - (*((double *) ( /* dim=0 */ (__pyx_v_y.data + __pyx_t_11 * __pyx_v_y.strides[0]) )))), 0);
     }
   }
 
@@ -3957,7 +3961,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_x, 1);
 }
 
 /* "kaggler/online_model/ftrl.pyx":170
- *                 self.update_one(x, self.predict_one(x) - y[row])
+ *                 self._update_one(x, self._predict_one(x) - y[row])
  * 
  *     def predict(self, X):             # <<<<<<<<<<<<<<
  *         """Predict for a sparse matrix X.
@@ -3999,7 +4003,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_9predict(struct __
   goto __pyx_L0;
 
   /* "kaggler/online_model/ftrl.pyx":170
- *                 self.update_one(x, self.predict_one(x) - y[row])
+ *                 self._update_one(x, self._predict_one(x) - y[row])
  * 
  *     def predict(self, X):             # <<<<<<<<<<<<<<
  *         """Predict for a sparse matrix X.
@@ -4141,7 +4145,7 @@ static PyObject *__pyx_f_7kaggler_12online_model_4ftrl_4FTRL__predict(struct __p
  *         p = np.zeros((row_num, ), dtype=np.float64)
  *         for row in range(row_num):             # <<<<<<<<<<<<<<
  *             x = indices[indptr[row] : indptr[row + 1]]
- *             p[row] = self.predict_one(x)
+ *             p[row] = self._predict_one(x)
  */
   __pyx_t_3 = __pyx_v_row_num;
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_3; __pyx_t_8+=1) {
@@ -4151,7 +4155,7 @@ static PyObject *__pyx_f_7kaggler_12online_model_4ftrl_4FTRL__predict(struct __p
  *         p = np.zeros((row_num, ), dtype=np.float64)
  *         for row in range(row_num):
  *             x = indices[indptr[row] : indptr[row + 1]]             # <<<<<<<<<<<<<<
- *             p[row] = self.predict_one(x)
+ *             p[row] = self._predict_one(x)
  *         return p
  */
     __pyx_t_9 = __pyx_v_row;
@@ -4185,11 +4189,11 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_x, 1);
     /* "kaggler/online_model/ftrl.pyx":199
  *         for row in range(row_num):
  *             x = indices[indptr[row] : indptr[row + 1]]
- *             p[row] = self.predict_one(x)             # <<<<<<<<<<<<<<
+ *             p[row] = self._predict_one(x)             # <<<<<<<<<<<<<<
  *         return p
  * 
  */
-    __pyx_t_7 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self->__pyx_vtab)->predict_one(__pyx_v_self, __pyx_v_x, 0)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 199, __pyx_L1_error)
+    __pyx_t_7 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self->__pyx_vtab)->_predict_one(__pyx_v_self, __pyx_v_x, 0)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 199, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     if (unlikely(__Pyx_SetItemInt(__pyx_v_p, __pyx_v_row, __pyx_t_7, int, 1, __Pyx_PyInt_From_int, 0, 0, 0) < 0)) __PYX_ERR(0, 199, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
@@ -4197,10 +4201,10 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_x, 1);
 
   /* "kaggler/online_model/ftrl.pyx":200
  *             x = indices[indptr[row] : indptr[row + 1]]
- *             p[row] = self.predict_one(x)
+ *             p[row] = self._predict_one(x)
  *         return p             # <<<<<<<<<<<<<<
  * 
- *     cpdef void update_one(self, int[:] x, double e):
+ *     def update_one(self, x, e):
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v_p);
@@ -4238,234 +4242,16 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_x, 1);
 /* "kaggler/online_model/ftrl.pyx":202
  *         return p
  * 
- *     cpdef void update_one(self, int[:] x, double e):             # <<<<<<<<<<<<<<
- *         """Update the model.
- * 
+ *     def update_one(self, x, e):             # <<<<<<<<<<<<<<
+ *         x = np.array(x, dtype=int)
+ *         self._update_one(x, e)
  */
-
-static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_12update_one(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static void __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_update_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x, double __pyx_v_e, int __pyx_skip_dispatch) {
-  int __pyx_v_i;
-  int __pyx_v_j;
-  double __pyx_v_e2;
-  double __pyx_v_s;
-  PyObject *__pyx_v_indices = 0;
-  int __pyx_v_indices_num;
-  __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
-  PyObject *__pyx_t_2 = NULL;
-  PyObject *__pyx_t_3 = NULL;
-  PyObject *__pyx_t_4 = NULL;
-  PyObject *__pyx_t_5 = NULL;
-  PyObject *__pyx_t_6 = NULL;
-  int __pyx_t_7;
-  PyObject *__pyx_t_8 = NULL;
-  Py_ssize_t __pyx_t_9;
-  int __pyx_t_10;
-  int __pyx_t_11;
-  Py_ssize_t __pyx_t_12;
-  Py_ssize_t __pyx_t_13;
-  Py_ssize_t __pyx_t_14;
-  Py_ssize_t __pyx_t_15;
-  Py_ssize_t __pyx_t_16;
-  __Pyx_RefNannySetupContext("update_one", 0);
-  /* Check if called by wrapper */
-  if (unlikely(__pyx_skip_dispatch)) ;
-  /* Check if overridden in Python */
-  else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_update_one); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 202, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_12update_one)) {
-      if (unlikely(!__pyx_v_x.memview)) { __Pyx_RaiseUnboundLocalError("x"); __PYX_ERR(0, 202, __pyx_L1_error) }
-      __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_x, 1, (PyObject *(*)(char *)) __pyx_memview_get_int, (int (*)(char *, PyObject *)) __pyx_memview_set_int, 0);; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 202, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_e); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 202, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_INCREF(__pyx_t_1);
-      __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
-      __pyx_t_7 = 0;
-      if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_5))) {
-        __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_5);
-        if (likely(__pyx_t_6)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_5);
-          __Pyx_INCREF(__pyx_t_6);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_5, function);
-          __pyx_t_7 = 1;
-        }
-      }
-      #if CYTHON_FAST_PYCALL
-      if (PyFunction_Check(__pyx_t_5)) {
-        PyObject *__pyx_temp[3] = {__pyx_t_6, __pyx_t_3, __pyx_t_4};
-        __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 202, __pyx_L1_error)
-        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-        __Pyx_GOTREF(__pyx_t_2);
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      } else
-      #endif
-      #if CYTHON_FAST_PYCCALL
-      if (__Pyx_PyFastCFunction_Check(__pyx_t_5)) {
-        PyObject *__pyx_temp[3] = {__pyx_t_6, __pyx_t_3, __pyx_t_4};
-        __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 202, __pyx_L1_error)
-        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-        __Pyx_GOTREF(__pyx_t_2);
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      } else
-      #endif
-      {
-        __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 202, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_8);
-        if (__pyx_t_6) {
-          __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
-        }
-        __Pyx_GIVEREF(__pyx_t_3);
-        PyTuple_SET_ITEM(__pyx_t_8, 0+__pyx_t_7, __pyx_t_3);
-        __Pyx_GIVEREF(__pyx_t_4);
-        PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
-        __pyx_t_3 = 0;
-        __pyx_t_4 = 0;
-        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 202, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_2);
-        __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      }
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      goto __pyx_L0;
-    }
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  }
-
-  /* "kaggler/online_model/ftrl.pyx":216
- *         cdef double e2
- *         cdef double s
- *         cdef list indices = self._indices(x)             # <<<<<<<<<<<<<<
- *         cdef int indices_num = len(indices)
- * 
- */
-  __pyx_t_1 = ((struct __pyx_vtabstruct_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self->__pyx_vtab)->_indices(__pyx_v_self, __pyx_v_x); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 216, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_v_indices = ((PyObject*)__pyx_t_1);
-  __pyx_t_1 = 0;
-
-  /* "kaggler/online_model/ftrl.pyx":217
- *         cdef double s
- *         cdef list indices = self._indices(x)
- *         cdef int indices_num = len(indices)             # <<<<<<<<<<<<<<
- * 
- *         e2 = e * e
- */
-  if (unlikely(__pyx_v_indices == Py_None)) {
-    PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 217, __pyx_L1_error)
-  }
-  __pyx_t_9 = PyList_GET_SIZE(__pyx_v_indices); if (unlikely(__pyx_t_9 == -1)) __PYX_ERR(0, 217, __pyx_L1_error)
-  __pyx_v_indices_num = __pyx_t_9;
-
-  /* "kaggler/online_model/ftrl.pyx":219
- *         cdef int indices_num = len(indices)
- * 
- *         e2 = e * e             # <<<<<<<<<<<<<<
- *         for j in range(indices_num):
- *             i = indices[j]
- */
-  __pyx_v_e2 = (__pyx_v_e * __pyx_v_e);
-
-  /* "kaggler/online_model/ftrl.pyx":220
- * 
- *         e2 = e * e
- *         for j in range(indices_num):             # <<<<<<<<<<<<<<
- *             i = indices[j]
- *             s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a
- */
-  __pyx_t_7 = __pyx_v_indices_num;
-  for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_7; __pyx_t_10+=1) {
-    __pyx_v_j = __pyx_t_10;
-
-    /* "kaggler/online_model/ftrl.pyx":221
- *         e2 = e * e
- *         for j in range(indices_num):
- *             i = indices[j]             # <<<<<<<<<<<<<<
- *             s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a
- *             self.w[i] += e - s * self.z[i]
- */
-    if (unlikely(__pyx_v_indices == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 221, __pyx_L1_error)
-    }
-    __pyx_t_11 = __Pyx_PyInt_As_int(PyList_GET_ITEM(__pyx_v_indices, __pyx_v_j)); if (unlikely((__pyx_t_11 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 221, __pyx_L1_error)
-    __pyx_v_i = __pyx_t_11;
-
-    /* "kaggler/online_model/ftrl.pyx":222
- *         for j in range(indices_num):
- *             i = indices[j]
- *             s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a             # <<<<<<<<<<<<<<
- *             self.w[i] += e - s * self.z[i]
- *             self.c[i] += e2
- */
-    if (unlikely(!__pyx_v_self->c.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 222, __pyx_L1_error)}
-    __pyx_t_12 = __pyx_v_i;
-    if (unlikely(!__pyx_v_self->c.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 222, __pyx_L1_error)}
-    __pyx_t_13 = __pyx_v_i;
-    __pyx_v_s = ((sqrt(((*((double *) ( /* dim=0 */ (__pyx_v_self->c.data + __pyx_t_12 * __pyx_v_self->c.strides[0]) ))) + __pyx_v_e2)) - sqrt((*((double *) ( /* dim=0 */ (__pyx_v_self->c.data + __pyx_t_13 * __pyx_v_self->c.strides[0]) ))))) / __pyx_v_self->a);
-
-    /* "kaggler/online_model/ftrl.pyx":223
- *             i = indices[j]
- *             s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a
- *             self.w[i] += e - s * self.z[i]             # <<<<<<<<<<<<<<
- *             self.c[i] += e2
- * 
- */
-    if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 223, __pyx_L1_error)}
-    __pyx_t_14 = __pyx_v_i;
-    if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 223, __pyx_L1_error)}
-    __pyx_t_15 = __pyx_v_i;
-    *((double *) ( /* dim=0 */ (__pyx_v_self->w.data + __pyx_t_15 * __pyx_v_self->w.strides[0]) )) += (__pyx_v_e - (__pyx_v_s * (*((double *) ( /* dim=0 */ (__pyx_v_self->z.data + __pyx_t_14 * __pyx_v_self->z.strides[0]) )))));
-
-    /* "kaggler/online_model/ftrl.pyx":224
- *             s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a
- *             self.w[i] += e - s * self.z[i]
- *             self.c[i] += e2             # <<<<<<<<<<<<<<
- * 
- *     cpdef double predict_one(self, int[:] x):
- */
-    if (unlikely(!__pyx_v_self->c.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 224, __pyx_L1_error)}
-    __pyx_t_16 = __pyx_v_i;
-    *((double *) ( /* dim=0 */ (__pyx_v_self->c.data + __pyx_t_16 * __pyx_v_self->c.strides[0]) )) += __pyx_v_e2;
-  }
-
-  /* "kaggler/online_model/ftrl.pyx":202
- *         return p
- * 
- *     cpdef void update_one(self, int[:] x, double e):             # <<<<<<<<<<<<<<
- *         """Update the model.
- * 
- */
-
-  /* function exit code */
-  goto __pyx_L0;
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_WriteUnraisable("kaggler.online_model.ftrl.FTRL.update_one", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
-  __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v_indices);
-  __Pyx_RefNannyFinishContext();
-}
 
 /* Python wrapper */
 static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_12update_one(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_7kaggler_12online_model_4ftrl_4FTRL_11update_one[] = "Update the model.\n\n        Args:\n            x (list of int): a list of index of non-zero features\n            e (double): error between prediction of the model and target\n\n        Returns:\n            updates model weights and counts\n        ";
 static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_12update_one(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
-  __Pyx_memviewslice __pyx_v_x = { 0, 0, { 0 }, { 0 }, { 0 } };
-  double __pyx_v_e;
+  PyObject *__pyx_v_x = 0;
+  PyObject *__pyx_v_e = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("update_one (wrapper)", 0);
@@ -4501,8 +4287,8 @@ static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_12update_one(PyObj
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_x = __Pyx_PyObject_to_MemoryviewSlice_ds_int(values[0]); if (unlikely(!__pyx_v_x.memview)) __PYX_ERR(0, 202, __pyx_L3_error)
-    __pyx_v_e = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_e == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 202, __pyx_L3_error)
+    __pyx_v_x = values[0];
+    __pyx_v_e = values[1];
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
@@ -4519,14 +4305,379 @@ static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_12update_one(PyObj
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_11update_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x, double __pyx_v_e) {
+static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_11update_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, PyObject *__pyx_v_x, PyObject *__pyx_v_e) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  __Pyx_memviewslice __pyx_t_5 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  double __pyx_t_6;
   __Pyx_RefNannySetupContext("update_one", 0);
+  __Pyx_INCREF(__pyx_v_x);
+
+  /* "kaggler/online_model/ftrl.pyx":203
+ * 
+ *     def update_one(self, x, e):
+ *         x = np.array(x, dtype=int)             # <<<<<<<<<<<<<<
+ *         self._update_one(x, e)
+ * 
+ */
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_INCREF(__pyx_v_x);
+  __Pyx_GIVEREF(__pyx_v_x);
+  PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_x);
+  __pyx_t_3 = PyDict_New(); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, ((PyObject *)(&PyInt_Type))) < 0) __PYX_ERR(0, 203, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF_SET(__pyx_v_x, __pyx_t_4);
+  __pyx_t_4 = 0;
+
+  /* "kaggler/online_model/ftrl.pyx":204
+ *     def update_one(self, x, e):
+ *         x = np.array(x, dtype=int)
+ *         self._update_one(x, e)             # <<<<<<<<<<<<<<
+ * 
+ *     cpdef void _update_one(self, int[:] x, double e):
+ */
+  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_int(__pyx_v_x);
+  if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 204, __pyx_L1_error)
+  __pyx_t_6 = __pyx_PyFloat_AsDouble(__pyx_v_e); if (unlikely((__pyx_t_6 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 204, __pyx_L1_error)
+  ((struct __pyx_vtabstruct_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self->__pyx_vtab)->_update_one(__pyx_v_self, __pyx_t_5, __pyx_t_6, 0);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
+  __pyx_t_5.memview = NULL;
+  __pyx_t_5.data = NULL;
+
+  /* "kaggler/online_model/ftrl.pyx":202
+ *         return p
+ * 
+ *     def update_one(self, x, e):             # <<<<<<<<<<<<<<
+ *         x = np.array(x, dtype=int)
+ *         self._update_one(x, e)
+ */
+
+  /* function exit code */
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
+  __Pyx_AddTraceback("kaggler.online_model.ftrl.FTRL.update_one", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_x);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "kaggler/online_model/ftrl.pyx":206
+ *         self._update_one(x, e)
+ * 
+ *     cpdef void _update_one(self, int[:] x, double e):             # <<<<<<<<<<<<<<
+ *         """Update the model.
+ * 
+ */
+
+static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_14_update_one(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static void __pyx_f_7kaggler_12online_model_4ftrl_4FTRL__update_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x, double __pyx_v_e, int __pyx_skip_dispatch) {
+  int __pyx_v_i;
+  int __pyx_v_j;
+  double __pyx_v_e2;
+  double __pyx_v_s;
+  PyObject *__pyx_v_indices = 0;
+  int __pyx_v_indices_num;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  int __pyx_t_7;
+  PyObject *__pyx_t_8 = NULL;
+  Py_ssize_t __pyx_t_9;
+  int __pyx_t_10;
+  int __pyx_t_11;
+  Py_ssize_t __pyx_t_12;
+  Py_ssize_t __pyx_t_13;
+  Py_ssize_t __pyx_t_14;
+  Py_ssize_t __pyx_t_15;
+  Py_ssize_t __pyx_t_16;
+  __Pyx_RefNannySetupContext("_update_one", 0);
+  /* Check if called by wrapper */
+  if (unlikely(__pyx_skip_dispatch)) ;
+  /* Check if overridden in Python */
+  else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_update_one); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 206, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_14_update_one)) {
+      if (unlikely(!__pyx_v_x.memview)) { __Pyx_RaiseUnboundLocalError("x"); __PYX_ERR(0, 206, __pyx_L1_error) }
+      __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_x, 1, (PyObject *(*)(char *)) __pyx_memview_get_int, (int (*)(char *, PyObject *)) __pyx_memview_set_int, 0);; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 206, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_e); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 206, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx_t_1);
+      __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
+      __pyx_t_7 = 0;
+      if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_5))) {
+        __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_5);
+        if (likely(__pyx_t_6)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_5);
+          __Pyx_INCREF(__pyx_t_6);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_5, function);
+          __pyx_t_7 = 1;
+        }
+      }
+      #if CYTHON_FAST_PYCALL
+      if (PyFunction_Check(__pyx_t_5)) {
+        PyObject *__pyx_temp[3] = {__pyx_t_6, __pyx_t_3, __pyx_t_4};
+        __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 206, __pyx_L1_error)
+        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      } else
+      #endif
+      #if CYTHON_FAST_PYCCALL
+      if (__Pyx_PyFastCFunction_Check(__pyx_t_5)) {
+        PyObject *__pyx_temp[3] = {__pyx_t_6, __pyx_t_3, __pyx_t_4};
+        __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 206, __pyx_L1_error)
+        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      } else
+      #endif
+      {
+        __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 206, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_8);
+        if (__pyx_t_6) {
+          __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
+        }
+        __Pyx_GIVEREF(__pyx_t_3);
+        PyTuple_SET_ITEM(__pyx_t_8, 0+__pyx_t_7, __pyx_t_3);
+        __Pyx_GIVEREF(__pyx_t_4);
+        PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
+        __pyx_t_3 = 0;
+        __pyx_t_4 = 0;
+        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 206, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+      }
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      goto __pyx_L0;
+    }
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  }
+
+  /* "kaggler/online_model/ftrl.pyx":220
+ *         cdef double e2
+ *         cdef double s
+ *         cdef list indices = self._indices(x)             # <<<<<<<<<<<<<<
+ *         cdef int indices_num = len(indices)
+ * 
+ */
+  __pyx_t_1 = ((struct __pyx_vtabstruct_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self->__pyx_vtab)->_indices(__pyx_v_self, __pyx_v_x); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 220, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_indices = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "kaggler/online_model/ftrl.pyx":221
+ *         cdef double s
+ *         cdef list indices = self._indices(x)
+ *         cdef int indices_num = len(indices)             # <<<<<<<<<<<<<<
+ * 
+ *         e2 = e * e
+ */
+  if (unlikely(__pyx_v_indices == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
+    __PYX_ERR(0, 221, __pyx_L1_error)
+  }
+  __pyx_t_9 = PyList_GET_SIZE(__pyx_v_indices); if (unlikely(__pyx_t_9 == -1)) __PYX_ERR(0, 221, __pyx_L1_error)
+  __pyx_v_indices_num = __pyx_t_9;
+
+  /* "kaggler/online_model/ftrl.pyx":223
+ *         cdef int indices_num = len(indices)
+ * 
+ *         e2 = e * e             # <<<<<<<<<<<<<<
+ *         for j in range(indices_num):
+ *             i = indices[j]
+ */
+  __pyx_v_e2 = (__pyx_v_e * __pyx_v_e);
+
+  /* "kaggler/online_model/ftrl.pyx":224
+ * 
+ *         e2 = e * e
+ *         for j in range(indices_num):             # <<<<<<<<<<<<<<
+ *             i = indices[j]
+ *             s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a
+ */
+  __pyx_t_7 = __pyx_v_indices_num;
+  for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_7; __pyx_t_10+=1) {
+    __pyx_v_j = __pyx_t_10;
+
+    /* "kaggler/online_model/ftrl.pyx":225
+ *         e2 = e * e
+ *         for j in range(indices_num):
+ *             i = indices[j]             # <<<<<<<<<<<<<<
+ *             s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a
+ *             self.w[i] += e - s * self.z[i]
+ */
+    if (unlikely(__pyx_v_indices == Py_None)) {
+      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+      __PYX_ERR(0, 225, __pyx_L1_error)
+    }
+    __pyx_t_11 = __Pyx_PyInt_As_int(PyList_GET_ITEM(__pyx_v_indices, __pyx_v_j)); if (unlikely((__pyx_t_11 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 225, __pyx_L1_error)
+    __pyx_v_i = __pyx_t_11;
+
+    /* "kaggler/online_model/ftrl.pyx":226
+ *         for j in range(indices_num):
+ *             i = indices[j]
+ *             s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a             # <<<<<<<<<<<<<<
+ *             self.w[i] += e - s * self.z[i]
+ *             self.c[i] += e2
+ */
+    if (unlikely(!__pyx_v_self->c.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 226, __pyx_L1_error)}
+    __pyx_t_12 = __pyx_v_i;
+    if (unlikely(!__pyx_v_self->c.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 226, __pyx_L1_error)}
+    __pyx_t_13 = __pyx_v_i;
+    __pyx_v_s = ((sqrt(((*((double *) ( /* dim=0 */ (__pyx_v_self->c.data + __pyx_t_12 * __pyx_v_self->c.strides[0]) ))) + __pyx_v_e2)) - sqrt((*((double *) ( /* dim=0 */ (__pyx_v_self->c.data + __pyx_t_13 * __pyx_v_self->c.strides[0]) ))))) / __pyx_v_self->a);
+
+    /* "kaggler/online_model/ftrl.pyx":227
+ *             i = indices[j]
+ *             s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a
+ *             self.w[i] += e - s * self.z[i]             # <<<<<<<<<<<<<<
+ *             self.c[i] += e2
+ * 
+ */
+    if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 227, __pyx_L1_error)}
+    __pyx_t_14 = __pyx_v_i;
+    if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 227, __pyx_L1_error)}
+    __pyx_t_15 = __pyx_v_i;
+    *((double *) ( /* dim=0 */ (__pyx_v_self->w.data + __pyx_t_15 * __pyx_v_self->w.strides[0]) )) += (__pyx_v_e - (__pyx_v_s * (*((double *) ( /* dim=0 */ (__pyx_v_self->z.data + __pyx_t_14 * __pyx_v_self->z.strides[0]) )))));
+
+    /* "kaggler/online_model/ftrl.pyx":228
+ *             s = (sqrt(self.c[i] + e2) - sqrt(self.c[i])) / self.a
+ *             self.w[i] += e - s * self.z[i]
+ *             self.c[i] += e2             # <<<<<<<<<<<<<<
+ * 
+ *     def predict_one(self, x):
+ */
+    if (unlikely(!__pyx_v_self->c.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 228, __pyx_L1_error)}
+    __pyx_t_16 = __pyx_v_i;
+    *((double *) ( /* dim=0 */ (__pyx_v_self->c.data + __pyx_t_16 * __pyx_v_self->c.strides[0]) )) += __pyx_v_e2;
+  }
+
+  /* "kaggler/online_model/ftrl.pyx":206
+ *         self._update_one(x, e)
+ * 
+ *     cpdef void _update_one(self, int[:] x, double e):             # <<<<<<<<<<<<<<
+ *         """Update the model.
+ * 
+ */
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_WriteUnraisable("kaggler.online_model.ftrl.FTRL._update_one", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_indices);
+  __Pyx_RefNannyFinishContext();
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_14_update_one(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_7kaggler_12online_model_4ftrl_4FTRL_13_update_one[] = "Update the model.\n\n        Args:\n            x (list of int): a list of index of non-zero features\n            e (double): error between prediction of the model and target\n\n        Returns:\n            updates model weights and counts\n        ";
+static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_14_update_one(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  __Pyx_memviewslice __pyx_v_x = { 0, 0, { 0 }, { 0 }, { 0 } };
+  double __pyx_v_e;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("_update_one (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_x,&__pyx_n_s_e,0};
+    PyObject* values[2] = {0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_x)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_e)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("_update_one", 1, 2, 2, 1); __PYX_ERR(0, 206, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_update_one") < 0)) __PYX_ERR(0, 206, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+    }
+    __pyx_v_x = __Pyx_PyObject_to_MemoryviewSlice_ds_int(values[0]); if (unlikely(!__pyx_v_x.memview)) __PYX_ERR(0, 206, __pyx_L3_error)
+    __pyx_v_e = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_e == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 206, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("_update_one", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 206, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("kaggler.online_model.ftrl.FTRL._update_one", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_13_update_one(((struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self), __pyx_v_x, __pyx_v_e);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_13_update_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x, double __pyx_v_e) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("_update_one", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_x.memview)) { __Pyx_RaiseUnboundLocalError("x"); __PYX_ERR(0, 202, __pyx_L1_error) }
-  __pyx_t_1 = __Pyx_void_to_None(__pyx_f_7kaggler_12online_model_4ftrl_4FTRL_update_one(__pyx_v_self, __pyx_v_x, __pyx_v_e, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 202, __pyx_L1_error)
+  if (unlikely(!__pyx_v_x.memview)) { __Pyx_RaiseUnboundLocalError("x"); __PYX_ERR(0, 206, __pyx_L1_error) }
+  __pyx_t_1 = __Pyx_void_to_None(__pyx_f_7kaggler_12online_model_4ftrl_4FTRL__update_one(__pyx_v_self, __pyx_v_x, __pyx_v_e, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 206, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4535,7 +4686,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_11update_one(struc
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("kaggler.online_model.ftrl.FTRL.update_one", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("kaggler.online_model.ftrl.FTRL._update_one", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_x, 1);
@@ -4544,16 +4695,119 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_11update_one(struc
   return __pyx_r;
 }
 
-/* "kaggler/online_model/ftrl.pyx":226
+/* "kaggler/online_model/ftrl.pyx":230
  *             self.c[i] += e2
  * 
- *     cpdef double predict_one(self, int[:] x):             # <<<<<<<<<<<<<<
+ *     def predict_one(self, x):             # <<<<<<<<<<<<<<
+ *         x = np.array(x, dtype=int)
+ *         return self._predict_one(x)
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_16predict_one(PyObject *__pyx_v_self, PyObject *__pyx_v_x); /*proto*/
+static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_16predict_one(PyObject *__pyx_v_self, PyObject *__pyx_v_x) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("predict_one (wrapper)", 0);
+  __pyx_r = __pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_15predict_one(((struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self), ((PyObject *)__pyx_v_x));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_15predict_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, PyObject *__pyx_v_x) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  __Pyx_memviewslice __pyx_t_5 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_RefNannySetupContext("predict_one", 0);
+  __Pyx_INCREF(__pyx_v_x);
+
+  /* "kaggler/online_model/ftrl.pyx":231
+ * 
+ *     def predict_one(self, x):
+ *         x = np.array(x, dtype=int)             # <<<<<<<<<<<<<<
+ *         return self._predict_one(x)
+ * 
+ */
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 231, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 231, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 231, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_INCREF(__pyx_v_x);
+  __Pyx_GIVEREF(__pyx_v_x);
+  PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_x);
+  __pyx_t_3 = PyDict_New(); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 231, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, ((PyObject *)(&PyInt_Type))) < 0) __PYX_ERR(0, 231, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 231, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF_SET(__pyx_v_x, __pyx_t_4);
+  __pyx_t_4 = 0;
+
+  /* "kaggler/online_model/ftrl.pyx":232
+ *     def predict_one(self, x):
+ *         x = np.array(x, dtype=int)
+ *         return self._predict_one(x)             # <<<<<<<<<<<<<<
+ * 
+ *     cpdef double _predict_one(self, int[:] x):
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_int(__pyx_v_x);
+  if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 232, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self->__pyx_vtab)->_predict_one(__pyx_v_self, __pyx_t_5, 0)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 232, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
+  __pyx_t_5.memview = NULL;
+  __pyx_t_5.data = NULL;
+  __pyx_r = __pyx_t_4;
+  __pyx_t_4 = 0;
+  goto __pyx_L0;
+
+  /* "kaggler/online_model/ftrl.pyx":230
+ *             self.c[i] += e2
+ * 
+ *     def predict_one(self, x):             # <<<<<<<<<<<<<<
+ *         x = np.array(x, dtype=int)
+ *         return self._predict_one(x)
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
+  __Pyx_AddTraceback("kaggler.online_model.ftrl.FTRL.predict_one", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_x);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "kaggler/online_model/ftrl.pyx":234
+ *         return self._predict_one(x)
+ * 
+ *     cpdef double _predict_one(self, int[:] x):             # <<<<<<<<<<<<<<
  *         """Predict for features.
  * 
  */
 
-static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_14predict_one(PyObject *__pyx_v_self, PyObject *__pyx_arg_x); /*proto*/
-static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x, int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_18_predict_one(PyObject *__pyx_v_self, PyObject *__pyx_arg_x); /*proto*/
+static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL__predict_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x, int __pyx_skip_dispatch) {
   int __pyx_v_i;
   int __pyx_v_j;
   double __pyx_v_sign;
@@ -4581,16 +4835,16 @@ static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(struct __p
   Py_ssize_t __pyx_t_17;
   Py_ssize_t __pyx_t_18;
   Py_ssize_t __pyx_t_19;
-  __Pyx_RefNannySetupContext("predict_one", 0);
+  __Pyx_RefNannySetupContext("_predict_one", 0);
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_predict_one); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 226, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_predict_one); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 234, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_14predict_one)) {
-      if (unlikely(!__pyx_v_x.memview)) { __Pyx_RaiseUnboundLocalError("x"); __PYX_ERR(0, 226, __pyx_L1_error) }
-      __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_x, 1, (PyObject *(*)(char *)) __pyx_memview_get_int, (int (*)(char *, PyObject *)) __pyx_memview_set_int, 0);; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 226, __pyx_L1_error)
+    if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_18_predict_one)) {
+      if (unlikely(!__pyx_v_x.memview)) { __Pyx_RaiseUnboundLocalError("x"); __PYX_ERR(0, 234, __pyx_L1_error) }
+      __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_x, 1, (PyObject *(*)(char *)) __pyx_memview_get_int, (int (*)(char *, PyObject *)) __pyx_memview_set_int, 0);; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 234, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_4 = __pyx_t_1; __pyx_t_5 = NULL;
@@ -4604,14 +4858,14 @@ static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(struct __p
         }
       }
       if (!__pyx_t_5) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 226, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 234, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_GOTREF(__pyx_t_2);
       } else {
         #if CYTHON_FAST_PYCALL
         if (PyFunction_Check(__pyx_t_4)) {
           PyObject *__pyx_temp[2] = {__pyx_t_5, __pyx_t_3};
-          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 226, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 234, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -4620,26 +4874,26 @@ static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(struct __p
         #if CYTHON_FAST_PYCCALL
         if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
           PyObject *__pyx_temp[2] = {__pyx_t_5, __pyx_t_3};
-          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 226, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 234, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         } else
         #endif
         {
-          __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 226, __pyx_L1_error)
+          __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 234, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_6);
           __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_5); __pyx_t_5 = NULL;
           __Pyx_GIVEREF(__pyx_t_3);
           PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_3);
           __pyx_t_3 = 0;
-          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 226, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 234, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         }
       }
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 226, __pyx_L1_error)
+      __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 234, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_7;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -4648,19 +4902,19 @@ static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(struct __p
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "kaggler/online_model/ftrl.pyx":239
+  /* "kaggler/online_model/ftrl.pyx":247
  *         cdef double sign
  *         cdef double wTx
  *         cdef list indices = self._indices(x)             # <<<<<<<<<<<<<<
  *         cdef int indices_num = len(indices)
  * 
  */
-  __pyx_t_1 = ((struct __pyx_vtabstruct_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self->__pyx_vtab)->_indices(__pyx_v_self, __pyx_v_x); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 239, __pyx_L1_error)
+  __pyx_t_1 = ((struct __pyx_vtabstruct_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self->__pyx_vtab)->_indices(__pyx_v_self, __pyx_v_x); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 247, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_indices = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "kaggler/online_model/ftrl.pyx":240
+  /* "kaggler/online_model/ftrl.pyx":248
  *         cdef double wTx
  *         cdef list indices = self._indices(x)
  *         cdef int indices_num = len(indices)             # <<<<<<<<<<<<<<
@@ -4669,12 +4923,12 @@ static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(struct __p
  */
   if (unlikely(__pyx_v_indices == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 240, __pyx_L1_error)
+    __PYX_ERR(0, 248, __pyx_L1_error)
   }
-  __pyx_t_8 = PyList_GET_SIZE(__pyx_v_indices); if (unlikely(__pyx_t_8 == -1)) __PYX_ERR(0, 240, __pyx_L1_error)
+  __pyx_t_8 = PyList_GET_SIZE(__pyx_v_indices); if (unlikely(__pyx_t_8 == -1)) __PYX_ERR(0, 248, __pyx_L1_error)
   __pyx_v_indices_num = __pyx_t_8;
 
-  /* "kaggler/online_model/ftrl.pyx":242
+  /* "kaggler/online_model/ftrl.pyx":250
  *         cdef int indices_num = len(indices)
  * 
  *         wTx = 0.             # <<<<<<<<<<<<<<
@@ -4683,7 +4937,7 @@ static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(struct __p
  */
   __pyx_v_wTx = 0.;
 
-  /* "kaggler/online_model/ftrl.pyx":243
+  /* "kaggler/online_model/ftrl.pyx":251
  * 
  *         wTx = 0.
  *         for j in range(indices_num):             # <<<<<<<<<<<<<<
@@ -4694,7 +4948,7 @@ static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(struct __p
   for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
     __pyx_v_j = __pyx_t_10;
 
-    /* "kaggler/online_model/ftrl.pyx":244
+    /* "kaggler/online_model/ftrl.pyx":252
  *         wTx = 0.
  *         for j in range(indices_num):
  *             i = indices[j]             # <<<<<<<<<<<<<<
@@ -4703,19 +4957,19 @@ static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(struct __p
  */
     if (unlikely(__pyx_v_indices == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 244, __pyx_L1_error)
+      __PYX_ERR(0, 252, __pyx_L1_error)
     }
-    __pyx_t_11 = __Pyx_PyInt_As_int(PyList_GET_ITEM(__pyx_v_indices, __pyx_v_j)); if (unlikely((__pyx_t_11 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 244, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyInt_As_int(PyList_GET_ITEM(__pyx_v_indices, __pyx_v_j)); if (unlikely((__pyx_t_11 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 252, __pyx_L1_error)
     __pyx_v_i = __pyx_t_11;
 
-    /* "kaggler/online_model/ftrl.pyx":245
+    /* "kaggler/online_model/ftrl.pyx":253
  *         for j in range(indices_num):
  *             i = indices[j]
  *             sign = -1. if self.w[i] < 0 else 1.             # <<<<<<<<<<<<<<
  *             if sign * self.w[i] <= self.l1:
  *                 self.z[i] = 0.
  */
-    if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 245, __pyx_L1_error)}
+    if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 253, __pyx_L1_error)}
     __pyx_t_12 = __pyx_v_i;
     if ((((*((double *) ( /* dim=0 */ (__pyx_v_self->w.data + __pyx_t_12 * __pyx_v_self->w.strides[0]) ))) < 0.0) != 0)) {
       __pyx_t_7 = -1.;
@@ -4724,30 +4978,30 @@ static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(struct __p
     }
     __pyx_v_sign = __pyx_t_7;
 
-    /* "kaggler/online_model/ftrl.pyx":246
+    /* "kaggler/online_model/ftrl.pyx":254
  *             i = indices[j]
  *             sign = -1. if self.w[i] < 0 else 1.
  *             if sign * self.w[i] <= self.l1:             # <<<<<<<<<<<<<<
  *                 self.z[i] = 0.
  *             else:
  */
-    if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 246, __pyx_L1_error)}
+    if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 254, __pyx_L1_error)}
     __pyx_t_13 = __pyx_v_i;
     __pyx_t_14 = (((__pyx_v_sign * (*((double *) ( /* dim=0 */ (__pyx_v_self->w.data + __pyx_t_13 * __pyx_v_self->w.strides[0]) )))) <= __pyx_v_self->l1) != 0);
     if (__pyx_t_14) {
 
-      /* "kaggler/online_model/ftrl.pyx":247
+      /* "kaggler/online_model/ftrl.pyx":255
  *             sign = -1. if self.w[i] < 0 else 1.
  *             if sign * self.w[i] <= self.l1:
  *                 self.z[i] = 0.             # <<<<<<<<<<<<<<
  *             else:
  *                 self.z[i] = (sign * self.l1 - self.w[i]) / \
  */
-      if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 247, __pyx_L1_error)}
+      if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 255, __pyx_L1_error)}
       __pyx_t_15 = __pyx_v_i;
       *((double *) ( /* dim=0 */ (__pyx_v_self->z.data + __pyx_t_15 * __pyx_v_self->z.strides[0]) )) = 0.;
 
-      /* "kaggler/online_model/ftrl.pyx":246
+      /* "kaggler/online_model/ftrl.pyx":254
  *             i = indices[j]
  *             sign = -1. if self.w[i] < 0 else 1.
  *             if sign * self.w[i] <= self.l1:             # <<<<<<<<<<<<<<
@@ -4757,7 +5011,7 @@ static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(struct __p
       goto __pyx_L5;
     }
 
-    /* "kaggler/online_model/ftrl.pyx":249
+    /* "kaggler/online_model/ftrl.pyx":257
  *                 self.z[i] = 0.
  *             else:
  *                 self.z[i] = (sign * self.l1 - self.w[i]) / \             # <<<<<<<<<<<<<<
@@ -4765,45 +5019,45 @@ static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(struct __p
  * 
  */
     /*else*/ {
-      if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 249, __pyx_L1_error)}
+      if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 257, __pyx_L1_error)}
       __pyx_t_16 = __pyx_v_i;
 
-      /* "kaggler/online_model/ftrl.pyx":250
+      /* "kaggler/online_model/ftrl.pyx":258
  *             else:
  *                 self.z[i] = (sign * self.l1 - self.w[i]) / \
  *                             ((self.b + sqrt(self.c[i])) / self.a + self.l2)             # <<<<<<<<<<<<<<
  * 
  *             wTx += self.z[i]
  */
-      if (unlikely(!__pyx_v_self->c.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 250, __pyx_L1_error)}
+      if (unlikely(!__pyx_v_self->c.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 258, __pyx_L1_error)}
       __pyx_t_17 = __pyx_v_i;
 
-      /* "kaggler/online_model/ftrl.pyx":249
+      /* "kaggler/online_model/ftrl.pyx":257
  *                 self.z[i] = 0.
  *             else:
  *                 self.z[i] = (sign * self.l1 - self.w[i]) / \             # <<<<<<<<<<<<<<
  *                             ((self.b + sqrt(self.c[i])) / self.a + self.l2)
  * 
  */
-      if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 249, __pyx_L1_error)}
+      if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 257, __pyx_L1_error)}
       __pyx_t_18 = __pyx_v_i;
       *((double *) ( /* dim=0 */ (__pyx_v_self->z.data + __pyx_t_18 * __pyx_v_self->z.strides[0]) )) = (((__pyx_v_sign * __pyx_v_self->l1) - (*((double *) ( /* dim=0 */ (__pyx_v_self->w.data + __pyx_t_16 * __pyx_v_self->w.strides[0]) )))) / (((__pyx_v_self->b + sqrt((*((double *) ( /* dim=0 */ (__pyx_v_self->c.data + __pyx_t_17 * __pyx_v_self->c.strides[0]) ))))) / __pyx_v_self->a) + __pyx_v_self->l2));
     }
     __pyx_L5:;
 
-    /* "kaggler/online_model/ftrl.pyx":252
+    /* "kaggler/online_model/ftrl.pyx":260
  *                             ((self.b + sqrt(self.c[i])) / self.a + self.l2)
  * 
  *             wTx += self.z[i]             # <<<<<<<<<<<<<<
  * 
  *         return sigm(wTx)
  */
-    if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 252, __pyx_L1_error)}
+    if (unlikely(!__pyx_v_self->z.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 260, __pyx_L1_error)}
     __pyx_t_19 = __pyx_v_i;
     __pyx_v_wTx = (__pyx_v_wTx + (*((double *) ( /* dim=0 */ (__pyx_v_self->z.data + __pyx_t_19 * __pyx_v_self->z.strides[0]) ))));
   }
 
-  /* "kaggler/online_model/ftrl.pyx":254
+  /* "kaggler/online_model/ftrl.pyx":262
  *             wTx += self.z[i]
  * 
  *         return sigm(wTx)             # <<<<<<<<<<<<<<
@@ -4811,10 +5065,10 @@ static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(struct __p
   __pyx_r = __pyx_f_7kaggler_4util_sigm(__pyx_v_wTx);
   goto __pyx_L0;
 
-  /* "kaggler/online_model/ftrl.pyx":226
- *             self.c[i] += e2
+  /* "kaggler/online_model/ftrl.pyx":234
+ *         return self._predict_one(x)
  * 
- *     cpdef double predict_one(self, int[:] x):             # <<<<<<<<<<<<<<
+ *     cpdef double _predict_one(self, int[:] x):             # <<<<<<<<<<<<<<
  *         """Predict for features.
  * 
  */
@@ -4827,7 +5081,7 @@ static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(struct __p
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_WriteUnraisable("kaggler.online_model.ftrl.FTRL.predict_one", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
+  __Pyx_WriteUnraisable("kaggler.online_model.ftrl.FTRL._predict_one", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_indices);
@@ -4836,37 +5090,37 @@ static double __pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(struct __p
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_14predict_one(PyObject *__pyx_v_self, PyObject *__pyx_arg_x); /*proto*/
-static char __pyx_doc_7kaggler_12online_model_4ftrl_4FTRL_13predict_one[] = "Predict for features.\n\n        Args:\n            x (list of int): a list of index of non-zero features\n\n        Returns:\n            p (double): a prediction for input features\n        ";
-static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_14predict_one(PyObject *__pyx_v_self, PyObject *__pyx_arg_x) {
+static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_18_predict_one(PyObject *__pyx_v_self, PyObject *__pyx_arg_x); /*proto*/
+static char __pyx_doc_7kaggler_12online_model_4ftrl_4FTRL_17_predict_one[] = "Predict for features.\n\n        Args:\n            x (list of int): a list of index of non-zero features\n\n        Returns:\n            p (double): a prediction for input features\n        ";
+static PyObject *__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_18_predict_one(PyObject *__pyx_v_self, PyObject *__pyx_arg_x) {
   __Pyx_memviewslice __pyx_v_x = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("predict_one (wrapper)", 0);
+  __Pyx_RefNannySetupContext("_predict_one (wrapper)", 0);
   assert(__pyx_arg_x); {
-    __pyx_v_x = __Pyx_PyObject_to_MemoryviewSlice_ds_int(__pyx_arg_x); if (unlikely(!__pyx_v_x.memview)) __PYX_ERR(0, 226, __pyx_L3_error)
+    __pyx_v_x = __Pyx_PyObject_to_MemoryviewSlice_ds_int(__pyx_arg_x); if (unlikely(!__pyx_v_x.memview)) __PYX_ERR(0, 234, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("kaggler.online_model.ftrl.FTRL.predict_one", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("kaggler.online_model.ftrl.FTRL._predict_one", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_13predict_one(((struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self), __pyx_v_x);
+  __pyx_r = __pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_17_predict_one(((struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *)__pyx_v_self), __pyx_v_x);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_13predict_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x) {
+static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_17_predict_one(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *__pyx_v_self, __Pyx_memviewslice __pyx_v_x) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  __Pyx_RefNannySetupContext("predict_one", 0);
+  __Pyx_RefNannySetupContext("_predict_one", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_x.memview)) { __Pyx_RaiseUnboundLocalError("x"); __PYX_ERR(0, 226, __pyx_L1_error) }
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one(__pyx_v_self, __pyx_v_x, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 226, __pyx_L1_error)
+  if (unlikely(!__pyx_v_x.memview)) { __Pyx_RaiseUnboundLocalError("x"); __PYX_ERR(0, 234, __pyx_L1_error) }
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7kaggler_12online_model_4ftrl_4FTRL__predict_one(__pyx_v_self, __pyx_v_x, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 234, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4875,7 +5129,7 @@ static PyObject *__pyx_pf_7kaggler_12online_model_4ftrl_4FTRL_13predict_one(stru
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("kaggler.online_model.ftrl.FTRL.predict_one", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("kaggler.online_model.ftrl.FTRL._predict_one", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_x, 1);
@@ -19143,8 +19397,10 @@ static PyMethodDef __pyx_methods_7kaggler_12online_model_4ftrl_FTRL[] = {
   {"read_sparse", (PyCFunction)__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_5read_sparse, METH_O, __pyx_doc_7kaggler_12online_model_4ftrl_4FTRL_4read_sparse},
   {"fit", (PyCFunction)__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_8fit, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7kaggler_12online_model_4ftrl_4FTRL_7fit},
   {"predict", (PyCFunction)__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_10predict, METH_O, __pyx_doc_7kaggler_12online_model_4ftrl_4FTRL_9predict},
-  {"update_one", (PyCFunction)__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_12update_one, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7kaggler_12online_model_4ftrl_4FTRL_11update_one},
-  {"predict_one", (PyCFunction)__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_14predict_one, METH_O, __pyx_doc_7kaggler_12online_model_4ftrl_4FTRL_13predict_one},
+  {"update_one", (PyCFunction)__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_12update_one, METH_VARARGS|METH_KEYWORDS, 0},
+  {"_update_one", (PyCFunction)__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_14_update_one, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7kaggler_12online_model_4ftrl_4FTRL_13_update_one},
+  {"predict_one", (PyCFunction)__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_16predict_one, METH_O, 0},
+  {"_predict_one", (PyCFunction)__pyx_pw_7kaggler_12online_model_4ftrl_4FTRL_18_predict_one, METH_O, __pyx_doc_7kaggler_12online_model_4ftrl_4FTRL_17_predict_one},
   {0, 0, 0, 0}
 };
 
@@ -20090,6 +20346,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_a, __pyx_k_a, sizeof(__pyx_k_a), 0, 0, 1, 1},
   {&__pyx_n_s_allocate_buffer, __pyx_k_allocate_buffer, sizeof(__pyx_k_allocate_buffer), 0, 0, 1, 1},
   {&__pyx_n_s_args, __pyx_k_args, sizeof(__pyx_k_args), 0, 0, 1, 1},
+  {&__pyx_n_s_array, __pyx_k_array, sizeof(__pyx_k_array), 0, 0, 1, 1},
   {&__pyx_n_s_astype, __pyx_k_astype, sizeof(__pyx_k_astype), 0, 0, 1, 1},
   {&__pyx_n_s_b, __pyx_k_b, sizeof(__pyx_k_b), 0, 0, 1, 1},
   {&__pyx_n_s_base, __pyx_k_base, sizeof(__pyx_k_base), 0, 0, 1, 1},
@@ -20631,8 +20888,8 @@ PyMODINIT_FUNC PyInit_ftrl(void)
   __pyx_vtable_7kaggler_12online_model_4ftrl_FTRL._indices = (PyObject *(*)(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *, __Pyx_memviewslice))__pyx_f_7kaggler_12online_model_4ftrl_4FTRL__indices;
   __pyx_vtable_7kaggler_12online_model_4ftrl_FTRL._fit = (void (*)(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *, PyObject *, __Pyx_memviewslice))__pyx_f_7kaggler_12online_model_4ftrl_4FTRL__fit;
   __pyx_vtable_7kaggler_12online_model_4ftrl_FTRL._predict = (PyObject *(*)(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *, PyObject *))__pyx_f_7kaggler_12online_model_4ftrl_4FTRL__predict;
-  __pyx_vtable_7kaggler_12online_model_4ftrl_FTRL.update_one = (void (*)(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *, __Pyx_memviewslice, double, int __pyx_skip_dispatch))__pyx_f_7kaggler_12online_model_4ftrl_4FTRL_update_one;
-  __pyx_vtable_7kaggler_12online_model_4ftrl_FTRL.predict_one = (double (*)(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *, __Pyx_memviewslice, int __pyx_skip_dispatch))__pyx_f_7kaggler_12online_model_4ftrl_4FTRL_predict_one;
+  __pyx_vtable_7kaggler_12online_model_4ftrl_FTRL._update_one = (void (*)(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *, __Pyx_memviewslice, double, int __pyx_skip_dispatch))__pyx_f_7kaggler_12online_model_4ftrl_4FTRL__update_one;
+  __pyx_vtable_7kaggler_12online_model_4ftrl_FTRL._predict_one = (double (*)(struct __pyx_obj_7kaggler_12online_model_4ftrl_FTRL *, __Pyx_memviewslice, int __pyx_skip_dispatch))__pyx_f_7kaggler_12online_model_4ftrl_4FTRL__predict_one;
   if (PyType_Ready(&__pyx_type_7kaggler_12online_model_4ftrl_FTRL) < 0) __PYX_ERR(0, 26, __pyx_L1_error)
   __pyx_type_7kaggler_12online_model_4ftrl_FTRL.tp_print = 0;
   #if CYTHON_COMPILING_IN_CPYTHON
