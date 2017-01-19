@@ -110,7 +110,7 @@ cdef class SGD:
 
             yield x, y
 
-    def fit(self, X, y):
+    cpdef fit(self, X, y):
         """Update the model with a sparse input feature matrix and its targets.
 
         Args:
@@ -120,9 +120,11 @@ cdef class SGD:
         Returns:
             updated model weights and counts
         """
+        cdef int[:] indices = X.indices
+        cdef int[:] indptr = X.indptr
         for epoch in range(self.epoch):
             for row in range(X.shape[0]):
-                x = list(X[row].indices)
+                x = list(indices[indptr[row] : indptr[row + 1]])
                 self.update_one(x, self.predict_one(x) - y[row])
 
     def predict(self, X):
