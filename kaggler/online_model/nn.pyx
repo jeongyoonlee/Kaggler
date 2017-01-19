@@ -110,7 +110,7 @@ cdef class NN:
 
             yield zip(idx, val), y
 
-    def fit(self, X, y):
+    cpdef fit(self, X, y):
         """Update the model with a sparse input feature matrix and its targets.
 
         Args:
@@ -120,9 +120,18 @@ cdef class NN:
         Returns:
             updated model weights and counts
         """
+        cdef int row
+
+        cdef int[:] indices = X.indices
+        cdef int[:] data = X.data
+        cdef int[:] indptr = X.indptr
+
         for epoch in range(self.epoch):
             for row in range(X.shape[0]):
-                x = zip(X[row].indices, X[row].data)
+                x = zip(
+                    indices[indptr[row] : indptr[row + 1]], 
+                    data[indptr[row] : indptr[row + 1]],
+                )
                 self.update_one(x, self.predict_one(x) - y[row])
 
     def predict(self, X):
