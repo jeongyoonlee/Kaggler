@@ -1,7 +1,7 @@
 # Kaggler
-Kaggler is a Python package for Kaggle data science competitions and distributed under the version 3 of the GNU General Public License.
+Kaggler is a Python package for lightweight online machine learning algorithms and utility functions for ETL and data analysis. It is distributed under the version 3 of the GNU General Public License.
 
-It provides online learning algorithms for classification - inspired by Kaggle user [tinrtgu's code](http://goo.gl/K8hQBx).  It uses the sparse input format that handles large sparse data efficiently.  Core code is optimized for speed by using Cython.
+Its online learning algorithms are inspired by Kaggle user [tinrtgu's code](http://goo.gl/K8hQBx).  It uses the sparse input format that handles large sparse data efficiently.  Core code is optimized for speed by using Cython.
 
 # Algorithms
 Currently algorithms available are as follows:
