@@ -3,6 +3,7 @@ Kaggler is a Python package for lightweight online machine learning algorithms a
 
 Its online learning algorithms are inspired by Kaggle user [tinrtgu's code](http://goo.gl/K8hQBx).  It uses the sparse input format that handles large sparse data efficiently.  Core code is optimized for speed by using Cython.
 
+
 # Algorithms
 Currently algorithms available are as follows:
 
@@ -16,6 +17,7 @@ Currently algorithms available are as follows:
 ## Batch learning algorithm
 * Neural Networks (NN) - with a single hidden layer and L-BFGS optimization
 
+
 # Dependencies
 Python packages required are listed in `requirements.txt`
 * cython
@@ -25,12 +27,15 @@ Python packages required are listed in `requirements.txt`
 * scikit-learn
 * ml_metrics
 
+
 # Installation
 ## Using pip
 Python package is available at PyPi for pip installation:
 ```
 sudo pip install -U Kaggler
 ```
+If installation fails because it cannot find `MurmurHash3.h`, please add `.` to
+`LD_LIBRARY_PATH` as described [here](https://github.com/jeongyoonlee/Kaggler/issues/32).
 
 ## From source code
 If you want to install it from source code:
@@ -39,12 +44,27 @@ python setup.py build_ext --inplace
 sudo python setup.py install
 ```
 
+
 # Input Format
-libsvm style sparse file format is used.
+Kaggler supports CSV (`.csv`), LibSVM (`.sps`), and HDF5 (`.h5`) file formats:
 ```
+# CSV format: target,feature1,feature2,...
+1,1,0,0,1,0.5
+0,0,1,0,0,5
+
+# LibSVM format: target feature-index1:feature-value1 feature-index2:feature-value2
 1 1:1 4:1 5:0.5
 0 2:1 5:1
+
+# HDF5
+issparse: binary flag indicating whether it stores sparse data or not.
+target: stores a target variable as a numpy.array
+shape: available only if issparse == 1. shape of scipy.sparse.csr_matrix
+indices: available only if issparse == 1. indices of scipy.sparse.csr_matrix
+indptr: available only if issparse == 1. indptr of scipy.sparse.csr_matrix
+data: dense feature matrix if issparse == 0 else data of scipy.sparse.csr_matrix
 ```
+
 
 # Example
 ```python
@@ -89,13 +109,14 @@ for x, _ in clf.read_sparse('test.sparse'):
     p = clf.predict_one(x)
 
 # online training and prediction with a scipy sparse matrix
-from sklearn.datasets import load_svmlight_file
+from kaggler import load_data
 
-X, y = load_svmlight_file('train.sparse')
+X, y = load_data('train.sps')
 
 clf.fit(X, y)
 p = clf.predict(X)
 ```
+
 
 # Package Documentation
 Package documentation is available at [here](http://pythonhosted.org//Kaggler).
