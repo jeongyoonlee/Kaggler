@@ -1,7 +1,22 @@
 from __future__ import division
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error as mse
 
 import numpy as np
+
+
+def mape(y, p):
+    """Mean Absolute Percentage Error (MAPE).
+
+    Args:
+        y (numpy.array): target
+        p (numpy.array): prediction
+
+    Returns:
+        e (numpy.float64): MAPE
+    """
+
+    filt = np.abs(y) > 1e-16
+    return np.mean(np.abs(1 - p[filt] / y[filt]))
 
 
 def rmse(y, p):
@@ -18,7 +33,7 @@ def rmse(y, p):
     # check and get number of samples
     assert y.shape == p.shape
 
-    return np.sqrt(mean_squared_error(y, p))
+    return np.sqrt(mse(y, p))
 
 
 def gini(y, p):
