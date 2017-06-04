@@ -59,7 +59,7 @@ def save_csv(X, y, path):
     if sparse.issparse(X):
         X = X.todense()
 
-    np.savetxt(path, np.hstack((y.reshape((-1, 1)), X)))
+    np.savetxt(path, np.hstack((y.reshape((-1, 1)), X)), delimiter=',')
 
 
 def save_libsvm(X, y, path):
