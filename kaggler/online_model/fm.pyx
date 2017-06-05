@@ -111,16 +111,17 @@ cdef class FM:
         cdef int row
 
         cdef int[:] indices = X.indices
-        cdef int[:] data = X.data
+        cdef double[:] data = X.data
         cdef int[:] indptr = X.indptr
 
         for epoch in range(self.epoch):
             for row in range(X.shape[0]):
                 x = zip(
-                    indices[indptr[row] : indptr[row + 1]], 
+                    indices[indptr[row] : indptr[row + 1]],
                     data[indptr[row] : indptr[row + 1]],
                 )
                 self.update_one(x, self.predict_one(x) - y[row])
+        return self
 
     def predict(self, X):
         """Predict for a sparse matrix X.

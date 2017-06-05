@@ -25,7 +25,7 @@ np.import_array()
 
 cdef class FTRL:
     """FTRL online learner with the hasing trick using liblinear format data.
-    
+
     inspired by Kaggle user tinrtgu's code at http://goo.gl/K8hQBx
     original FTRL paper is available at http://goo.gl/iqIaH0
 
@@ -144,6 +144,7 @@ cdef class FTRL:
         if y.dtype != np.float64:
             y = y.astype(np.float64)
         self._fit(X, y)
+        return self
 
     cdef void _fit(self, X, double[:] y):
         """Update the model with a sparse input feature matrix and its targets.

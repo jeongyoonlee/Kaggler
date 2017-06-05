@@ -144,6 +144,7 @@ cdef class NN_H2:
             for row in range(X.shape[0]):
                 x = zip(X[row].indices, X[row].data)
                 self.update_one(x, self.predict_one(x) - y[row])
+        return self
 
     def predict(self, X):
         """Predict for a sparse matrix X.

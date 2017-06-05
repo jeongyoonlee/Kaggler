@@ -126,6 +126,7 @@ cdef class SGD:
             for row in range(X.shape[0]):
                 x = list(indices[indptr[row] : indptr[row + 1]])
                 self.update_one(x, self.predict_one(x) - y[row])
+        return self
 
     def predict(self, X):
         """Predict for a sparse matrix X.
