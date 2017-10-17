@@ -5,7 +5,7 @@ from sklearn.metrics import log_loss
 
 def logloss(y, p):
     """Bounded log loss error.
-    
+
     Args:
         y (numpy.array): target
         p (numpy.array): prediction
