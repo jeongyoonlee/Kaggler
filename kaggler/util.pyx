@@ -3,9 +3,11 @@
 # cython: cdivision=True
 from __future__ import division
 from scipy import sparse
+from keras import backend as K
 
 import logging
 import numpy as np
+import tensorflow as tf
 
 cimport cython
 from libc.math cimport exp, log
@@ -96,3 +98,13 @@ def point(rank, n_team, n_teammate=1, t=0):
     """
     return (1e5 / np.sqrt(n_teammate) * (rank ** -.75) *
             np.log10(1 + np.log10(n_team)) * np.exp(-t / 500))
+
+
+def limit_mem(gpu):
+    gpu = gpu
+    os.environ["CUDA_VISIBLE_DEVICES"] = "{}".format(gpu)
+    logging.info('using GPU #{}'.format(gpu))
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth=True
+    sess = tf.Session(config=config)
+    K.set_session(sess)
