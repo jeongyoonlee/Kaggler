@@ -89,17 +89,20 @@ def save_hdf5(X, y, path):
         f['target'] = y
 
         if is_sparse:
+            if not sparse.isspmatrix_csr(X):
+                X = X.tocsr()
+
             f['shape'] = np.array(X.shape)
             f['data'] = X.data
             f['indices'] = X.indices
             f['indptr'] = X.indptr
         else:
             f['data'] = X
- 
+
 
 def load_data(path, dense=False):
     """Load data from a CSV, LibSVM or HDF5 file based on the file extension.
-    
+
     Args:
         path (str): A path to the CSV, LibSVM or HDF5 format file containing data.
         dense (boolean): An optional variable indicating if the return matrix
