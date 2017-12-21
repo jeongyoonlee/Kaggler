@@ -2,8 +2,11 @@ from __future__ import division
 from sklearn.metrics import mean_squared_error as mse
 from sklearn.metrics import mean_absolute_error as mae
 from sklearn.metrics import r2_score as r2
+from ml_metrics import quadratic_weighted_kappa as kappa
 
 import numpy as np
+
+from ..const import EPS
 
 
 def mape(y, p):
@@ -17,7 +20,7 @@ def mape(y, p):
         e (numpy.float64): MAPE
     """
 
-    filt = np.abs(y) > 1e-16
+    filt = np.abs(y) > EPS
     return np.mean(np.abs(1 - p[filt] / y[filt]))
 
 

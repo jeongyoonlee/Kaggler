@@ -29,7 +29,7 @@ class Normalizer(base.BaseEstimator):
 
     def transform(self, X):
         """Normalize numerical columns.
-        
+
         Args:
             X (numpy.array) : numerical columns to normalize
 
@@ -39,12 +39,12 @@ class Normalizer(base.BaseEstimator):
 
         for col in range(X.shape[1]):
             X[:, col] = self._transform_col(X[:, col], col)
-            
+
         return X
 
     def fit_transform(self, X, y=None):
         """Normalize numerical columns.
-        
+
         Args:
             X (numpy.array) : numerical columns to normalize
 
@@ -62,7 +62,7 @@ class Normalizer(base.BaseEstimator):
 
     def _transform_col(self, x, col):
         """Normalize one numerical column.
-        
+
         Args:
             x (numpy.array): a numerical column to normalize
             col (int): column index

@@ -3,6 +3,9 @@ from sklearn.metrics import roc_auc_score as auc
 from sklearn.metrics import log_loss
 
 
+from ..const import EPS
+
+
 def logloss(y, p):
     """Bounded log loss error.
 
@@ -14,6 +17,6 @@ def logloss(y, p):
         bounded log loss error
     """
 
-    p[p < 1e-15] = 1e-15
-    p[p > 1 - 1e-15] = 1 - 1e-15
+    p[p < EPS] = EPS
+    p[p > 1 - EPS] = 1 - EPS
     return log_loss(y, p)
