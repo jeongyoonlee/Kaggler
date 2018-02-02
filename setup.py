@@ -36,9 +36,11 @@ setup(
         'ml_metrics',
         'numpy',
         'pandas',
+        'matplotlib',
         'scipy >= 0.14.0',
         'scikit-learn >= 0.15.0',
         'statsmodels >= 0.5.0',
+        'kaggle'
     ],
 
     cmdclass={'build_ext': build_ext},
