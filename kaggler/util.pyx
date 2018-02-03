@@ -100,7 +100,7 @@ def point(rank, n_team, n_teammate=1, t=0):
             np.log10(1 + np.log10(n_team)) * np.exp(-t / 500))
 
 
-def limit_mem(gpu):
+def limit_mem(gpu=0):
     gpu = gpu
     os.environ["CUDA_VISIBLE_DEVICES"] = "{}".format(gpu)
     logging.info('using GPU #{}'.format(gpu))
