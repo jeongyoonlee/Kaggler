@@ -8,6 +8,7 @@ from keras import backend as K
 import logging
 import numpy as np
 import tensorflow as tf
+import os
 
 cimport cython
 from libc.math cimport exp, log
