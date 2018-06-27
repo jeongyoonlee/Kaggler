@@ -19,6 +19,7 @@ setup(
 
     packages=['kaggler',
               'kaggler.feature_selection',
+              'kaggler.ensemble',
               'kaggler.model',
               'kaggler.metrics',
               'kaggler.online_model',
