@@ -4,21 +4,9 @@ Kaggler is a Python package for lightweight online machine learning algorithms a
 Its online learning algorithms are inspired by Kaggle user [tinrtgu's code](http://goo.gl/K8hQBx).  It uses the sparse input format that handles large sparse data efficiently.  Core code is optimized for speed by using Cython.
 
 
-# Algorithms
-Currently algorithms available are as follows:
+## Installation
 
-## Online learning algorithms
-* Stochastic Gradient Descent (SGD)
-* Follow-the-Regularized-Leader (FTRL)
-* Factorization Machine (FM)
-* Neural Networks (NN) - with a single (NN) or two (NN_H2) ReLU hidden layers
-* Decision Tree
-
-## Batch learning algorithm
-* Neural Networks (NN) - with a single hidden layer and L-BFGS optimization
-
-
-# Dependencies
+### Dependencies
 Python packages required are listed in `requirements.txt`
 * cython
 * h5py
@@ -27,9 +15,7 @@ Python packages required are listed in `requirements.txt`
 * scikit-learn
 * ml_metrics
 
-
-# Installation
-## Using pip
+### Using pip
 Python package is available at PyPi for pip installation:
 ```
 sudo pip install -U Kaggler
@@ -37,15 +23,14 @@ sudo pip install -U Kaggler
 If installation fails because it cannot find `MurmurHash3.h`, please add `.` to
 `LD_LIBRARY_PATH` as described [here](https://github.com/jeongyoonlee/Kaggler/issues/32).
 
-## From source code
+### From source code
 If you want to install it from source code:
 ```
 python setup.py build_ext --inplace
 sudo python setup.py install
 ```
 
-
-# Input Format
+## Data I/O
 Kaggler supports CSV (`.csv`), LibSVM (`.sps`), and HDF5 (`.h5`) file formats:
 ```
 # CSV format: target,feature1,feature2,...
@@ -57,16 +42,81 @@ Kaggler supports CSV (`.csv`), LibSVM (`.sps`), and HDF5 (`.h5`) file formats:
 0 2:1 5:1
 
 # HDF5
-issparse: binary flag indicating whether it stores sparse data or not.
-target: stores a target variable as a numpy.array
-shape: available only if issparse == 1. shape of scipy.sparse.csr_matrix
-indices: available only if issparse == 1. indices of scipy.sparse.csr_matrix
-indptr: available only if issparse == 1. indptr of scipy.sparse.csr_matrix
-data: dense feature matrix if issparse == 0 else data of scipy.sparse.csr_matrix
+- issparse: binary flag indicating whether it stores sparse data or not.
+- target: stores a target variable as a numpy.array
+- shape: available only if issparse == 1. shape of scipy.sparse.csr_matrix
+- indices: available only if issparse == 1. indices of scipy.sparse.csr_matrix
+- indptr: available only if issparse == 1. indptr of scipy.sparse.csr_matrix
+- data: dense feature matrix if issparse == 0 else data of scipy.sparse.csr_matrix
+```
+
+```
+from kaggler.data_io import load_data, save_data
+
+X, y = load_data('train.csv')	# use the first column as a target variable
+X, y = load_data('train.h5')	# load the feature matrix and target vector from a HDF5 file.
+X, y = load_data('train.sps')	# load the feature matrix and target vector from LibSVM file.
+
+save_data(X, y, 'train.csv')
+save_data(X, y, 'train.h5')
+save_data(X, y, 'train.sps')
 ```
 
 
-# Example
+## Feature Engineering
+
+### One-hot and label encoding with grouping infrequent categories
+```
+import numpy as np
+import pandas as pd
+from kaggler.preprocessing import OneHotEncoder, LabelEncoder
+
+df = pd.read_csv('train.csv')
+cat_cols = [col for col in df.columns if df[col].dtype == np.object]
+
+ohe = OneHotEncoder(min_obs=100) # grouping all categories with less than 100 occurences
+lbe = LabelEncoder(min_obs=0.01) # grouping all categories with less than 1% occurences
+
+X_cat = ohe.fit_transform(df[cat_cols].values)	# X_cat is a scipy sparse matrix
+df.loc[:, cat_cols] = lbe.fit_transform(df[cat_cols].values)
+```
+
+## Ensemble
+
+### Netflix Blending
+```
+import numpy as np
+from kaggler.ensemble import netflix
+from kaggler.metrics import rmse
+
+y = np.loadtxt('target.txt')
+p1 = np.loadtxt('model1_prediction.txt')
+p2 = np.loadtxt('model2_prediction.txt')
+p3 = np.loadtxt('model3_prediction.txt')
+
+e0 = rmse(y, np.zeros_like(y))
+e1 = rmse(y, p1)
+e2 = rmse(y, p2)
+e3 = rmse(y, p3)
+
+p, w = netflix([e1, e2, e3], [p1, p2, p3], e0)
+```
+
+
+## Algorithms
+Currently algorithms available are as follows:
+
+### Online learning algorithms
+* Stochastic Gradient Descent (SGD)
+* Follow-the-Regularized-Leader (FTRL)
+* Factorization Machine (FM)
+* Neural Networks (NN) - with a single (NN) or two (NN_H2) ReLU hidden layers
+* Decision Tree
+
+### Batch learning algorithm
+* Neural Networks (NN) - with a single hidden layer and L-BFGS optimization
+
+### Examples
 ```python
 from kaggler.online_model import SGD, FTRL, FM, NN
 
@@ -117,6 +167,5 @@ clf.fit(X, y)
 p = clf.predict(X)
 ```
 
-
-# Package Documentation
+## Documentation
 Package documentation is available at [here](http://pythonhosted.org//Kaggler).
