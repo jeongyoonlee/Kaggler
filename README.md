@@ -50,7 +50,7 @@ Kaggler supports CSV (`.csv`), LibSVM (`.sps`), and HDF5 (`.h5`) file formats:
 - data: dense feature matrix if issparse == 0 else data of scipy.sparse.csr_matrix
 ```
 
-```
+```python
 from kaggler.data_io import load_data, save_data
 
 X, y = load_data('train.csv')	# use the first column as a target variable
@@ -66,7 +66,7 @@ save_data(X, y, 'train.sps')
 ## Feature Engineering
 
 ### One-hot and label encoding with grouping infrequent categories
-```
+```python
 import numpy as np
 import pandas as pd
 from kaggler.preprocessing import OneHotEncoder, LabelEncoder
@@ -84,7 +84,7 @@ df.loc[:, cat_cols] = lbe.fit_transform(df[cat_cols].values)
 ## Ensemble
 
 ### Netflix Blending
-```
+```python
 import numpy as np
 from kaggler.ensemble import netflix
 from kaggler.metrics import rmse
