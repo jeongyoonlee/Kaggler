@@ -89,13 +89,15 @@ import numpy as np
 from kaggler.ensemble import netflix
 from kaggler.metrics import rmse
 
-y = np.loadtxt('target.txt')	# This is not necessary if RMSE of all zero submission can be estimated 
-								# (e.g. from a public leaderboard score of all zero submission).
+# Load the predictions of input models for ensemble
 p1 = np.loadtxt('model1_prediction.txt')
 p2 = np.loadtxt('model2_prediction.txt')
 p3 = np.loadtxt('model3_prediction.txt')
 
-e0 = rmse(y, np.zeros_like(y))
+# Calculate RMSEs of model predictions and all-zero prediction.
+# At a competition, RMSEs (or RMLSEs) of submissions can be used.
+y = np.loadtxt('target.txt')   
+e0 = rmse(y, np.zeros_like(y)) 
 e1 = rmse(y, p1)
 e2 = rmse(y, p2)
 e3 = rmse(y, p3)
