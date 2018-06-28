@@ -89,7 +89,8 @@ import numpy as np
 from kaggler.ensemble import netflix
 from kaggler.metrics import rmse
 
-y = np.loadtxt('target.txt')
+y = np.loadtxt('target.txt')	# This is not necessary if RMSE of all zero submission can be estimated 
+								# (e.g. from a public leaderboard score of all zero submission).
 p1 = np.loadtxt('model1_prediction.txt')
 p2 = np.loadtxt('model2_prediction.txt')
 p3 = np.loadtxt('model3_prediction.txt')
