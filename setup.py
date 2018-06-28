@@ -12,7 +12,7 @@ except ImportError:
 
 setup(
     name='Kaggler',
-    version='0.5.3',
+    version='0.6.0',
 
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
