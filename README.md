@@ -102,7 +102,7 @@ e1 = rmse(y, p1)
 e2 = rmse(y, p2)
 e3 = rmse(y, p3)
 
-p, w = netflix([e1, e2, e3], [p1, p2, p3], e0)
+p, w = netflix([e1, e2, e3], [p1, p2, p3], e0, l=0.0001) # l is an optional regularization parameter.
 ```
 
 
