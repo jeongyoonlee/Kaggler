@@ -107,72 +107,42 @@ class LabelEncoder(base.BaseEstimator):
         """
 
         # NaN cannot be used as a key for dict. So replace it with a random integer.
-        x[pd.isnull(x)] = NAN_INT
+        label_count = x.fillna(NAN_INT).value_counts()
+        n_uniq = label_count.shape[0]
 
-        # count each unique value
-        label_count = {}
-        for label in x:
-            try:
-                label_count[label] += 1
-            except KeyError:
-                label_count[label] = 1
+        label_count = label_count[label_count >= self.min_obs]
+        n_uniq_new = label_count.shape[0]
 
-        # add unique values appearing more than min_obs to the encoder.
-        label_encoder = {}
-        label_index = 1
-        labels_not_encoded = 0
-        for label in label_count.keys():
-            if label_count[label] >= self.min_obs:
-                label_encoder[label] = label_index
-                label_index += 1
-            else:
-                labels_not_encoded += 1
+        # If every label appears more than min_obs, new label starts from 0.
+        # Otherwise, new label starts from 1 and 0 is used for all old labels
+        # that appear less than min_obs.
+        offset = 0 if n_uniq == n_uniq_new else 1
 
-        max_label = label_index - 1
-
-        # if every label is encoded, then replace the maximum label with 0 so
-        # that total number of labels encoded is (# of total labels - 1).
-        if labels_not_encoded == 0:
-            for label in label_encoder:
-                # find the label with the maximum encoded value
-                if label_encoder[label] == max_label:
-                    # set the value of the label to 0 and decrease the maximum
-                    # by 1.
-                    label_encoder[label] = 0
-                    max_label -= 1
-                    break
+        label_encoder = pd.Series(np.arange(n_uniq_new) + offset, index=label_count.index)
+        max_label = label_encoder.max()
+        label_encoder = label_encoder.to_dict()
 
         return label_encoder, max_label
 
-    def _transform_col(self, x, col):
+    def _transform_col(self, x, i):
         """Encode one categorical column into labels.
 
         Args:
-            x (numpy.array): a categorical column to encode
-            col (int): column index
+            x (pandas.Series): a categorical column to encode
+            i (int): column index
 
         Returns:
             x (numpy.array): a column with labels.
         """
-
-        label_encoder = self.label_encoders[col]
-
-        # replace NaNs with the pre-defined random integer
-        x[pd.isnull(x)] = NAN_INT
-
-        labels = np.zeros((x.shape[0], ), dtype=np.int64)
-        for label in label_encoder:
-            labels[x == label] = label_encoder[label]
-
-        return labels
+        return x.fillna(NAN_INT).map(self.label_encoders[i]).fillna(0)
 
     def fit(self, X, y=None):
         self.label_encoders = [None] * X.shape[1]
         self.label_maxes = [None] * X.shape[1]
 
-        for col in range(X.shape[1]):
-            self.label_encoders[col], self.label_maxes[col] = \
-                self._get_label_encoder_and_max(X[:, col])
+        for i, col in enumerate(X.columns):
+            self.label_encoders[i], self.label_maxes[i] = \
+                self._get_label_encoder_and_max(X[col])
 
         return self
 
@@ -186,8 +156,8 @@ class LabelEncoder(base.BaseEstimator):
             X (numpy.array): label encoded columns
         """
 
-        for col in range(X.shape[1]):
-            X[:, col] = self._transform_col(X[:, col], col)
+        for i, col in enumerate(X.columns):
+            X.loc[:, col] = self._transform_col(X[col], i)
 
         return X
 
@@ -204,11 +174,11 @@ class LabelEncoder(base.BaseEstimator):
         self.label_encoders = [None] * X.shape[1]
         self.label_maxes = [None] * X.shape[1]
 
-        for col in range(X.shape[1]):
-            self.label_encoders[col], self.label_maxes[col] = \
-                self._get_label_encoder_and_max(X[:, col])
+        for i, col in enumerate(X.columns):
+            self.label_encoders[i], self.label_maxes[i] = \
+                self._get_label_encoder_and_max(X[col])
 
-            X[:, col] = self._transform_col(X[:, col], col)
+            X.loc[:, col] = X[col].fillna(NAN_INT).map(self.label_encoders[i]).fillna(0)
 
         return X
 
@@ -236,20 +206,20 @@ class OneHotEncoder(base.BaseEstimator):
     def __repr__(self):
         return ('OneHotEncoder(min_obs={})').format(self.min_obs)
 
-    def _transform_col(self, x, col):
+    def _transform_col(self, x, i):
         """Encode one categorical column into sparse matrix with one-hot-encoding.
 
         Args:
             x (numpy.array): a categorical column to encode
-            col (int): column index
+            i (int): column index
 
         Returns:
             X (scipy.sparse.coo_matrix): sparse matrix encoding a categorical
                                          variable into dummy variables
         """
 
-        labels = self.label_encoder._transform_col(x, col)
-        label_max = self.label_encoder.label_maxes[col]
+        labels = self.label_encoder._transform_col(x, i)
+        label_max = self.label_encoder.label_maxes[i]
 
         # build row and column index for non-zero values of a sparse matrix
         index = np.array(range(len(labels)))
@@ -279,16 +249,16 @@ class OneHotEncoder(base.BaseEstimator):
                                              variables into dummy variables
         """
 
-        for col in range(X.shape[1]):
-            X_col = self._transform_col(X[:, col], col)
+        for i, col in enumerate(X.columns):
+            X_col = self._transform_col(X[col], i)
             if X_col is not None:
-                if col == 0:
+                if i == 0:
                     X_new = X_col
                 else:
                     X_new = sparse.hstack((X_new, X_col))
 
             logging.debug('{} --> {} features'.format(
-                col, self.label_encoder.label_maxes[col])
+                col, self.label_encoder.label_maxes[i])
             )
 
         return X_new

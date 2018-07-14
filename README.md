@@ -77,8 +77,8 @@ cat_cols = [col for col in df.columns if df[col].dtype == np.object]
 ohe = OneHotEncoder(min_obs=100) # grouping all categories with less than 100 occurences
 lbe = LabelEncoder(min_obs=0.01) # grouping all categories with less than 1% occurences
 
-X_cat = ohe.fit_transform(df[cat_cols].values)	# X_cat is a scipy sparse matrix
-df.loc[:, cat_cols] = lbe.fit_transform(df[cat_cols].values)
+X_cat = ohe.fit_transform(df[cat_cols])	# X_cat is a scipy sparse matrix
+df.loc[:, cat_cols] = lbe.fit_transform(df[cat_cols])
 ```
 
 ## Ensemble
