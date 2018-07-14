@@ -99,7 +99,7 @@ class LabelEncoder(base.BaseEstimator):
         """Return a mapping from values and its maximum of a column to integer labels.
 
         Args:
-            x (numpy.array): a categorical column to encode.
+            x (pandas.Series): a categorical column to encode.
 
         Returns:
             label_encoder (dict): mapping from values of features to integers
@@ -132,7 +132,7 @@ class LabelEncoder(base.BaseEstimator):
             i (int): column index
 
         Returns:
-            x (numpy.array): a column with labels.
+            x (pandas.Series): a column with labels.
         """
         return x.fillna(NAN_INT).map(self.label_encoders[i]).fillna(0)
 
@@ -150,10 +150,10 @@ class LabelEncoder(base.BaseEstimator):
         """Encode categorical columns into sparse matrix with one-hot-encoding.
 
         Args:
-            X (numpy.array): categorical columns to encode
+            X (pandas.DataFrame): categorical columns to encode
 
         Returns:
-            X (numpy.array): label encoded columns
+            X (pandas.DataFrame): label encoded columns
         """
 
         for i, col in enumerate(X.columns):
@@ -165,10 +165,10 @@ class LabelEncoder(base.BaseEstimator):
         """Encode categorical columns into label encoded columns
 
         Args:
-            X (numpy.array): categorical columns to encode
+            X (pandas.DataFrame): categorical columns to encode
 
         Returns:
-            X (numpy.array): label encoded columns
+            X (pandas.DataFrame): label encoded columns
         """
 
         self.label_encoders = [None] * X.shape[1]
@@ -210,7 +210,7 @@ class OneHotEncoder(base.BaseEstimator):
         """Encode one categorical column into sparse matrix with one-hot-encoding.
 
         Args:
-            x (numpy.array): a categorical column to encode
+            x (pandas.Series): a categorical column to encode
             i (int): column index
 
         Returns:
@@ -242,7 +242,7 @@ class OneHotEncoder(base.BaseEstimator):
         """Encode categorical columns into sparse matrix with one-hot-encoding.
 
         Args:
-            X (numpy.array): categorical columns to encode
+            X (pandas.DataFrame): categorical columns to encode
 
         Returns:
             X_new (scipy.sparse.coo_matrix): sparse matrix encoding categorical
@@ -267,7 +267,7 @@ class OneHotEncoder(base.BaseEstimator):
         """Encode categorical columns into sparse matrix with one-hot-encoding.
 
         Args:
-            X (numpy.array): categorical columns to encode
+            X (pandas.DataFrame): categorical columns to encode
 
         Returns:
             sparse matrix encoding categorical variables into dummy variables
