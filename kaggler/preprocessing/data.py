@@ -147,7 +147,7 @@ class LabelEncoder(base.BaseEstimator):
         return self
 
     def transform(self, X):
-        """Encode categorical columns into sparse matrix with one-hot-encoding.
+        """Encode categorical columns into label encoded columns
 
         Args:
             X (pandas.DataFrame): categorical columns to encode
@@ -276,6 +276,91 @@ class OneHotEncoder(base.BaseEstimator):
         self.label_encoder.fit(X)
 
         return self.transform(X)
+
+
+class TargetEncoder(base.BaseEstimator):
+    """Target Encoder that encode categorical values into average target values.
+    Attributes:
+        target_encoders (list of dict): target encoders for columns
+    """
+
+    def __init__(self):
+        """Initialize the TargetEncoder class object
+        Args:
+        """
+        pass
+
+    def __repr__(self):
+        return('TargetEncoder()')
+
+    def _get_target_encoder(self, x, y):
+        """Return a mapping from categories to average target values.
+        Args:
+            x (pandas.Series): a categorical column to encode.
+            y (pandas.Series): the target column
+        Returns:
+            target_encoder (dict): mapping from categories to average target values
+        """
+
+        assert len(x) == len(y)
+
+        # NaN cannot be used as a key for dict. So replace it with a random integer
+        df = pd.DataFrame({y.name: y, x.name: x.fillna(NAN_INT)})
+        return df.groupby(x.name)[y.name].mean().to_dict()
+
+    def _transform_col(self, x, i):
+        """Encode one categorical column into average target values.
+        Args:
+            x (pandas.Series): a categorical column to encode
+            i (int): column index
+        Returns:
+            x (pandas.Series): a column with labels.
+        """
+        return x.fillna(NAN_INT).map(self.target_encoders[i]).fillna(0)
+
+    def fit(self, X, y):
+        """Encode categorical columns into average target values.
+        Args:
+            X (pandas.DataFrame): categorical columns to encode
+            y (pandas.Series): the target column
+        Returns:
+            X (pandas.DataFrame): encoded columns
+        """
+        self.target_encoders = [None] * X.shape[1]
+
+        for i, col in enumerate(X.columns):
+            self.target_encoders[i] = self._get_target_encoder(X[col], y)
+
+        return self
+
+    def transform(self, X):
+        """Encode categorical columns into average target values.
+        Args:
+            X (pandas.DataFrame): categorical columns to encode
+        Returns:
+            X (pandas.DataFrame): encoded columns
+        """
+        for i, col in enumerate(X.columns):
+            X.loc[:, col] = self._transform_col(X[col], i)
+
+        return X
+
+    def fit_transform(self, X, y):
+        """Encode categorical columns into average target values.
+        Args:
+            X (pandas.DataFrame): categorical columns to encode
+            y (pandas.Series): the target column
+        Returns:
+            X (pandas.DataFrame): encoded columns
+        """
+        self.target_encoders = [None] * X.shape[1]
+
+        for i, col in enumerate(X.columns):
+            self.target_encoders[i] = self._get_target_encoder(X[col], y)
+
+            X.loc[:, col] = X[col].fillna(NAN_INT).map(self.target_encoders[i]).fillna(0)
+
+        return X
 
 
 class BandpassFilter(base.BaseEstimator):
