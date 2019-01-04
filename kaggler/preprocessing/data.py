@@ -316,7 +316,7 @@ class TargetEncoder(base.BaseEstimator):
         Returns:
             x (pandas.Series): a column with labels.
         """
-        return x.fillna(NAN_INT).map(self.target_encoders[i]).fillna(0)
+        return x.fillna(NAN_INT).map(self.target_encoders[i]).fillna(self.target_mean)
 
     def fit(self, X, y):
         """Encode categorical columns into average target values.
@@ -327,6 +327,7 @@ class TargetEncoder(base.BaseEstimator):
             X (pandas.DataFrame): encoded columns
         """
         self.target_encoders = [None] * X.shape[1]
+        self.target_mean = y.mean()
 
         for i, col in enumerate(X.columns):
             self.target_encoders[i] = self._get_target_encoder(X[col], y)
@@ -354,11 +355,12 @@ class TargetEncoder(base.BaseEstimator):
             X (pandas.DataFrame): encoded columns
         """
         self.target_encoders = [None] * X.shape[1]
+        self.target_mean = y.mean()
 
         for i, col in enumerate(X.columns):
             self.target_encoders[i] = self._get_target_encoder(X[col], y)
 
-            X.loc[:, col] = X[col].fillna(NAN_INT).map(self.target_encoders[i]).fillna(0)
+            X.loc[:, col] = X[col].fillna(NAN_INT).map(self.target_encoders[i]).fillna(self.target_mean)
 
         return X
 
@@ -370,14 +372,12 @@ class BandpassFilter(base.BaseEstimator):
         self.lowcut = .5
         self.highcut = 3.
         self.order = 3
-        b, a = _butter_bandpass()
-        self.a = a
-        self.b = b
+        self.b, self.a = self._butter_bandpass()
 
     def _butter_bandpass(self):
         nyq = .5 * self.fs
-        low = lowcut / nyq
-        high = highcut / nyq
+        low = self.lowcut / nyq
+        high = self.highcut / nyq
         b, a = butter(self.order, [low, high], btype='band')
 
         return b, a
