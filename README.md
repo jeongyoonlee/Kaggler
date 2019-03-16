@@ -18,7 +18,7 @@ Python packages required are listed in `requirements.txt`
 ### Using pip
 Python package is available at PyPi for pip installation:
 ```
-sudo pip install -U Kaggler
+(sudo) pip install -U Kaggler
 ```
 If installation fails because it cannot find `MurmurHash3.h`, please add `.` to
 `LD_LIBRARY_PATH` as described [here](https://github.com/jeongyoonlee/Kaggler/issues/32).
