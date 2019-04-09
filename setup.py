@@ -2,24 +2,42 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from setuptools import setup, Extension
-import numpy as np
+
 
 try:
     from Cython.Build import build_ext
 except ImportError:
+    from setuptools.command.build_ext import build_ext
     ext = '.c'
-    cmdclass = {}
 else:
     ext = '.pyx'
-    cmdclass = {'build_ext': build_ext}
 
 
 read_md = lambda f: open(f, 'r').read()
 
 
+def set_builtin(name, value):
+    if isinstance(__builtins__, dict):
+        __builtins__[name] = value
+    else:
+        setattr(__builtins__, name, value)
+
+
+
+# include_dirs adjusted:
+class my_build_ext(build_ext):
+    def finalize_options(self):
+        build_ext.finalize_options(self)
+
+        # prevent numpy from thinking it is still in its setup process:
+        set_builtin('__NUMPY_SETUP__', False)
+        import numpy as np
+        self.include_dirs.append(np.get_include())
+
+
 setup(
     name='Kaggler',
-    version='0.6.7',
+    version='0.6.8',
 
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
@@ -54,39 +72,39 @@ setup(
         'keras'
     ],
 
-    setup_requires=['cython'],
+    setup_requires=['cython', 'numpy'],
 
-    cmdclass=cmdclass,
+    cmdclass={'build_ext': my_build_ext},
     ext_modules=[Extension('kaggler.online_model.ftrl',
                            ['kaggler/online_model/ftrl' + ext,
                             'kaggler/online_model/murmurhash/MurmurHash3.cpp'],
                            libraries=[],
-                           include_dirs=[np.get_include(), '.'],
+                           include_dirs=['.'],
                            extra_compile_args=['-O3']),
                  Extension('kaggler.online_model.sgd',
                            ['kaggler/online_model/sgd' + ext],
                            libraries=[],
-                           include_dirs=[np.get_include(), '.'],
+                           include_dirs=['.'],
                            extra_compile_args=['-O3']),
                  Extension('kaggler.online_model.fm',
                            ['kaggler/online_model/fm' + ext],
                            libraries=[],
-                           include_dirs=[np.get_include(), '.'],
+                           include_dirs=['.'],
                            extra_compile_args=['-O3']),
                  Extension('kaggler.online_model.nn',
                            ['kaggler/online_model/nn' + ext],
                            libraries=[],
-                           include_dirs=[np.get_include(), '.'],
+                           include_dirs=['.'],
                            extra_compile_args=['-O3']),
                  Extension('kaggler.online_model.nn_h2',
                            ['kaggler/online_model/nn_h2' + ext],
                            libraries=[],
-                           include_dirs=[np.get_include(), '.'],
+                           include_dirs=['.'],
                            extra_compile_args=['-O3']),
                  Extension('kaggler.util',
                            ['kaggler/util' + ext, 'kaggler/util.pxd'],
                            libraries=[],
-                           include_dirs=[np.get_include(), '.'],
+                           include_dirs=['.'],
                            extra_compile_args=['-O3'])],
 
     zip_safe=False,
