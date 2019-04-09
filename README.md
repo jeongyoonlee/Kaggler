@@ -179,4 +179,4 @@ p = clf.predict(X)
 ```
 
 ## Documentation
-Package documentation is available at [here](http://pythonhosted.org//Kaggler).
+Package documentation is available at [here](https://kaggler.readthedocs.io/en/latest/)
