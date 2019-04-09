@@ -12,7 +12,7 @@ read_md = lambda f: open(f, 'r').read()
 
 setup(
     name='Kaggler',
-    version='0.6.5',
+    version='0.6.6',
 
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
