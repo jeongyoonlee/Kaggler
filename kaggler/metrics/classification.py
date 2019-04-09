@@ -1,4 +1,6 @@
+from __future__ import absolute_import
 from __future__ import division
+from __future__ import print_function
 from sklearn.metrics import roc_curve, precision_recall_curve, log_loss, roc_auc_score as auc
 import matplotlib.pyplot as plt
 
@@ -34,7 +36,7 @@ def plot_roc_curve(y, p):
 
 def plot_pr_curve(y, p):
     precision, recall, _ = precision_recall_curve(y, p)
-    
+
     plt.step(recall, precision, color='b', alpha=0.2, where='post')
     plt.fill_between(recall, precision, step='post', alpha=0.2, color='b')
     plt.xlabel('Recall')

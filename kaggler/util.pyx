@@ -1,7 +1,9 @@
 # cython: boundscheck=False
 # cython: wraparound=False
 # cython: cdivision=True
+from __future__ import absolute_import
 from __future__ import division
+from __future__ import print_function
 from scipy import sparse
 from keras import backend as K
 
@@ -16,6 +18,7 @@ cimport numpy as np
 
 
 np.import_array()
+logger = logging.getLogger('Kaggler')
 
 
 cdef double sigm(double x):
@@ -104,7 +107,7 @@ def point(rank, n_team, n_teammate=1, t=0):
 def limit_mem(gpu=0):
     gpu = gpu
     os.environ["CUDA_VISIBLE_DEVICES"] = "{}".format(gpu)
-    logging.info('using GPU #{}'.format(gpu))
+    logger.info('using GPU #{}'.format(gpu))
     config = tf.ConfigProto()
     config.gpu_options.allow_growth=True
     sess = tf.Session(config=config)

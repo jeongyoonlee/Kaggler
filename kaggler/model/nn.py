@@ -1,4 +1,6 @@
+from __future__ import absolute_import
 from __future__ import division
+from __future__ import print_function
 from scipy import sparse
 from scipy.optimize import minimize
 from sklearn.metrics import roc_auc_score
@@ -8,6 +10,9 @@ import numpy as np
 import time
 
 from ..const import SEC_PER_MIN
+
+
+logger = logging.getLogger('Kaggler')
 
 
 class NN(object):
@@ -60,7 +65,7 @@ class NN(object):
         self.w_opt = self.w
         self.n_opt = 0
 
-        logging.info('training ...')
+        logger.info('training ...')
         n_obs = X.shape[0]
         batch = self.b
         n_epoch = self.n
@@ -150,7 +155,7 @@ class NN(object):
                                                           self.auc_opt))
             self.w = self.w_opt
 
-        logging.info('done training')
+        logger.info('done training')
 
     def predict(self, X):
         """Predict targets for a feature matrix.
@@ -159,9 +164,9 @@ class NN(object):
             X (np.array of float): feature matrix for prediction
 
         Returns:
-            
+            prediction (np.array)
         """
-        logging.info('predicting ...')
+        logger.info('predicting ...')
         ps = self.predict_raw(X)
 
         return sigm(ps[:, 0])

@@ -1,4 +1,6 @@
+from __future__ import absolute_import
 from __future__ import division
+from __future__ import print_function
 from scipy import sparse
 from scipy.signal import butter, lfilter
 from scipy.stats import norm
@@ -10,6 +12,7 @@ import pandas as pd
 
 
 NAN_INT = 7535805
+logger = logging.getLogger('Kaggler')
 
 
 class Normalizer(base.BaseEstimator):
@@ -257,7 +260,7 @@ class OneHotEncoder(base.BaseEstimator):
                 else:
                     X_new = sparse.hstack((X_new, X_col))
 
-            logging.debug('{} --> {} features'.format(
+            logger.debug('{} --> {} features'.format(
                 col, self.label_encoder.label_maxes[i])
             )
 

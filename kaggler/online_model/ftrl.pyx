@@ -2,13 +2,16 @@
 # cython: wraparound=False
 # cython: cdivision=True
 # cython: linetrace=False
+from __future__ import absolute_import
 from __future__ import division
+from __future__ import print_function
 import numpy as np
 
 cimport cython
 from libc.math cimport sqrt, abs
 from ..util cimport sigm
 cimport numpy as np
+
 
 cdef extern from "murmurhash/MurmurHash3.h":
     void MurmurHash3_x86_32(void *key, int len, np.uint32_t seed, void *out)

@@ -1,18 +1,18 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 from setuptools import setup, Extension
 from Cython.Distutils import build_ext
 
 import numpy as np
 
-try:
-    from pypandoc import convert
-    read_md = lambda f: convert(f, 'rst')
-except ImportError:
-    print("warning: pypandoc module not found, could not convert Markdown to RST")
-    read_md = lambda f: open(f, 'r').read()
+
+read_md = lambda f: open(f, 'r').read()
+
 
 setup(
     name='Kaggler',
-    version='0.6.3',
+    version='0.6.5',
 
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
@@ -30,6 +30,7 @@ setup(
 
     description='Code for Kaggle Data Science Competitions.',
     long_description=read_md('README.md'),
+    long_description_content_type='text/markdown',
 
     install_requires=[
         'cython',
@@ -41,8 +42,12 @@ setup(
         'scipy >= 0.14.0',
         'scikit-learn >= 0.15.0',
         'statsmodels >= 0.5.0',
-        'kaggle'
+        'kaggle',
+        'tensorflow',
+        'keras'
     ],
+
+    setup_requires=['setuptools', 'cython'],
 
     cmdclass={'build_ext': build_ext},
     ext_modules=[Extension('kaggler.online_model.ftrl',

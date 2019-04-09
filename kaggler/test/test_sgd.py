@@ -1,6 +1,8 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 import os
 import unittest
-
 from kaggler.online_model import SGD
 
 
@@ -10,6 +12,7 @@ DUMMY_SPARSE_STR = """0 1:1 3:1 10:1
 
 DUMMY_Y = [0, 0, 1]
 DUMMY_LEN_X = [3, 2, 4]
+
 
 class TestSGD(unittest.TestCase):
 
@@ -35,7 +38,7 @@ class TestSGD(unittest.TestCase):
 
             ys.append(y)
             len_xs.append(len(x))
-            
+
         # check if target values are correct
         self.assertEqual(ys, DUMMY_Y)
 

@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 from io import open
 from sklearn.datasets import load_svmlight_file, dump_svmlight_file
 from scipy import sparse
@@ -15,7 +18,7 @@ import h5py
 import numpy as np
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('Kaggler')
 
 
 def is_number(s):
@@ -252,26 +255,26 @@ def limit_stream(stream, count=1, skip=0):
 def save_obj(filename, obj):
     with open(filename, 'wb') as file:
         pickle.dump(obj, file, protocol=pickle.HIGHEST_PROTOCOL)
-    logging.info('saved : {}\t{}'.format(filename, type(obj)))
+    logger.info('saved : {}\t{}'.format(filename, type(obj)))
 
 
 def load_obj(filename):
     with open(filename, 'rb') as file:
         obj = pickle.load(file)
-    logging.info('loaded : {}\t{}'.format(filename, type(obj)))
+    logger.info('loaded : {}\t{}'.format(filename, type(obj)))
     return obj
 
 
 def save_array(filename, array):
     with h5py.File(filename, 'w') as file:
         file['data'] = array
-    logging.info('saved : {}\t{}\t{}'.format(filename, array.dtype, array.shape))
+    logger.info('saved : {}\t{}\t{}'.format(filename, array.dtype, array.shape))
 
 
 def load_array(filename):
     with h5py.File(filename, 'r') as file:
         array = file['data'][...]
-    logging.info('loaded : {}\t{}\t{}'.format(filename, array.dtype, array.shape))
+    logger.info('loaded : {}\t{}\t{}'.format(filename, array.dtype, array.shape))
     return array
 
 
@@ -281,7 +284,7 @@ def save_sparse(filename, array):
         file['data'] = array.data
         file['indices'] = array.indices
         file['indptr'] = array.indptr
-    logging.info('saved : {}\t{}\t{}'.format(filename, array.dtype, array.shape))
+    logger.info('saved : {}\t{}\t{}'.format(filename, array.dtype, array.shape))
 
 
 def load_sparse(filename):
@@ -291,7 +294,7 @@ def load_sparse(filename):
         indices = file['indices'][...]
         indptr = file['indptr'][...]
     array = sparse.csr_matrix((data, indices, indptr), shape=shape)
-    logging.info('loaded : {}\t{}\t{}'.format(filename, array.dtype, array.shape))
+    logger.info('loaded : {}\t{}\t{}'.format(filename, array.dtype, array.shape))
     return array
 
 
@@ -329,7 +332,7 @@ class Clock:
         current = time.asctime().split()[3]
         since_start = datetime.timedelta(seconds=round(self.now - self.start))
         since_last = datetime.timedelta(seconds=round(self.now - self.last))
-        logging.info(txt.format(current, since_start, since_last))
+        logger.info(txt.format(current, since_start, since_last))
 
 
 def beep(n=1):
@@ -340,9 +343,9 @@ def beep(n=1):
 def print_shape_type(*objs):
     for obj in objs:
         try:
-            logging.info(obj.shape, obj.dtype, type(obj))
+            logger.info(obj.shape, obj.dtype, type(obj))
         except AttributeError:
-            logging.error(obj.shape, type(obj))
+            logger.error(obj.shape, type(obj))
 
 
 """
