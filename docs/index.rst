@@ -1,48 +1,20 @@
-kaggler package
-===============
+.. Kaggler documentation master file, created by
+   sphinx-quickstart on Tue Apr  9 03:35:36 2019.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
 
-Subpackages
------------
+Welcome to Kaggler's documentation!
+===================================
 
 .. toctree::
-
-    kaggler.metrics
-    kaggler.online_model
-    kaggler.preprocessing
-    kaggler.test
-
-Submodules
-----------
-
-kaggler.const module
---------------------
-
-.. automodule:: kaggler.const
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-kaggler.data_io module
------------------
-
-.. automodule:: kaggler.data_io
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-kaggler.util module
--------------------
-
-.. automodule:: kaggler.util
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :maxdepth: 2
+   :caption: Contents:
 
 
-Module contents
----------------
 
-.. automodule:: kaggler
-    :members:
-    :undoc-members:
-    :show-inheritance:
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

@@ -1,21 +1,22 @@
-kaggler.preprocessing package
-============================
+kaggler.ensemble package
+========================
 
 Submodules
 ----------
 
-kaggler.preprocessing.data module
+kaggler.ensemble.linear module
 ------------------------------
 
-.. automodule:: kaggler.preprocessing.data
+.. automodule:: kaggler.ensemble.linear
     :members:
     :undoc-members:
     :show-inheritance:
 
+
 Module contents
 ---------------
 
-.. automodule:: kaggler.preprocessing
+.. automodule:: kaggler.ensemble
     :members:
     :undoc-members:
     :show-inheritance:
