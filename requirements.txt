@@ -1,3 +1,4 @@
+setuptools>=41.0.0
 cython
 h5py
 ml_metrics

@@ -58,18 +58,19 @@ setup(
     long_description_content_type='text/markdown',
 
     install_requires=[
+        'setuptools>=41.0.0',
         'cython',
         'h5py',
         'ml_metrics',
         'numpy',
         'pandas',
         'matplotlib',
-        'scipy >= 0.14.0',
-        'scikit-learn >= 0.15.0',
-        'statsmodels >= 0.5.0',
+        'scipy>=0.14.0',
+        'scikit-learn>=0.15.0',
+        'statsmodels>=0.5.0',
         'kaggle',
         'tensorflow',
-        'keras'
+        'keras',
     ],
 
     setup_requires=['cython', 'numpy'],
