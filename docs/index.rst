@@ -7,9 +7,10 @@ Welcome to Kaggler's documentation!
 ===================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+    :maxdepth: 2
+    :caption: Contents:
 
+    kaggler
 
 
 Indices and tables
