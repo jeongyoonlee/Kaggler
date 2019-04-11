@@ -10,7 +10,7 @@ Welcome to Kaggler's documentation!
     :maxdepth: 2
     :caption: Contents:
 
-    kaggler
+    source/kaggler
 
 
 Indices and tables
