@@ -1,5 +1,5 @@
 setuptools>=41.0.0
-cython
+cython>0.29.0
 h5py
 ml_metrics
 numpy

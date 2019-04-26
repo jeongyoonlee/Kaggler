@@ -37,7 +37,7 @@ class my_build_ext(build_ext):
 
 setup(
     name='Kaggler',
-    version='0.6.8',
+    version='0.6.9',
 
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
@@ -59,7 +59,7 @@ setup(
 
     install_requires=[
         'setuptools>=41.0.0',
-        'cython',
+        'cython>=0.29.0',
         'h5py',
         'ml_metrics',
         'numpy',
@@ -73,7 +73,7 @@ setup(
         'keras',
     ],
 
-    setup_requires=['cython', 'numpy'],
+    setup_requires=['cython>=0.29.0', 'numpy'],
 
     cmdclass={'build_ext': my_build_ext},
     ext_modules=[Extension('kaggler.online_model.ftrl',
