@@ -13,6 +13,37 @@ kaggler.data\_io module
     :undoc-members:
     :show-inheritance:
 
+
+kaggler.feature_selection module
+--------------------------------
+
+.. automodule:: kaggler.feature_selection
+    :members:
+    :imported-members:
+    :undoc-members:
+    :show-inheritance:
+
+
+kaggler.preprocessing module
+----------------------------
+
+.. automodule:: kaggler.preprocessing
+    :members:
+    :imported-members:
+    :undoc-members:
+    :show-inheritance:
+
+
+kaggler.online_model module
+---------------------------
+
+.. automodule:: kaggler.online_model
+    :members:
+    :imported-members:
+    :undoc-members:
+    :show-inheritance:
+
+
 kaggler.util module
 -------------------
 
