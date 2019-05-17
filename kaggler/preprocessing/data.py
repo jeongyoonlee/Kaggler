@@ -15,6 +15,92 @@ NAN_INT = 7535805
 logger = logging.getLogger('Kaggler')
 
 
+class QuantileEncoder(base.BaseEstimator):
+    """QuantileEncoder encodes numerical features to quantile values.
+
+    Attributes:
+        ecdfs (list of empirical CDF): empirical CDFs for columns
+        n_label (int): the number of labels to be created.
+    """
+
+    def __init__(self, n_label=10, sample=100000, random_state=42):
+        """Initialize a QuantileEncoder class object.
+
+        Args:
+            n_label (int): the number of labels to be created.
+            sample (int or float): the number or fraction of samples to use for ECDF
+        """
+        self.n_label = n_label
+        self.sample = sample
+        self.random_state = random_state
+
+    def fit(self, X, y=None):
+        """Get empirical CDFs of numerical features.
+
+        Args:
+            X (pandas.DataFrame): numerical features to encode
+
+        Returns:
+            A trained QuantileEncoder object.
+        """
+        def _calculate_ecdf(x):
+            return ECDF(x[~np.isnan(x)])
+
+        if self.sample >= X.shape[0]:
+            self.ecdfs = X.apply(_calculate_ecdf, axis=0)
+        elif self.sample > 1:
+            self.ecdfs = X.sample(n=self.sample, random_state=self.random_state).apply(_calculate_ecdf, axis=0)
+        else:
+            self.ecdfs = X.sample(frac=self.sample, random_state=self.random_state).apply(_calculate_ecdf, axis=0)
+
+        return self
+
+    def fit_transform(self, X, y=None):
+        """Get empirical CDFs of numerical features and encode to quantiles.
+
+        Args:
+            X (pandas.DataFrame): numerical features to encode
+
+        Returns:
+            Encoded features (pandas.DataFrame).
+        """
+        self.fit(X, y)
+
+        return self.transform(X)
+
+    def transform(self, X):
+        """Encode numerical features to quantiles.
+
+        Args:
+            X (pandas.DataFrame): numerical features to encode
+
+        Returns:
+            Encoded features (pandas.DataFrame).
+        """
+        for i, col in enumerate(X.columns):
+            X.loc[:, col] = self._transform_col(X[col], i)
+
+        return X
+
+    def _transform_col(self, x, i):
+        """Encode one numerical feature column to quantiles.
+
+        Args:
+            x (pandas.Series): numerical feature column to encode
+            i (int): column index of the numerical feature
+
+        Returns:
+            Encoded feature (pandas.Series).
+        """
+        # Map values to the emperical CDF between .1% and 99.9%
+        rv = np.ones_like(x) * -1
+
+        filt = ~np.isnan(x)
+        rv[filt] = np.floor((self.ecdfs[i](x[filt]) * 0.998 + .001) * self.n_label)
+
+        return rv
+
+
 class Normalizer(base.BaseEstimator):
     """Normalizer that transforms numerical columns into normal distribution.
 
