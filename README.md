@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jeongyoonlee/Kaggler.svg?branch=master)](https://travis-ci.org/jeongyoonlee/Kaggler)
+
 # Kaggler
 Kaggler is a Python package for lightweight online machine learning algorithms and utility functions for ETL and data analysis. It is distributed under the MIT License.
 
