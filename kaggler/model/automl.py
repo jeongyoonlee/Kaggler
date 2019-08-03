@@ -1,3 +1,8 @@
+"""
+This code is based on the starting kit provided at KDD Cup 2019 -
+Auto ML track (https://www.4paradigm.com/competition/kddcup2019).
+"""
+
 import hyperopt
 from hyperopt import STATUS_OK, Trials, hp, space_eval, tpe
 import lightgbm as lgb
