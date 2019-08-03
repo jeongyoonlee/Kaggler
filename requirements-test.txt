@@ -1,0 +1,5 @@
+flake8
+pluggy<1,>=0.12.0
+pytest
+tox
+tox-travis
