@@ -2,7 +2,6 @@ language: python
 
 python:
     - "3.6"
-    - "3.7"
 
 install:
     - pip install -U pip
@@ -15,4 +14,4 @@ jobs:
     include:
         - stage: test
           name: test
-          script: tox
+          script: pytest -vs
