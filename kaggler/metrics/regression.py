@@ -2,9 +2,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from sklearn.metrics import mean_squared_error as mse
-from sklearn.metrics import mean_absolute_error as mae
-from sklearn.metrics import r2_score as r2
-from ml_metrics import quadratic_weighted_kappa as kappa
+from sklearn.metrics import mean_absolute_error as mae  # noqa
+from sklearn.metrics import r2_score as r2              # noqa
+from ml_metrics import quadratic_weighted_kappa as kappa    # noqa
 
 import numpy as np
 
@@ -62,8 +62,8 @@ def gini(y, p):
     # sort rows on prediction column
     # (from largest to smallest)
     arr = np.array([y, p]).transpose()
-    true_order = arr[arr[:,0].argsort()][::-1,0]
-    pred_order = arr[arr[:,1].argsort()][::-1,0]
+    true_order = arr[arr[:, 0].argsort()][::-1, 0]
+    pred_order = arr[arr[:, 1].argsort()][::-1, 0]
 
     # get Lorenz curves
     l_true = np.cumsum(true_order) / np.sum(true_order)

@@ -54,3 +54,6 @@ docs/_build/
 # PyBuilder
 target/
 .eggs/
+.vscode/
+*.c
+.DS_Store

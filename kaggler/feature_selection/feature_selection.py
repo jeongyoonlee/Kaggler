@@ -6,10 +6,11 @@ from sklearn import base
 import numpy as np
 
 
-"""
-Code below was originally written by Baris Umog (https://www.kaggle.com/barisumog).
-"""
 class DropInactive(base.BaseEstimator, base.TransformerMixin):
+    """Drop all zero features.
+
+    Originally written by Baris Umog (https://www.kaggle.com/barisumog).
+    """
 
     def __init__(self, lowest=25):
         self.lowest = lowest
@@ -26,6 +27,10 @@ class DropInactive(base.BaseEstimator, base.TransformerMixin):
 
 
 class DropLowInfo(base.BaseEstimator, base.TransformerMixin):
+    """Drop features with low information.
+
+    Originally written by Baris Umog (https://www.kaggle.com/barisumog).
+    """
 
     def __init__(self, margin=0.02, weighted=True):
         self.margin = margin

@@ -1,7 +1,8 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-from sklearn.metrics import roc_curve, precision_recall_curve, log_loss, roc_auc_score as auc
+from sklearn.metrics import roc_curve, precision_recall_curve, log_loss
+from sklearn.metrics import roc_auc_score as auc    # noqa
 import matplotlib.pyplot as plt
 
 from ..const import EPS

@@ -1,9 +1,13 @@
 setuptools>=41.0.0
 cython>0.29.0
+flake8
 h5py
+hyperopt
+lightgbm
 ml_metrics
 numpy
 pandas
+pytest
 scikit-learn>=0.15.0
 scipy>=0.14.0
 statsmodels>=0.5.0
@@ -11,3 +15,6 @@ matplotlib
 kaggle
 keras
 tensorflow
+tox
+tox-travis
+tqdm

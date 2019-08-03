@@ -2,9 +2,17 @@ import random
 import numpy as np
 cimport numpy as np
 
-from utils import *
 
 ctypedef np.int_t DTYPE_t
+
+
+cpdef tuple bin_split(list sample_feature, double feature_value):
+    cdef list left, right
+    cdef tuple x
+    left = [x[1] for x in sample_feature if x[0]<=feature_value]
+    right = [x[1] for x in sample_feature if x[0]>feature_value]
+    return left, right
+
 
 cdef class Tree:
 
@@ -53,14 +61,14 @@ cdef class Tree:
 
     def _is_leaf(self):
         return self.criterion == None
-    
+
     cpdef update(self, np.ndarray x, y):
         """
         Update the model according to a single (x, y) input.
-        
+
         If the current node is a leaf, then update the samples of the
         current node.
-        
+
         Else update its left or right node recursively according to the
         value of x.
         When the left and right child are created, they inherit mean and
@@ -101,14 +109,14 @@ cdef class Tree:
             for (value, prediction) in self.samples[feature]:
                 sample_feature = self.samples[feature]
                 left, right = bin_split(sample_feature, value)
-                
+
                 split = {
                     'left': left,
                     'right': right,
                     'value': value,
                     'feature': feature,
                 }
-                
+
                 split_score = self._calculate_split_score(split)
                 if split_score > best_split_score:
                     best_split = split

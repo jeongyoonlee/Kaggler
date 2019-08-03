@@ -1,5 +1,5 @@
 # Kaggler
-Kaggler is a Python package for lightweight online machine learning algorithms and utility functions for ETL and data analysis. It is distributed under the version 3 of the GNU General Public License.
+Kaggler is a Python package for lightweight online machine learning algorithms and utility functions for ETL and data analysis. It is distributed under the MIT License.
 
 Its online learning algorithms are inspired by Kaggle user [tinrtgu's code](http://goo.gl/K8hQBx).  It uses the sparse input format that handles large sparse data efficiently.  Core code is optimized for speed by using Cython.
 
@@ -10,10 +10,12 @@ Its online learning algorithms are inspired by Kaggle user [tinrtgu's code](http
 Python packages required are listed in `requirements.txt`
 * cython
 * h5py
+* hyperopt
+* lightgbm
+* ml_metrics
 * numpy/scipy
 * pandas
 * scikit-learn
-* ml_metrics
 
 ### Using pip
 Python package is available at PyPi for pip installation:
@@ -89,6 +91,41 @@ tst.loc[:, cat_cols] = lbe.transform(tst[cat_cols])
 tst.loc[:, cat_cols] = te.transform(tst[cat_cols])
 ```
 
+## AutoML
+
+### Feature Selection & Hyperparameter Tuning
+```python
+import pandas as pd
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+from kaggler.metrics import auc
+from kaggler.model import AutoLGB
+
+
+RANDOM_SEED = 42
+N_OBS = 10000
+N_FEATURE = 100
+N_IMP_FEATURE = 20
+
+X, y = make_classification(n_samples=N_OBS,
+                            n_features=N_FEATURE,
+                            n_informative=N_IMP_FEATURE,
+                            random_state=RANDOM_SEED)
+X = pd.DataFrame(X, columns=['x{}'.format(i) for i in range(X.shape[1])])
+y = pd.Series(y)
+
+X_trn, X_tst, y_trn, y_tst = train_test_split(X, y,
+                                                test_size=.2,
+                                                random_state=RANDOM_SEED)
+
+model = AutoLGB(objective='binary', metric='auc')
+model.tune(X_trn, y_trn)
+model.fit(X_trn, y_trn)
+p = model.predict(X_tst)
+print('AUC: {:.4f}'.format(auc(y_tst, p)))
+
+```
+
 ## Ensemble
 
 ### Netflix Blending
@@ -104,8 +141,8 @@ p3 = np.loadtxt('model3_prediction.txt')
 
 # Calculate RMSEs of model predictions and all-zero prediction.
 # At a competition, RMSEs (or RMLSEs) of submissions can be used.
-y = np.loadtxt('target.txt')   
-e0 = rmse(y, np.zeros_like(y)) 
+y = np.loadtxt('target.txt')
+e0 = rmse(y, np.zeros_like(y))
 e1 = rmse(y, p1)
 e2 = rmse(y, p2)
 e3 = rmse(y, p3)

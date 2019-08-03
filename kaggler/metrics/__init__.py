@@ -8,3 +8,7 @@ from .regression import mape
 from .regression import gini
 from .regression import rmse
 from .regression import kappa
+
+
+__all__ = ['auc', 'logloss', 'plot_roc_curve', 'plot_pr_curve',
+           'mae', 'r2', 'mape', 'gini', 'rmse', 'kappa']

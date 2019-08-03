@@ -5,8 +5,7 @@ import numpy as np
 
 
 def netflix(es, ps, e0, l=.0001):
-    """
-    Combine predictions with the optimal weights to minimize RMSE.
+    """Combine predictions with the optimal weights to minimize RMSE.
 
     Args:
         es (list of float): RMSEs of predictions
@@ -15,7 +14,10 @@ def netflix(es, ps, e0, l=.0001):
         l (float): lambda as in the ridge regression
 
     Returns:
-        Ensemble prediction (np.array) and weights (np.array) for input predictions
+        (tuple):
+
+            - (np.array): ensemble predictions
+            - (np.array): weights for input predictions
     """
     m = len(es)
     n = len(ps[0])

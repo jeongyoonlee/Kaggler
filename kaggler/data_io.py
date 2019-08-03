@@ -107,7 +107,7 @@ def load_data(path, dense=False):
     """Load data from a CSV, LibSVM or HDF5 file based on the file extension.
 
     Args:
-        path (str): A path to the CSV, LibSVM or HDF5 format file containing data.
+        path (str): A path to the CSV, LibSVM or HDF5 format file.
         dense (boolean): An optional variable indicating if the return matrix
                          should be dense.  By default, it is false.
 
@@ -209,13 +209,12 @@ def shuf_file(f, shuf_win):
     while len(heap) > 0:
         _, out = heapq.heappop(heap)
         yield out
-        
 
-"""
-Code below was originally written by Baris Umog (https://www.kaggle.com/barisumog).
-"""
+
 class PathJoiner:
     """Load directory names from SETTINGS.json.
+
+    Originally written by Baris Umog (https://www.kaggle.com/barisumog).
 
     Usage:
         # In SETTINGS.json, "data": "/path/to/data/".
@@ -265,26 +264,26 @@ def load_obj(filename):
     return obj
 
 
-def save_array(filename, array):
+def save_array(filename, X):
     with h5py.File(filename, 'w') as file:
-        file['data'] = array
-    logger.info('saved : {}\t{}\t{}'.format(filename, array.dtype, array.shape))
+        file['data'] = X
+    logger.info('saved : {}\t{}\t{}'.format(filename, X.dtype, X.shape))
 
 
 def load_array(filename):
     with h5py.File(filename, 'r') as file:
-        array = file['data'][...]
-    logger.info('loaded : {}\t{}\t{}'.format(filename, array.dtype, array.shape))
-    return array
+        X = file['data'][...]
+    logger.info('loaded : {}\t{}\t{}'.format(filename, X.dtype, X.shape))
+    return X
 
 
-def save_sparse(filename, array):
+def save_sparse(filename, X):
     with h5py.File(filename, 'w') as file:
-        file['shape'] = np.array(array.shape)
-        file['data'] = array.data
-        file['indices'] = array.indices
-        file['indptr'] = array.indptr
-    logger.info('saved : {}\t{}\t{}'.format(filename, array.dtype, array.shape))
+        file['shape'] = np.array(X.shape)
+        file['data'] = X.data
+        file['indices'] = X.indices
+        file['indptr'] = X.indptr
+    logger.info('saved : {}\t{}\t{}'.format(filename, X.dtype, X.shape))
 
 
 def load_sparse(filename):
@@ -293,27 +292,27 @@ def load_sparse(filename):
         data = file['data'][...]
         indices = file['indices'][...]
         indptr = file['indptr'][...]
-    array = sparse.csr_matrix((data, indices, indptr), shape=shape)
-    logger.info('loaded : {}\t{}\t{}'.format(filename, array.dtype, array.shape))
-    return array
+    X = sparse.csr_matrix((data, indices, indptr), shape=shape)
+    logger.info('loaded : {}\t{}\t{}'.format(filename, X.dtype, X.shape))
+    return X
 
 
-def save(filename, data):
+def save(filename, X):
     catalog = {'obj': save_obj, 'array': save_array, 'sparse': save_sparse}
     extension = filename.split('.')[-1]
     func = catalog[extension]
-    func(filename, data)
+    func(filename, X)
 
 
 def load(filename):
     catalog = {'obj': load_obj, 'array': load_array, 'sparse': load_sparse}
     extension = filename.split('.')[-1]
     func = catalog[extension]
-    data = func(filename)
-    return data
+    X = func(filename)
+    return X
 
 
-class Clock:
+class Clock(object):
 
     def __init__(self):
         self.start = time.time()
@@ -346,11 +345,3 @@ def print_shape_type(*objs):
             logger.info(obj.shape, obj.dtype, type(obj))
         except AttributeError:
             logger.error(obj.shape, type(obj))
-
-
-"""
-def plot_maxed():
-    manager = plt.get_current_fig_manager()
-    manager.resize(*manager.window.maxsize())
-    plt.show()
-"""

@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from setuptools import setup, Extension
+import platform
 
 
 try:
@@ -13,7 +14,18 @@ else:
     ext = '.pyx'
 
 
-read_md = lambda f: open(f, 'r').read()
+# from https://stackoverflow.com/a/52466939/3216742
+extra_compile_args = ['-O3']
+extra_link_args = []
+
+if platform.system() == "Darwin":
+    extra_compile_args += ["-mmacosx-version-min=10.9"]
+    extra_link_args += ["-mmacosx-version-min=10.9"]
+
+
+def read_md(path):
+    with open(path, 'r') as f:
+        f.read()
 
 
 def set_builtin(name, value):
@@ -21,7 +33,6 @@ def set_builtin(name, value):
         __builtins__[name] = value
     else:
         setattr(__builtins__, name, value)
-
 
 
 # include_dirs adjusted:
@@ -37,7 +48,7 @@ class my_build_ext(build_ext):
 
 setup(
     name='Kaggler',
-    version='0.7.0',
+    version='0.8.0',
 
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
@@ -48,10 +59,9 @@ setup(
               'kaggler.model',
               'kaggler.metrics',
               'kaggler.online_model',
-              'kaggler.preprocessing',
-              'kaggler.test'],
+              'kaggler.preprocessing'],
     url='https://github.com/jeongyoonlee/Kaggler',
-    license='LICENSE.txt',
+    license='LICENSE',
 
     description='Code for Kaggle Data Science Competitions.',
     long_description=read_md('README.md'),
@@ -61,6 +71,7 @@ setup(
         'setuptools>=41.0.0',
         'cython>=0.29.0',
         'h5py',
+        'hyperopt',
         'ml_metrics',
         'numpy',
         'pandas',
@@ -81,32 +92,45 @@ setup(
                             'kaggler/online_model/murmurhash/MurmurHash3.cpp'],
                            libraries=[],
                            include_dirs=['.'],
-                           extra_compile_args=['-O3']),
+                           extra_compile_args=extra_compile_args,
+                           extra_link_args=extra_link_args),
                  Extension('kaggler.online_model.sgd',
                            ['kaggler/online_model/sgd' + ext],
                            libraries=[],
                            include_dirs=['.'],
-                           extra_compile_args=['-O3']),
+                           extra_compile_args=extra_compile_args,
+                           extra_link_args=extra_link_args),
                  Extension('kaggler.online_model.fm',
                            ['kaggler/online_model/fm' + ext],
                            libraries=[],
                            include_dirs=['.'],
-                           extra_compile_args=['-O3']),
+                           extra_compile_args=extra_compile_args,
+                           extra_link_args=extra_link_args),
                  Extension('kaggler.online_model.nn',
                            ['kaggler/online_model/nn' + ext],
                            libraries=[],
                            include_dirs=['.'],
-                           extra_compile_args=['-O3']),
+                           extra_compile_args=extra_compile_args,
+                           extra_link_args=extra_link_args),
                  Extension('kaggler.online_model.nn_h2',
                            ['kaggler/online_model/nn_h2' + ext],
                            libraries=[],
                            include_dirs=['.'],
-                           extra_compile_args=['-O3']),
+                           extra_compile_args=extra_compile_args,
+                           extra_link_args=extra_link_args),
+                 Extension('kaggler.online_model._tree',
+                           ['kaggler/online_model/_tree' + ext],
+                           libraries=[],
+                           include_dirs=['.'],
+                           extra_compile_args=extra_compile_args,
+                           extra_link_args=extra_link_args),
                  Extension('kaggler.util',
                            ['kaggler/util' + ext, 'kaggler/util.pxd'],
                            libraries=[],
                            include_dirs=['.'],
-                           extra_compile_args=['-O3'])],
+                           extra_compile_args=extra_compile_args,
+                           extra_link_args=extra_link_args),
+                 ],
 
     zip_safe=False,
 )

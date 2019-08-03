@@ -42,7 +42,7 @@ class NN(object):
 
     def fit(self, X, y, X_val=None, y_val=None):
         """Train a network with the quasi-Newton method.
-        
+
         Args:
             X (np.array of float): feature matrix for training
             y (np.array of float): target values for training
@@ -87,9 +87,9 @@ class NN(object):
         print('\t{:3d}:  {:.6f}  {:.6f}  {:.6f}  {:.2f}'.format(
               0, auc, auc_val, self.auc_opt,
               (time.time() - start) / SEC_PER_MIN))
-     
+
         # Use 'while' instead of 'for' to increase n_epoch if the validation
-        # error keeps improving at the end of n_epoch 
+        # error keeps improving at the end of n_epoch
         epoch = 1
         while epoch <= n_epoch:
             # Shuffle inputs every epoch - it helps avoiding the local optimum
@@ -109,8 +109,10 @@ class NN(object):
                     sub_idx = idx[batch * i:batch * (i + 1)]
 
                 x = X[sub_idx]
-                neg_idx = [n_idx for n_idx, n_y in enumerate(y[sub_idx]) if n_y == 0.]
-                pos_idx = [p_idx for p_idx, p_y in enumerate(y[sub_idx]) if p_y == 1.]
+                neg_idx = [n_idx for n_idx, n_y in enumerate(y[sub_idx])
+                           if n_y == 0.]
+                pos_idx = [p_idx for p_idx, p_y in enumerate(y[sub_idx])
+                           if p_y == 1.]
                 x0 = x[neg_idx]
                 x1 = x[pos_idx]
                 # Update weights to minimize the cost function using the
@@ -250,7 +252,6 @@ class NN(object):
         # Return the cost that consists of the sum of squared error +
         # L2-regularization for weights between the input and h layers +
         # L2-regularization for weights between the h and output layers.
-        #return .5 * (sum((1 - sigm(p1 - p0)) ** 2) + self.l1 * sum(w[:-h1] ** 2) +
         return .5 * (sum((1 - p1 + p0) ** 2) / n +
                      self.l1 * sum(w[:-h1] ** 2) / (i1 * h) +
                      self.l2 * sum(w[-h1:] ** 2) / h1)
@@ -304,8 +305,6 @@ class NN(object):
         y0 = z0.dot(w2)
         y1 = z1.dot(w2)
 
-        #e = 1 - sigm(y1 - y0)
-        #dy = e * dsigm(y1 - y0)
         e = 1 - (y1 - y0)
         dy = e / n
 
@@ -313,8 +312,8 @@ class NN(object):
         # F -- weights between the input and h layers
         # w2 -- weights between the h and output layers
         dw1 = -(xb1.T.dot(dy.dot(w2[:-1].reshape(1, h)) * dsigm(xb1.dot(w1))) -
-               xb0.T.dot(dy.dot(w2[:-1].reshape(1, h)) * dsigm(xb0.dot(w1)))
-                       ).reshape(i1 * h) + self.l1 * w[:-h1] / (i1 * h)
+                xb0.T.dot(dy.dot(w2[:-1].reshape(1, h)) * dsigm(xb0.dot(w1)))
+                ).reshape(i1 * h) + self.l1 * w[:-h1] / (i1 * h)
         dw2 = -(z1 - z0).T.dot(dy).reshape(h1) + self.l2 * w[-h1:] / h1
 
         return np.append(dw1, dw2)

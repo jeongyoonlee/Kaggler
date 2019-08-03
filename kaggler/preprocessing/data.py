@@ -28,7 +28,7 @@ class QuantileEncoder(base.BaseEstimator):
 
         Args:
             n_label (int): the number of labels to be created.
-            sample (int or float): the number or fraction of samples to use for ECDF
+            sample (int or float): the number or fraction of samples for ECDF
         """
         self.n_label = n_label
         self.sample = sample
@@ -49,9 +49,15 @@ class QuantileEncoder(base.BaseEstimator):
         if self.sample >= X.shape[0]:
             self.ecdfs = X.apply(_calculate_ecdf, axis=0)
         elif self.sample > 1:
-            self.ecdfs = X.sample(n=self.sample, random_state=self.random_state).apply(_calculate_ecdf, axis=0)
+            self.ecdfs = X.sample(n=self.sample,
+                                  random_state=self.random_state).apply(
+                                      _calculate_ecdf, axis=0
+                                  )
         else:
-            self.ecdfs = X.sample(frac=self.sample, random_state=self.random_state).apply(_calculate_ecdf, axis=0)
+            self.ecdfs = X.sample(frac=self.sample,
+                                  random_state=self.random_state).apply(
+                                      _calculate_ecdf, axis=0
+                                  )
 
         return self
 
@@ -96,7 +102,8 @@ class QuantileEncoder(base.BaseEstimator):
         rv = np.ones_like(x) * -1
 
         filt = ~np.isnan(x)
-        rv[filt] = np.floor((self.ecdfs[i](x[filt]) * 0.998 + .001) * self.n_label)
+        rv[filt] = np.floor((self.ecdfs[i](x[filt]) * 0.998 + .001) *
+                            self.n_label)
 
         return rv
 
@@ -123,7 +130,7 @@ class Normalizer(base.BaseEstimator):
             X (numpy.array) : numerical columns to normalize
 
         Returns:
-            X (numpy.array): normalized numerical columns
+            (numpy.array): normalized numerical columns
         """
 
         for col in range(X.shape[1]):
@@ -138,7 +145,7 @@ class Normalizer(base.BaseEstimator):
             X (numpy.array) : numerical columns to normalize
 
         Returns:
-            X (numpy.array): normalized numerical columns
+            (numpy.array): normalized numerical columns
         """
 
         self.ecdfs = [None] * X.shape[1]
@@ -191,11 +198,13 @@ class LabelEncoder(base.BaseEstimator):
             x (pandas.Series): a categorical column to encode.
 
         Returns:
-            label_encoder (dict): mapping from values of features to integers
-            max_label (int): maximum label
+            (tuple):
+                - (dict): mapping from values of features to integers
+                - (int): maximum label
         """
 
-        # NaN cannot be used as a key for dict. So replace it with a random integer.
+        # NaN cannot be used as a key for dict. Impute it with a random
+        # integer.
         label_count = x.fillna(NAN_INT).value_counts()
         n_uniq = label_count.shape[0]
 
@@ -207,7 +216,8 @@ class LabelEncoder(base.BaseEstimator):
         # that appear less than min_obs.
         offset = 0 if n_uniq == n_uniq_new else 1
 
-        label_encoder = pd.Series(np.arange(n_uniq_new) + offset, index=label_count.index)
+        label_encoder = pd.Series(np.arange(n_uniq_new) + offset,
+                                  index=label_count.index)
         max_label = label_encoder.max()
         label_encoder = label_encoder.to_dict()
 
@@ -221,7 +231,7 @@ class LabelEncoder(base.BaseEstimator):
             i (int): column index
 
         Returns:
-            x (pandas.Series): a column with labels.
+            (pandas.Series): a column with labels.
         """
         return x.fillna(NAN_INT).map(self.label_encoders[i]).fillna(0)
 
@@ -242,7 +252,7 @@ class LabelEncoder(base.BaseEstimator):
             X (pandas.DataFrame): categorical columns to encode
 
         Returns:
-            X (pandas.DataFrame): label encoded columns
+            (pandas.DataFrame): label encoded columns
         """
 
         for i, col in enumerate(X.columns):
@@ -257,7 +267,7 @@ class LabelEncoder(base.BaseEstimator):
             X (pandas.DataFrame): categorical columns to encode
 
         Returns:
-            X (pandas.DataFrame): label encoded columns
+            (pandas.DataFrame): label encoded columns
         """
 
         self.label_encoders = [None] * X.shape[1]
@@ -267,7 +277,9 @@ class LabelEncoder(base.BaseEstimator):
             self.label_encoders[i], self.label_maxes[i] = \
                 self._get_label_encoder_and_max(X[col])
 
-            X.loc[:, col] = X[col].fillna(NAN_INT).map(self.label_encoders[i]).fillna(0)
+            X.loc[:, col] = (X[col].fillna(NAN_INT)
+                             .map(self.label_encoders[i])
+                             .fillna(0))
 
         return X
 
@@ -285,7 +297,8 @@ class OneHotEncoder(base.BaseEstimator):
         """Initialize the OneHotEncoder class object.
 
         Args:
-            min_obs (int): minimum number of observation to create a dummy variable
+            min_obs (int): minimum number of observations required to create
+                a dummy variable
             label_encoder (LabelEncoder): LabelEncoder that transofrm
         """
 
@@ -303,8 +316,8 @@ class OneHotEncoder(base.BaseEstimator):
             i (int): column index
 
         Returns:
-            X (scipy.sparse.coo_matrix): sparse matrix encoding a categorical
-                                         variable into dummy variables
+            (scipy.sparse.coo_matrix): sparse matrix encoding a categorical
+                                       variable into dummy variables
         """
 
         labels = self.label_encoder._transform_col(x, i)
@@ -334,8 +347,8 @@ class OneHotEncoder(base.BaseEstimator):
             X (pandas.DataFrame): categorical columns to encode
 
         Returns:
-            X_new (scipy.sparse.coo_matrix): sparse matrix encoding categorical
-                                             variables into dummy variables
+            (scipy.sparse.coo_matrix): sparse matrix encoding categorical
+                                       variables into dummy variables
         """
 
         for i, col in enumerate(X.columns):
@@ -369,14 +382,13 @@ class OneHotEncoder(base.BaseEstimator):
 
 class TargetEncoder(base.BaseEstimator):
     """Target Encoder that encode categorical values into average target values.
+
     Attributes:
         target_encoders (list of dict): target encoders for columns
     """
 
     def __init__(self):
-        """Initialize the TargetEncoder class object
-        Args:
-        """
+        """Initialize the TargetEncoder class object."""
         pass
 
     def __repr__(self):
@@ -384,36 +396,45 @@ class TargetEncoder(base.BaseEstimator):
 
     def _get_target_encoder(self, x, y):
         """Return a mapping from categories to average target values.
+
         Args:
             x (pandas.Series): a categorical column to encode.
             y (pandas.Series): the target column
+
         Returns:
-            target_encoder (dict): mapping from categories to average target values
+            (dict): mapping from categories to average target values
         """
 
         assert len(x) == len(y)
 
-        # NaN cannot be used as a key for dict. So replace it with a random integer
+        # NaN cannot be used as a key for dict. So replace it with a random
+        # integer
         df = pd.DataFrame({y.name: y, x.name: x.fillna(NAN_INT)})
         return df.groupby(x.name)[y.name].mean().to_dict()
 
     def _transform_col(self, x, i):
         """Encode one categorical column into average target values.
+
         Args:
             x (pandas.Series): a categorical column to encode
             i (int): column index
+
         Returns:
-            x (pandas.Series): a column with labels.
+            (pandas.Series): a column with labels.
         """
-        return x.fillna(NAN_INT).map(self.target_encoders[i]).fillna(self.target_mean)
+        return (x.fillna(NAN_INT)
+                 .map(self.target_encoders[i])
+                 .fillna(self.target_mean))
 
     def fit(self, X, y):
         """Encode categorical columns into average target values.
+
         Args:
             X (pandas.DataFrame): categorical columns to encode
             y (pandas.Series): the target column
+
         Returns:
-            X (pandas.DataFrame): encoded columns
+            (pandas.DataFrame): encoded columns
         """
         self.target_encoders = [None] * X.shape[1]
         self.target_mean = y.mean()
@@ -425,10 +446,12 @@ class TargetEncoder(base.BaseEstimator):
 
     def transform(self, X):
         """Encode categorical columns into average target values.
+
         Args:
             X (pandas.DataFrame): categorical columns to encode
+
         Returns:
-            X (pandas.DataFrame): encoded columns
+            (pandas.DataFrame): encoded columns
         """
         for i, col in enumerate(X.columns):
             X.loc[:, col] = self._transform_col(X[col], i)
@@ -437,11 +460,13 @@ class TargetEncoder(base.BaseEstimator):
 
     def fit_transform(self, X, y):
         """Encode categorical columns into average target values.
+
         Args:
             X (pandas.DataFrame): categorical columns to encode
             y (pandas.Series): the target column
+
         Returns:
-            X (pandas.DataFrame): encoded columns
+            (pandas.DataFrame): encoded columns
         """
         self.target_encoders = [None] * X.shape[1]
         self.target_mean = y.mean()
@@ -449,7 +474,9 @@ class TargetEncoder(base.BaseEstimator):
         for i, col in enumerate(X.columns):
             self.target_encoders[i] = self._get_target_encoder(X[col], y)
 
-            X.loc[:, col] = X[col].fillna(NAN_INT).map(self.target_encoders[i]).fillna(self.target_mean)
+            X.loc[:, col] = (X[col].fillna(NAN_INT)
+                                   .map(self.target_encoders[i])
+                                   .fillna(self.target_mean))
 
         return X
 
