@@ -1,6 +1,9 @@
 """
-This code is based on the starting kit provided at KDD Cup 2019 -
-Auto ML track (https://www.4paradigm.com/competition/kddcup2019).
+This code is based on the solution of the team AvengersEnsmbl at
+the KDD Cup 2019 Auto ML track (https://github.com/jeongyoonlee/kddcup2019track2)
+
+Details and winners' solutions at the competition are available at
+the competition website (https://www.4paradigm.com/competition/kddcup2019).
 """
 
 import hyperopt
