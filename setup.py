@@ -48,7 +48,7 @@ class my_build_ext(build_ext):
 
 setup(
     name='Kaggler',
-    version='0.8.1',
+    version='0.8.2',
 
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
