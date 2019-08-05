@@ -1,6 +1,6 @@
 """
 This code is based on the solution of the team AvengersEnsmbl at
-the KDD Cup 2019 Auto ML track (https://github.com/jeongyoonlee/kddcup2019track2)
+the KDDCup 2019 AutoML track (https://github.com/jeongyoonlee/kddcup2019track2)
 
 Details and winners' solutions at the competition are available at
 the competition website (https://www.4paradigm.com/competition/kddcup2019).
@@ -216,7 +216,9 @@ class AutoLGB(BaseAutoML):
                  hyperparam_opt=True, n_hpopt=100, minimize=True,
                  n_random_col=10, random_state=RANDOM_SEED):
 
-        params = AutoLGB.params
+        metric, minimize = self._get_metric_alias_minimize(metric)
+
+        params = self.params
         params.update({'objective': objective,
                        'metric': metric,
                        'boosting': boosting})
@@ -228,6 +230,54 @@ class AutoLGB(BaseAutoML):
             minimize=minimize, n_random_col=n_random_col,
             random_state=random_state
         )
+
+    @staticmethod
+    def _get_metric_alias_minimize(metric):
+        """Get LightGBM metric alias.
+
+        As defined at https://lightgbm.readthedocs.io/en/latest/Parameters.html
+
+        Args:
+            metric (str): a metric name
+
+        Returns:
+            (tuple):
+
+                - (str): the standard metric name for LightGBM
+                - (bool): a flag whether to minimize or maximize the metric
+        """
+
+        if metric in ['mae', 'mean_absolute_error', 'regression_l1']:
+            metric = 'l1'
+        elif metric in ['mean_squared_error', 'mse', 'regression_l2',
+                        'regression']:
+            metric = 'l2'
+        elif metric in ['root_mean_squared_error', 'l2_root']:
+            metric = 'rmse'
+        elif metric in ['mean_absolute_percentage_error']:
+            metric = 'mape'
+        elif metric in ['lamdarank']:
+            metric = 'lambdarank'
+        elif metric in ['mean_average_precision']:
+            metric = 'map'
+        elif metric in ['binary']:
+            metric = 'binary_logloss'
+        elif metric in ['multiclass', 'softmax', 'multiclassova',
+                        'multiclass_ova', 'ova', 'ovr']:
+            metric = 'multi_logloss'
+        elif metric in ['xentropy']:
+            metric = 'cross_entropy'
+        elif metric in ['xentlambda']:
+            metric = 'cross_entropy_lambda'
+        elif metric in ['kldiv']:
+            metric = 'kullback_leibler'
+
+        if metric in ['auc', 'ndcg', 'map']:
+            minimize = False
+        else:
+            minimize = True
+
+        return metric, minimize
 
     @staticmethod
     def _get_feature_importance(model):
