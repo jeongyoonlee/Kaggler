@@ -387,12 +387,16 @@ class TargetEncoder(base.BaseEstimator):
         target_encoders (list of dict): target encoders for columns
     """
 
-    def __init__(self):
-        """Initialize the TargetEncoder class object."""
-        pass
+    def __init__(self, cv=None):
+        """Initialize the TargetEncoder class object.
+
+        Args:
+            cv (sklearn.model_selection._BaseKFold, optional): sklearn CV object
+        """
+        self.cv = cv
 
     def __repr__(self):
-        return('TargetEncoder()')
+        return('TargetEncoder(cv={})'.format(self.cv))
 
     def _get_target_encoder(self, x, y):
         """Return a mapping from categories to average target values.
@@ -412,20 +416,6 @@ class TargetEncoder(base.BaseEstimator):
         df = pd.DataFrame({y.name: y, x.name: x.fillna(NAN_INT)})
         return df.groupby(x.name)[y.name].mean().to_dict()
 
-    def _transform_col(self, x, i):
-        """Encode one categorical column into average target values.
-
-        Args:
-            x (pandas.Series): a categorical column to encode
-            i (int): column index
-
-        Returns:
-            (pandas.Series): a column with labels.
-        """
-        return (x.fillna(NAN_INT)
-                 .map(self.target_encoders[i])
-                 .fillna(self.target_mean))
-
     def fit(self, X, y):
         """Encode categorical columns into average target values.
 
@@ -440,7 +430,12 @@ class TargetEncoder(base.BaseEstimator):
         self.target_mean = y.mean()
 
         for i, col in enumerate(X.columns):
-            self.target_encoders[i] = self._get_target_encoder(X[col], y)
+            if self.cv is None:
+                self.target_encoders[i] = self._get_target_encoder(X[col], y)
+            else:
+                self.target_encoders[i] = []
+                for i_cv, (i_trn, i_val) in enumerate(self.cv.split(X[col], y), 1):
+                    self.target_encoders[i].append(self._get_target_encoder(X.loc[i_trn, col], y[i_trn]))
 
         return self
 
@@ -454,7 +449,18 @@ class TargetEncoder(base.BaseEstimator):
             (pandas.DataFrame): encoded columns
         """
         for i, col in enumerate(X.columns):
-            X.loc[:, col] = self._transform_col(X[col], i)
+            if self.cv is None:
+                X.loc[:, col] = (X[col].fillna(NAN_INT)
+                                       .map(self.target_encoders[i])
+                                       .fillna(self.target_mean))
+            else:
+                for i_enc, target_encoder in enumerate(self.target_encoders[i], 1):
+                    if i_enc == 1:
+                        x = X[col].fillna(NAN_INT).map(target_encoder).fillna(self.target_mean)
+                    else:
+                        x += X[col].fillna(NAN_INT).map(target_encoder).fillna(self.target_mean)
+
+                X.loc[:, col] = x / i_enc
 
         return X
 
@@ -472,11 +478,22 @@ class TargetEncoder(base.BaseEstimator):
         self.target_mean = y.mean()
 
         for i, col in enumerate(X.columns):
-            self.target_encoders[i] = self._get_target_encoder(X[col], y)
+            if self.cv is None:
+                self.target_encoders[i] = self._get_target_encoder(X[col], y)
 
-            X.loc[:, col] = (X[col].fillna(NAN_INT)
-                                   .map(self.target_encoders[i])
-                                   .fillna(self.target_mean))
+                X.loc[:, col] = (X[col].fillna(NAN_INT)
+                                       .map(self.target_encoders[i])
+                                       .fillna(self.target_mean))
+            else:
+                self.target_encoders[i] = []
+                for i_cv, (i_trn, i_val) in enumerate(self.cv.split(X[col], y), 1):
+                    target_encoder = self._get_target_encoder(X.loc[i_trn, col], y[i_trn])
+
+                    X.loc[i_val, col] = (X.loc[i_val, col].fillna(NAN_INT)
+                                                          .map(target_encoder)
+                                                          .fillna(y[i_trn].mean()))
+
+                    self.target_encoders[i].append(target_encoder)
 
         return X
 
