@@ -454,7 +454,7 @@ class TargetEncoder(base.BaseEstimator):
                                        .map(self.target_encoders[i])
                                        .fillna(self.target_mean))
             else:
-                x = np.zeros_like((X.shape[0], ))
+                x = np.zeros_like((X.shape[0], ), dtype=float)
                 for i_enc, target_encoder in enumerate(self.target_encoders[i], 1):
                     x += (X[col].fillna(NAN_INT)
                                 .map(target_encoder)
