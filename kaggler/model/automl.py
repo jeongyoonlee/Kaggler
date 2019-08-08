@@ -114,12 +114,8 @@ class BaseAutoML(object):
             X_s, y_s = sample_data(X, y, self.sample_size)
 
         if self.feature_selection:
-            self.features = self.select_features(X_s,
-                                                 y_s,
-                                                 n_eval=self.n_fs)
-            logger.info('selecting {} out of {} features'.format(
-                len(self.features), X.shape[1])
-            )
+            self.features = self.select_features(X_s, y_s, n_eval=self.n_fs)
+            logger.info('selecting {} out of {} features'.format(len(self.features), X.shape[1]))
         else:
             self.features = X.columns.tolist()
 
@@ -168,21 +164,16 @@ class BaseAutoML(object):
 
         _, trials = self.optimize_hyperparam(X.values, y.values, n_eval=n_eval)
 
-        feature_importances = self._get_feature_importance(
-            trials.best_trial['result']['model']
-        )
-        imp = pd.DataFrame({'feature_importances': feature_importances,
-                            'feature_names': X.columns.tolist()})
+        feature_importances = self._get_feature_importance(trials.best_trial['result']['model'])
+        imp = pd.DataFrame({'feature_importances': feature_importances, 'feature_names': X.columns.tolist()})
         imp = imp.sort_values('feature_importances', ascending=False)
 
         if len(random_cols) == 0:
             imp = imp[imp['feature_importances'] != 0]
         else:
-            th = imp.loc[imp.feature_names.isin(random_cols),
-                         'feature_importances'].mean()
+            th = imp.loc[imp.feature_names.isin(random_cols), 'feature_importances'].mean()
             logger.debug('feature importance (th={:.2f}):\n{}'.format(th, imp))
-            imp = imp[(imp.feature_importances > th) &
-                      ~(imp.feature_names.isin(random_cols))]
+            imp = imp[(imp.feature_importances > th) & ~(imp.feature_names.isin(random_cols))]
 
         return imp['feature_names'].tolist()
 
@@ -200,8 +191,7 @@ class AutoLGB(BaseAutoML):
     }
 
     space = {
-        "learning_rate": hp.loguniform("learning_rate", np.log(0.01),
-                                       np.log(0.1)),
+        "learning_rate": hp.loguniform("learning_rate", np.log(0.01), np.log(0.1)),
         "num_leaves": hp.choice("num_leaves", [15, 31, 63, 127]),
         "max_depth": hp.choice("max_depth", [-1, 4, 6, 8]),
         "feature_fraction": hp.quniform("feature_fraction", .5, .8, 0.1),
@@ -247,23 +237,25 @@ class AutoLGB(BaseAutoML):
                 - (bool): a flag whether to minimize or maximize the metric
         """
 
-        if metric in ['mae', 'mean_absolute_error', 'regression_l1']:
+        if metric in ['l1', 'l2', 'rmse', 'quantile', 'mape', 'huber', 'fair', 'poisson', 'gamma', 'gamma_deviance',
+                      'tweedie', 'ndcg', 'map', 'auc', 'binary_logloss', 'binary_error', 'multi_logloss',
+                      'multi_error', 'cross_entropy', 'cross_entropy_lambda', 'kullerback_leibler']:
+            pass
+        elif metric in ['mae', 'mean_absolute_error', 'regression_l1']:
             metric = 'l1'
-        elif metric in ['mean_squared_error', 'mse', 'regression_l2',
-                        'regression']:
+        elif metric in ['mean_squared_error', 'mse', 'regression_l2', 'regression']:
             metric = 'l2'
         elif metric in ['root_mean_squared_error', 'l2_root']:
             metric = 'rmse'
         elif metric in ['mean_absolute_percentage_error']:
             metric = 'mape'
         elif metric in ['lamdarank']:
-            metric = 'lambdarank'
+            metric = 'ndcg'
         elif metric in ['mean_average_precision']:
             metric = 'map'
         elif metric in ['binary']:
             metric = 'binary_logloss'
-        elif metric in ['multiclass', 'softmax', 'multiclassova',
-                        'multiclass_ova', 'ova', 'ovr']:
+        elif metric in ['multiclass', 'softmax', 'multiclassova', 'multiclass_ova', 'ova', 'ovr']:
             metric = 'multi_logloss'
         elif metric in ['xentropy']:
             metric = 'cross_entropy'
@@ -271,6 +263,9 @@ class AutoLGB(BaseAutoML):
             metric = 'cross_entropy_lambda'
         elif metric in ['kldiv']:
             metric = 'kullback_leibler'
+        else:
+            raise ValueError('{} is not a valid metric. See https://lightgbm.readthedocs.io/en/latest/Parameters.html '
+                             'for the full list of metrics available.'.format(metric))
 
         if metric in ['auc', 'ndcg', 'map']:
             minimize = False
@@ -287,9 +282,7 @@ class AutoLGB(BaseAutoML):
         return self.model.feature_importance(importance_type='gain')
 
     def optimize_hyperparam(self, X, y, test_size=.2, n_eval=100):
-        X_trn, X_val, y_trn, y_val = train_test_split(X,
-                                                      y,
-                                                      test_size=test_size)
+        X_trn, X_val, y_trn, y_val = train_test_split(X, y, test_size=test_size)
 
         train_data = lgb.Dataset(X_trn, label=y_trn)
         valid_data = lgb.Dataset(X_val, label=y_val)
@@ -302,8 +295,7 @@ class AutoLGB(BaseAutoML):
                               early_stopping_rounds=self.n_stop,
                               verbose_eval=0)
 
-            score = (model.best_score["valid_0"][self.params["metric"]] *
-                     self.loss_sign)
+            score = model.best_score["valid_0"][self.params["metric"]] * self.loss_sign
 
             return {'loss': score, 'status': STATUS_OK, 'model': model}
 
@@ -317,8 +309,7 @@ class AutoLGB(BaseAutoML):
 
     def fit(self, X, y):
         train_data = lgb.Dataset(X[self.features], label=y)
-        self.model = lgb.train(self.params, train_data, self.n_best,
-                               verbose_eval=100)
+        self.model = lgb.train(self.params, train_data, self.n_best, verbose_eval=100)
         return self
 
     def predict(self, X):

@@ -1,6 +1,7 @@
 import logging
 import numpy as np
 import pandas as pd
+import pytest
 from sklearn.datasets import make_classification, make_regression
 from sklearn.model_selection import train_test_split
 from kaggler.metrics import auc, mae
@@ -57,3 +58,12 @@ def test_autolgb_regression():
          y_trn.min())
     logging.info('MAE: {:.4f}'.format(mae(y_tst, p)))
     assert mae(y_tst, p) < mae(y_tst, r)
+
+
+def test_autolgb_get_metric_alias_minimize():
+    # Test if AutoLGB can take a metric alias instead of the standard metric name
+    _ = AutoLGB(objective='regression', metric='mae')
+
+    # Test if AutoLGB raises a ValueError for unknown metrics
+    with pytest.raises(ValueError):
+        _ = AutoLGB(objective='regression', metric='unknown_metric')
