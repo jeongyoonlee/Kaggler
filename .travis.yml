@@ -15,7 +15,7 @@ jobs:
     include:
         - stage: test
           name: test
-          script: pytest -vs
+          script: pytest -vs tests/ --cov kaggler/
 
 after_success:
     - codecov
