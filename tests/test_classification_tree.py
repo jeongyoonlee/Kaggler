@@ -4,18 +4,18 @@ from kaggler.online_model import ClassificationTree
 from tqdm import tqdm
 
 
-N_OBS = 10000
-N_FEATURE = 20
+N_OBS = 1000
+N_FEATURE = 10
 
 
 def test():
     data = np.random.randint(0, 1000, size=(N_OBS, N_FEATURE))
     y = np.random.randint(2, size=N_OBS)
 
-    train = data[0:50000]
-    ytrain = y[0:50000]
-    test = data[50000:]
-    ytest = y[50000:]
+    train = data[0:N_OBS // 2]
+    ytrain = y[0:N_OBS // 2]
+    test = data[N_OBS // 2:]
+    ytest = y[N_OBS // 2:]
 
     learner = ClassificationTree(number_of_features=N_FEATURE)
 

@@ -73,7 +73,7 @@ class ClassificationTree(Tree):
         if self._is_leaf():
             d1 = self.predict_initialize['count_dict']
             d2 = count_dict(self.Y)
-            for key, value in d1.iteritems():
+            for key, value in d1.items():
                 if key in d2:
                     d2[key] += value
                 else:
