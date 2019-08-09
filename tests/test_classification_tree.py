@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 
 N_OBS = 1000
-N_FEATURE = 0
+N_FEATURE = 10
 
 
 def test():
