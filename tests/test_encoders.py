@@ -39,10 +39,31 @@ def test_EmbeddingEncoder(generate_data):
     cat_cols = [x for x in feature_cols if df[x].nunique() < 100]
     num_cols = [x for x in feature_cols if x not in cat_cols]
 
+    print('Test with the regression target')
     ee = EmbeddingEncoder(cat_cols=cat_cols,
                           num_cols=num_cols,
                           random_state=RANDOM_SEED)
 
     X_emb = ee.fit_transform(X=df[feature_cols], y=df[TARGET_COL])
-
     assert X_emb.shape[1] == sum(ee.n_emb)
+
+    print('Test with the binary classification target')
+    df[TARGET_COL] = (df[TARGET_COL] > df[TARGET_COL].mean()).astype(int)
+
+    ee = EmbeddingEncoder(cat_cols=cat_cols,
+                          num_cols=num_cols,
+                          random_state=RANDOM_SEED)
+
+    X_emb = ee.fit_transform(X=df[feature_cols], y=df[TARGET_COL])
+    assert X_emb.shape[1] == sum(ee.n_emb)
+
+    print('Test with the binary classification target with cross validation')
+    cv = KFold(n_splits=N_FOLD, shuffle=True, random_state=RANDOM_SEED)
+    ee = EmbeddingEncoder(cat_cols=cat_cols,
+                          num_cols=num_cols,
+                          cv=cv,
+                          random_state=RANDOM_SEED)
+
+    X_emb = ee.fit_transform(X=df[feature_cols], y=df[TARGET_COL])
+    assert X_emb.shape[1] == sum(ee.n_emb)
+

@@ -1,18 +1,22 @@
 
 from __future__ import print_function, division, absolute_import
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from keras.layers import Embedding, Dense, Dropout, Input, Reshape, Concatenate, BatchNormalization
 from keras.models import Model
-from keras.layers import Embedding, Dense, Dropout, Input, Reshape, Concatenate
 from keras.optimizers import Adam
 import logging
 import numpy as np
-from sklearn import base
-import pandas as pd
 from scipy import sparse
+from sklearn import base
+from sklearn.metrics import roc_auc_score
+import pandas as pd
+import tensorflow as tf
 
 from .const import NAN_INT, MIN_EMBEDDING
 
 
 logger = logging.getLogger('Kaggler')
+EMBEDDING_SUFFIX = '_emb'
 
 
 class LabelEncoder(base.BaseEstimator):
@@ -345,9 +349,13 @@ class TargetEncoder(base.BaseEstimator):
 
 
 class EmbeddingEncoder(base.BaseEstimator):
-    """EmbeddingEncoder encodes categorical features to numerical embedding features."""
+    """EmbeddingEncoder encodes categorical features to numerical embedding features.
 
-    def __init__(self, cat_cols, num_cols=[], n_emb=[], min_obs=10, random_state=42):
+    Reference: 'Entity embeddings to handle categories' by Abhishek Thakur
+    at https://www.kaggle.com/abhishek/entity-embeddings-to-handle-categories
+    """
+
+    def __init__(self, cat_cols, num_cols=[], n_emb=[], min_obs=10, n_epoch=50, cv=None, random_state=42):
         """Initialize an EmbeddingEncoder class object.
 
         Args:
@@ -355,6 +363,7 @@ class EmbeddingEncoder(base.BaseEstimator):
             num_cols (list of str): the names of numerical features to train embeddings with.
             n_emb (int or list of int): the numbers of embedding features used for columns.
             min_obs (int): categories observed less than it will be grouped together before training embeddings
+            cv (sklearn.model_selection._BaseKFold): sklearn CV object
             random_state (int): random seed.
         """
         self.cat_cols = cat_cols
@@ -372,9 +381,55 @@ class EmbeddingEncoder(base.BaseEstimator):
             raise ValueError('n_emb should be int or list')
 
         self.min_obs = min_obs
+        self.n_epoch = n_epoch
+        self.cv = cv
         self.random_state = random_state
 
         self.lbe = LabelEncoder(min_obs=self.min_obs)
+
+    @staticmethod
+    def auc(y, p):
+        return tf.py_function(roc_auc_score, (y, p), tf.double)
+
+    @staticmethod
+    def _get_model(X, cat_cols, num_cols, n_emb, output_activation):
+        inputs = []
+        num_inputs = []
+        embeddings = []
+        for i, col in enumerate(cat_cols):
+
+            n_uniq = X[col].nunique()
+            if not n_emb[i]:
+                n_emb[i] = max(MIN_EMBEDDING, 2 * int(np.log2(n_uniq)))
+
+            _input = Input(shape=(1,), name=col)
+            _embed = Embedding(input_dim=n_uniq, output_dim=n_emb[i], name=col + EMBEDDING_SUFFIX)(_input)
+            _embed = Dropout(.2)(_embed)
+            _embed = Reshape((n_emb[i],))(_embed)
+
+            inputs.append(_input)
+            embeddings.append(_embed)
+
+        if num_cols:
+            num_inputs = Input(shape=(len(num_cols),), name='num_inputs')
+            merged_input = Concatenate(axis=1)(embeddings + [num_inputs])
+
+            inputs = inputs + [num_inputs]
+        else:
+            merged_input = Concatenate(axis=1)(embeddings)
+
+        x = BatchNormalization()(merged_input)
+        x = Dense(128, activation='relu')(x)
+        x = Dropout(.5)(x)
+        x = BatchNormalization()(x)
+        x = Dense(64, activation='relu')(x)
+        x = Dropout(.5)(x)
+        x = BatchNormalization()(x)
+        output = Dense(1, activation=output_activation)(x)
+
+        model = Model(inputs=inputs, outputs=output)
+
+        return model, n_emb
 
     def fit(self, X, y):
         """Train a neural network model with embedding layers.
@@ -386,62 +441,76 @@ class EmbeddingEncoder(base.BaseEstimator):
         Returns:
             A trained EmbeddingEncoder object.
         """
+        is_classification = y.nunique() == 2
+
         X_cat = self.lbe.fit_transform(X[self.cat_cols])
-
-        inputs = []
-        num_inputs = []
-        embeddings = []
-        self.embedding_layer_names = []
-        features = []
-        for i, col in enumerate(self.cat_cols):
-            features.append(X_cat[col].values)
-
-            if not self.n_emb[i]:
-                n_uniq = X_cat[col].nunique()
-                self.n_emb[i] = max(MIN_EMBEDDING, 2 * int(np.log2(n_uniq)))
-
-            _input = Input(shape=(1,), name=col)
-            _embed = Embedding(input_dim=n_uniq, output_dim=self.n_emb[i], name=col + '_emb')(_input)
-            _embed = Dropout(.2)(_embed)
-            _embed = Reshape((self.n_emb[i],))(_embed)
-
-            inputs.append(_input)
-            embeddings.append(_embed)
-
-        if self.num_cols:
-            num_inputs = Input(shape=(len(self.num_cols),), name='num_inputs')
-            merged_input = Concatenate(axis=1)(embeddings + [num_inputs])
-
-            inputs = inputs + [num_inputs]
-            features = features + [X[self.num_cols].values]
+        if is_classification:
+            assert np.isin(y, [0, 1]).all(), 'Target values should be 0 or 1 for classification.'
+            output_activation = 'sigmoid'
+            loss = 'binary_crossentropy'
+            metrics = [self.auc]
+            monitor = 'val_auc'
+            mode = 'max'
         else:
-            merged_input = Concatenate(axis=1)(embeddings)
+            output_activation = 'linear'
+            loss = 'mse'
+            metrics = ['mse']
+            monitor = 'val_mse'
+            mode = 'min'
 
-        x = Dense(128, activation='relu')(merged_input)
-        x = Dropout(.5)(x)
-        x = Dense(64, activation='relu')(x)
-        x = Dropout(.5)(x)
-        output = Dense(1, activation='linear')(x)
+        if self.cv:
+            self.embs = []
+            n_fold = self.cv.get_n_splits(X)
+            for i_cv, (i_trn, i_val) in enumerate(self.cv.split(X, y), 1):
+                model, self.n_emb = self._get_model(X_cat, self.cat_cols, self.num_cols, self.n_emb, output_activation)
+                model.compile(optimizer=Adam(lr=0.01), loss=loss, metrics=metrics)
 
-        self.model = Model(inputs=inputs, outputs=output)
-        self.model.compile(optimizer=Adam(lr=0.01),
-                           loss='mse',
-                           metrics=['mse'])
+                features_trn = [X_cat[col][i_trn] for col in self.cat_cols]
+                features_val = [X_cat[col][i_val] for col in self.cat_cols]
+                if self.num_cols:
+                    features_trn += [X[self.num_cols].values[i_trn]]
+                    features_val += [X[self.num_cols].values[i_val]]
 
-        self.model.fit(x=features,
-                       y=y,
-                       epochs=100,
-                       validation_split=.2,
-                       batch_size=128)
+                es = EarlyStopping(monitor=monitor, min_delta=.001, patience=5, verbose=1, mode=mode,
+                                   baseline=None, restore_best_weights=True)
+                rlr = ReduceLROnPlateau(monitor=monitor, factor=.5, patience=3, min_lr=1e-6, mode=mode)
+                model.fit(x=features_trn,
+                          y=y[i_trn],
+                          validation_data=(features_val, y[i_val]),
+                          epochs=self.n_epoch,
+                          batch_size=128,
+                          callbacks=[es, rlr])
 
-        self.embs = []
-        for i, col in enumerate(self.cat_cols):
-            self.embs.append(self.model.get_layer(col + '_emb').get_weights()[0])
-            logger.debug('{}: {}'.format(col, self.embs[i].shape))
+                for col in self.cat_cols:
+                    emb = model.get_layer(col + EMBEDDING_SUFFIX).get_weights()[0]
+                    if i_cv == 1:
+                        self.embs.append(emb / n_fold)
+                    else:
+                        self.embs[i_cv - 1] += emb / n_fold
+
+        else:
+            model, self.n_emb = self._get_model(X_cat, self.cat_cols, self.num_cols, self.n_emb, output_activation)
+            model.compile(optimizer=Adam(lr=0.01), loss=loss, metrics=metrics)
+
+            features = [X_cat[col] for col in self.cat_cols]
+            if self.num_cols:
+                features += [X[self.num_cols].values]
+
+            model.fit(x=features,
+                      y=y,
+                      epochs=self.n_epoch,
+                      validation_split=.2,
+                      batch_size=128)
+
+            self.embs = []
+            for i, col in enumerate(self.cat_cols):
+                self.embs.append(model.get_layer(col + EMBEDDING_SUFFIX).get_weights()[0])
+                logger.debug('{}: {}'.format(col, self.embs[i].shape))
 
     def transform(self, X):
         X_cat = self.lbe.transform(X[self.cat_cols])
         X_emb = []
+
         for i, col in enumerate(self.cat_cols):
             X_emb.append(self.embs[i][X_cat[col].values])
 
