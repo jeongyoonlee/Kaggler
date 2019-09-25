@@ -58,3 +58,4 @@ target/
 *.c
 .DS_Store
 .ipynb_checkpoints/
+.coverage*

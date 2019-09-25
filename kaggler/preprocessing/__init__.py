@@ -1,7 +1,5 @@
-from .data import OneHotEncoder
-from .data import LabelEncoder
-from .data import TargetEncoder
-from .data import Normalizer
+from .categorical import OneHotEncoder, LabelEncoder, TargetEncoder, EmbeddingEncoder
+from .numerical import Normalizer, QuantileEncoder
 
-__all__ = ['OneHotEncoder', 'LabelEncoder', 'TargetEncoder',
-           'Normalizer']
+__all__ = ['OneHotEncoder', 'LabelEncoder', 'TargetEncoder', 'EmbeddingEncoder',
+           'Normalizer', 'QuantileEncoder']

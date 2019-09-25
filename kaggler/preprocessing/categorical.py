@@ -1,173 +1,18 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from scipy import sparse
-from scipy.signal import butter, lfilter
-from scipy.stats import norm
-from sklearn import base
-from statsmodels.distributions.empirical_distribution import ECDF
+
+from __future__ import print_function, division, absolute_import
+from keras.models import Model
+from keras.layers import Embedding, Dense, Dropout, Input, Reshape, Concatenate
+from keras.optimizers import Adam
 import logging
 import numpy as np
+from sklearn import base
 import pandas as pd
+from scipy import sparse
+
+from .const import NAN_INT, MIN_EMBEDDING
 
 
-NAN_INT = 7535805
 logger = logging.getLogger('Kaggler')
-
-
-class QuantileEncoder(base.BaseEstimator):
-    """QuantileEncoder encodes numerical features to quantile values.
-
-    Attributes:
-        ecdfs (list of empirical CDF): empirical CDFs for columns
-        n_label (int): the number of labels to be created.
-    """
-
-    def __init__(self, n_label=10, sample=100000, random_state=42):
-        """Initialize a QuantileEncoder class object.
-
-        Args:
-            n_label (int): the number of labels to be created.
-            sample (int or float): the number or fraction of samples for ECDF
-        """
-        self.n_label = n_label
-        self.sample = sample
-        self.random_state = random_state
-
-    def fit(self, X, y=None):
-        """Get empirical CDFs of numerical features.
-
-        Args:
-            X (pandas.DataFrame): numerical features to encode
-
-        Returns:
-            A trained QuantileEncoder object.
-        """
-        def _calculate_ecdf(x):
-            return ECDF(x[~np.isnan(x)])
-
-        if self.sample >= X.shape[0]:
-            self.ecdfs = X.apply(_calculate_ecdf, axis=0)
-        elif self.sample > 1:
-            self.ecdfs = X.sample(n=self.sample,
-                                  random_state=self.random_state).apply(
-                                      _calculate_ecdf, axis=0
-                                  )
-        else:
-            self.ecdfs = X.sample(frac=self.sample,
-                                  random_state=self.random_state).apply(
-                                      _calculate_ecdf, axis=0
-                                  )
-
-        return self
-
-    def fit_transform(self, X, y=None):
-        """Get empirical CDFs of numerical features and encode to quantiles.
-
-        Args:
-            X (pandas.DataFrame): numerical features to encode
-
-        Returns:
-            Encoded features (pandas.DataFrame).
-        """
-        self.fit(X, y)
-
-        return self.transform(X)
-
-    def transform(self, X):
-        """Encode numerical features to quantiles.
-
-        Args:
-            X (pandas.DataFrame): numerical features to encode
-
-        Returns:
-            Encoded features (pandas.DataFrame).
-        """
-        for i, col in enumerate(X.columns):
-            X.loc[:, col] = self._transform_col(X[col], i)
-
-        return X
-
-    def _transform_col(self, x, i):
-        """Encode one numerical feature column to quantiles.
-
-        Args:
-            x (pandas.Series): numerical feature column to encode
-            i (int): column index of the numerical feature
-
-        Returns:
-            Encoded feature (pandas.Series).
-        """
-        # Map values to the emperical CDF between .1% and 99.9%
-        rv = np.ones_like(x) * -1
-
-        filt = ~np.isnan(x)
-        rv[filt] = np.floor((self.ecdfs[i](x[filt]) * 0.998 + .001) *
-                            self.n_label)
-
-        return rv
-
-
-class Normalizer(base.BaseEstimator):
-    """Normalizer that transforms numerical columns into normal distribution.
-
-    Attributes:
-        ecdfs (list of empirical CDF): empirical CDFs for columns
-    """
-
-    def fit(self, X, y=None):
-        self.ecdfs = [None] * X.shape[1]
-
-        for col in range(X.shape[1]):
-            self.ecdfs[col] = ECDF(X[:, col])
-
-        return self
-
-    def transform(self, X):
-        """Normalize numerical columns.
-
-        Args:
-            X (numpy.array) : numerical columns to normalize
-
-        Returns:
-            (numpy.array): normalized numerical columns
-        """
-
-        for col in range(X.shape[1]):
-            X[:, col] = self._transform_col(X[:, col], col)
-
-        return X
-
-    def fit_transform(self, X, y=None):
-        """Normalize numerical columns.
-
-        Args:
-            X (numpy.array) : numerical columns to normalize
-
-        Returns:
-            (numpy.array): normalized numerical columns
-        """
-
-        self.ecdfs = [None] * X.shape[1]
-
-        for col in range(X.shape[1]):
-            self.ecdfs[col] = ECDF(X[:, col])
-            X[:, col] = self._transform_col(X[:, col], col)
-
-        return X
-
-    def _transform_col(self, x, col):
-        """Normalize one numerical column.
-
-        Args:
-            x (numpy.array): a numerical column to normalize
-            col (int): column index
-
-        Returns:
-            A normalized feature vector.
-        """
-
-        return norm.ppf(self.ecdfs[col](x) * .998 + .001)
 
 
 class LabelEncoder(base.BaseEstimator):
@@ -233,7 +78,7 @@ class LabelEncoder(base.BaseEstimator):
         Returns:
             (pandas.Series): a column with labels.
         """
-        return x.fillna(NAN_INT).map(self.label_encoders[i]).fillna(0)
+        return x.fillna(NAN_INT).map(self.label_encoders[i]).fillna(0).astype(int)
 
     def fit(self, X, y=None):
         self.label_encoders = [None] * X.shape[1]
@@ -255,6 +100,7 @@ class LabelEncoder(base.BaseEstimator):
             (pandas.DataFrame): label encoded columns
         """
 
+        X = X.copy()
         for i, col in enumerate(X.columns):
             X.loc[:, col] = self._transform_col(X[col], i)
 
@@ -498,31 +344,109 @@ class TargetEncoder(base.BaseEstimator):
         return X
 
 
-class BandpassFilter(base.BaseEstimator):
+class EmbeddingEncoder(base.BaseEstimator):
+    """EmbeddingEncoder encodes categorical features to numerical embedding features."""
 
-    def __init__(self, fs=10., lowcut=.5, highcut=3., order=3):
-        self.fs = 10.
-        self.lowcut = .5
-        self.highcut = 3.
-        self.order = 3
-        self.b, self.a = self._butter_bandpass()
+    def __init__(self, cat_cols, num_cols=[], n_emb=[], min_obs=10, random_state=42):
+        """Initialize an EmbeddingEncoder class object.
 
-    def _butter_bandpass(self):
-        nyq = .5 * self.fs
-        low = self.lowcut / nyq
-        high = self.highcut / nyq
-        b, a = butter(self.order, [low, high], btype='band')
+        Args:
+            cat_cols (list of str): the names of categorical features to create embeddings for.
+            num_cols (list of str): the names of numerical features to train embeddings with.
+            n_emb (int or list of int): the numbers of embedding features used for columns.
+            min_obs (int): categories observed less than it will be grouped together before training embeddings
+            random_state (int): random seed.
+        """
+        self.cat_cols = cat_cols
+        self.num_cols = num_cols
 
-        return b, a
+        if isinstance(n_emb, int):
+            self.n_emb = [n_emb] * len(cat_cols)
+        elif isinstance(n_emb, list):
+            if not n_emb:
+                self.n_emb = [None] * len(cat_cols)
+            else:
+                assert len(cat_cols) == len(n_emb)
+                self.n_emb = n_emb
+        else:
+            raise ValueError('n_emb should be int or list')
 
-    def _butter_bandpass_filter(self, x):
-        return lfilter(self.b, self.a, x)
+        self.min_obs = min_obs
+        self.random_state = random_state
 
-    def fit(self, X):
-        return self
+        self.lbe = LabelEncoder(min_obs=self.min_obs)
 
-    def transform(self, X, y=None):
-        for col in range(X.shape[1]):
-            X[:, col] = self._butter_bandpass_filter(X[:, col])
+    def fit(self, X, y):
+        """Train a neural network model with embedding layers.
 
-        return X
+        Args:
+            X (pandas.DataFrame): categorical features to create embeddings for
+            y (pandas.Series): a target variable
+
+        Returns:
+            A trained EmbeddingEncoder object.
+        """
+        X_cat = self.lbe.fit_transform(X[self.cat_cols])
+
+        inputs = []
+        num_inputs = []
+        embeddings = []
+        self.embedding_layer_names = []
+        features = []
+        for i, col in enumerate(self.cat_cols):
+            features.append(X_cat[col].values)
+
+            if not self.n_emb[i]:
+                n_uniq = X_cat[col].nunique()
+                self.n_emb[i] = max(MIN_EMBEDDING, 2 * int(np.log2(n_uniq)))
+
+            _input = Input(shape=(1,), name=col)
+            _embed = Embedding(input_dim=n_uniq, output_dim=self.n_emb[i], name=col + '_emb')(_input)
+            _embed = Dropout(.2)(_embed)
+            _embed = Reshape((self.n_emb[i],))(_embed)
+
+            inputs.append(_input)
+            embeddings.append(_embed)
+
+        if self.num_cols:
+            num_inputs = Input(shape=(len(self.num_cols),), name='num_inputs')
+            merged_input = Concatenate(axis=1)(embeddings + [num_inputs])
+
+            inputs = inputs + [num_inputs]
+            features = features + [X[self.num_cols].values]
+        else:
+            merged_input = Concatenate(axis=1)(embeddings)
+
+        x = Dense(128, activation='relu')(merged_input)
+        x = Dropout(.5)(x)
+        x = Dense(64, activation='relu')(x)
+        x = Dropout(.5)(x)
+        output = Dense(1, activation='linear')(x)
+
+        self.model = Model(inputs=inputs, outputs=output)
+        self.model.compile(optimizer=Adam(lr=0.01),
+                           loss='mse',
+                           metrics=['mse'])
+
+        self.model.fit(x=features,
+                       y=y,
+                       epochs=100,
+                       validation_split=.2,
+                       batch_size=128)
+
+        self.embs = []
+        for i, col in enumerate(self.cat_cols):
+            self.embs.append(self.model.get_layer(col + '_emb').get_weights()[0])
+            logger.debug('{}: {}'.format(col, self.embs[i].shape))
+
+    def transform(self, X):
+        X_cat = self.lbe.transform(X[self.cat_cols])
+        X_emb = []
+        for i, col in enumerate(self.cat_cols):
+            X_emb.append(self.embs[i][X_cat[col].values])
+
+        return np.hstack(X_emb)
+
+    def fit_transform(self, X, y):
+        self.fit(X, y)
+        return self.transform(X)

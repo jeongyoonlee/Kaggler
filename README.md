@@ -1,3 +1,4 @@
+[![PyPI Version](https://badge.fury.io/py/kaggler.svg)](https://pypi.org/project/kaggler/)
 [![Build Status](https://travis-ci.org/jeongyoonlee/Kaggler.svg?branch=master)](https://travis-ci.org/jeongyoonlee/Kaggler)
 [![codecov](https://codecov.io/gh/jeongyoonlee/Kaggler/branch/master/graph/badge.svg)](https://codecov.io/gh/jeongyoonlee/Kaggler)
 

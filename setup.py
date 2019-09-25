@@ -1,8 +1,9 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-from setuptools import setup, Extension
+import kaggler
 import platform
+from setuptools import setup, Extension
 
 
 try:
@@ -48,7 +49,7 @@ class my_build_ext(build_ext):
 
 setup(
     name='Kaggler',
-    version='0.8.2',
+    version=kaggler.__version__,
 
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',

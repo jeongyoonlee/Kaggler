@@ -1,0 +1,2 @@
+RANDOM_SEED = 42
+TARGET_COL = 'target'
