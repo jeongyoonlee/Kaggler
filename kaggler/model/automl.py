@@ -28,8 +28,7 @@ def sample_data(X, y, nrows, random_state=None):
         X (pandas.DataFrame): features
         y (pandas.Series): labels
         nrows (int): the number rows to be sampled
-        random_state (int, or numpy.random.RandomState): random seed or
-            a RandomState instance
+        random_state (int, or numpy.random.RandomState): random seed or a RandomState instance
 
     Returns:
         a tuple of:
@@ -61,17 +60,14 @@ class BaseAutoML(object):
             space (dict): parameter space for hyperopt to explore
             n_est (int): the number of iterations for a regressor
             n_stop (int): early stopping rounds for a regressor
-            sample_size (int): the number of samples for feature selection and
-                parameter search
+            sample_size (int): the number of samples for feature selection and parameter search
             feature_selection (bool): whether to select features
             n_fs (int): the number of iterations for feature selection
             hyperparam_opt (bool): whether to search optimal parameters
             n_hpopt (int): the number of iterations for parameter search
             minimize (bool): whether the lower the metric is the better
-            n_random_col (int): the number of random columns to be added for
-                feature selection
-            random_state (int, or numpy.random.RandomState): random seed or
-                a RandomState instance
+            n_random_col (int): the number of random columns to be added for feature selection
+            random_state (int, or numpy.random.RandomState): random seed or a RandomState instance
         """
 
         self.params = params

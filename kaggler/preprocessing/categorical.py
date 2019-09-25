@@ -355,7 +355,8 @@ class EmbeddingEncoder(base.BaseEstimator):
     at https://www.kaggle.com/abhishek/entity-embeddings-to-handle-categories
     """
 
-    def __init__(self, cat_cols, num_cols=[], n_emb=[], min_obs=10, n_epoch=50, cv=None, random_state=42):
+    def __init__(self, cat_cols, num_cols=[], n_emb=[], min_obs=10, n_epoch=50, batch_size=1024, cv=None,
+                 random_state=42):
         """Initialize an EmbeddingEncoder class object.
 
         Args:
@@ -363,6 +364,8 @@ class EmbeddingEncoder(base.BaseEstimator):
             num_cols (list of str): the names of numerical features to train embeddings with.
             n_emb (int or list of int): the numbers of embedding features used for columns.
             min_obs (int): categories observed less than it will be grouped together before training embeddings
+            n_epoch (int): the number of epochs to train a neural network with embedding layer
+            batch_size (int): the size of mini-batches in model training
             cv (sklearn.model_selection._BaseKFold): sklearn CV object
             random_state (int): random seed.
         """
@@ -382,6 +385,7 @@ class EmbeddingEncoder(base.BaseEstimator):
 
         self.min_obs = min_obs
         self.n_epoch = n_epoch
+        self.batch_size = batch_size
         self.cv = cv
         self.random_state = random_state
 
@@ -392,18 +396,19 @@ class EmbeddingEncoder(base.BaseEstimator):
         return tf.py_function(roc_auc_score, (y, p), tf.double)
 
     @staticmethod
-    def _get_model(X, cat_cols, num_cols, n_emb, output_activation):
+    def _get_model(X, cat_cols, num_cols, n_uniq, n_emb, output_activation):
         inputs = []
         num_inputs = []
         embeddings = []
         for i, col in enumerate(cat_cols):
 
-            n_uniq = X[col].nunique()
+            if not n_uniq[i]:
+                n_uniq[i] = X[col].nunique()
             if not n_emb[i]:
-                n_emb[i] = max(MIN_EMBEDDING, 2 * int(np.log2(n_uniq)))
+                n_emb[i] = max(MIN_EMBEDDING, 2 * int(np.log2(n_uniq[i])))
 
             _input = Input(shape=(1,), name=col)
-            _embed = Embedding(input_dim=n_uniq, output_dim=n_emb[i], name=col + EMBEDDING_SUFFIX)(_input)
+            _embed = Embedding(input_dim=n_uniq[i], output_dim=n_emb[i], name=col + EMBEDDING_SUFFIX)(_input)
             _embed = Dropout(.2)(_embed)
             _embed = Reshape((n_emb[i],))(_embed)
 
@@ -429,7 +434,7 @@ class EmbeddingEncoder(base.BaseEstimator):
 
         model = Model(inputs=inputs, outputs=output)
 
-        return model, n_emb
+        return model, n_emb, n_uniq
 
     def fit(self, X, y):
         """Train a neural network model with embedding layers.
@@ -458,11 +463,13 @@ class EmbeddingEncoder(base.BaseEstimator):
             monitor = 'val_mse'
             mode = 'min'
 
+        n_uniq = [X[col].nunique() for col in self.cat_cols]
         if self.cv:
             self.embs = []
             n_fold = self.cv.get_n_splits(X)
             for i_cv, (i_trn, i_val) in enumerate(self.cv.split(X, y), 1):
-                model, self.n_emb = self._get_model(X_cat, self.cat_cols, self.num_cols, self.n_emb, output_activation)
+                model, self.n_emb, _ = self._get_model(X_cat, self.cat_cols, self.num_cols, n_uniq, self.n_emb,
+                                                       output_activation)
                 model.compile(optimizer=Adam(lr=0.01), loss=loss, metrics=metrics)
 
                 features_trn = [X_cat[col][i_trn] for col in self.cat_cols]
@@ -478,18 +485,19 @@ class EmbeddingEncoder(base.BaseEstimator):
                           y=y[i_trn],
                           validation_data=(features_val, y[i_val]),
                           epochs=self.n_epoch,
-                          batch_size=128,
+                          batch_size=self.batch_size,
                           callbacks=[es, rlr])
 
-                for col in self.cat_cols:
+                for i_col, col in enumerate(self.cat_cols):
                     emb = model.get_layer(col + EMBEDDING_SUFFIX).get_weights()[0]
                     if i_cv == 1:
                         self.embs.append(emb / n_fold)
                     else:
-                        self.embs[i_cv - 1] += emb / n_fold
+                        self.embs[i_col] += emb / n_fold
 
         else:
-            model, self.n_emb = self._get_model(X_cat, self.cat_cols, self.num_cols, self.n_emb, output_activation)
+            model, self.n_emb, _ = self._get_model(X_cat, self.cat_cols, self.num_cols, n_uniq, self.n_emb,
+                                                   output_activation)
             model.compile(optimizer=Adam(lr=0.01), loss=loss, metrics=metrics)
 
             features = [X_cat[col] for col in self.cat_cols]
@@ -500,7 +508,7 @@ class EmbeddingEncoder(base.BaseEstimator):
                       y=y,
                       epochs=self.n_epoch,
                       validation_split=.2,
-                      batch_size=128)
+                      batch_size=self.batch_size)
 
             self.embs = []
             for i, col in enumerate(self.cat_cols):
