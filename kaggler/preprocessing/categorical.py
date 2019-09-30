@@ -463,7 +463,7 @@ class EmbeddingEncoder(base.BaseEstimator):
             monitor = 'val_mse'
             mode = 'min'
 
-        n_uniq = [X[col].nunique() for col in self.cat_cols]
+        n_uniq = [X_cat[col].nunique() for col in self.cat_cols]
         if self.cv:
             self.embs = []
             n_fold = self.cv.get_n_splits(X)
