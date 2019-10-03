@@ -355,7 +355,7 @@ class EmbeddingEncoder(base.BaseEstimator):
     at https://www.kaggle.com/abhishek/entity-embeddings-to-handle-categories
     """
 
-    def __init__(self, cat_cols, num_cols=[], n_emb=[], min_obs=10, n_epoch=50, batch_size=1024, cv=None,
+    def __init__(self, cat_cols, num_cols=[], n_emb=[], min_obs=10, n_epoch=100, batch_size=1024, cv=None,
                  random_state=42):
         """Initialize an EmbeddingEncoder class object.
 
@@ -504,11 +504,15 @@ class EmbeddingEncoder(base.BaseEstimator):
             if self.num_cols:
                 features += [X[self.num_cols].values]
 
+            es = EarlyStopping(monitor=monitor, min_delta=.001, patience=5, verbose=1, mode=mode,
+                               baseline=None, restore_best_weights=True)
+            rlr = ReduceLROnPlateau(monitor=monitor, factor=.5, patience=3, min_lr=1e-6, mode=mode)
             model.fit(x=features,
                       y=y,
                       epochs=self.n_epoch,
                       validation_split=.2,
-                      batch_size=self.batch_size)
+                      batch_size=self.batch_size,
+                      callbacks=[es, rlr])
 
             self.embs = []
             for i, col in enumerate(self.cat_cols):
