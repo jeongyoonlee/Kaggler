@@ -233,20 +233,31 @@ class OneHotEncoder(base.BaseEstimator):
 class TargetEncoder(base.BaseEstimator):
     """Target Encoder that encode categorical values into average target values.
 
+    Smoothing and min_samples are added based on olivier's kernel at Kaggle:
+    https://www.kaggle.com/ogrellier/python-target-encoding-for-categorical-features
+
+    , which is based on Daniele Micci-Barreca (2001):
+    https://dl.acm.org/citation.cfm?id=507538
+
     Attributes:
         target_encoders (list of dict): target encoders for columns
     """
 
-    def __init__(self, cv=None):
+    def __init__(self, smoothing=1, min_samples=10, cv=None):
         """Initialize the TargetEncoder class object.
 
         Args:
+            smoothing (int): smoothing effect to balance between the categorical average vs global mean
+            min_samples (int): minimum samples to take category average into account
             cv (sklearn.model_selection._BaseKFold, optional): sklearn CV object
         """
+        assert (min_samples >= 0) and (smoothing >= 0), 'min_samples and smoothing should be positive'
+        self.smoothing = smoothing
+        self.min_samples = min_samples
         self.cv = cv
 
     def __repr__(self):
-        return('TargetEncoder(cv={})'.format(self.cv))
+        return('TargetEncoder(smoothing={}, min_samples={}, cv={})'.format(self.smoothing, self.min_samples, self.cv))
 
     def _get_target_encoder(self, x, y):
         """Return a mapping from categories to average target values.
@@ -263,8 +274,11 @@ class TargetEncoder(base.BaseEstimator):
 
         # NaN cannot be used as a key for dict. So replace it with a random
         # integer
-        df = pd.DataFrame({y.name: y, x.name: x.fillna(NAN_INT)})
-        return df.groupby(x.name)[y.name].mean().to_dict()
+        mean_count = pd.DataFrame({y.name: y, x.name: x.fillna(NAN_INT)}).groupby(x.name)[y.name].agg(['mean', 'count'])
+        smoothing = 1 / (1 + np.exp(-(mean_count['count'] - self.min_samples) / self.smoothing))
+
+        mean_count[y.name] = self.target_mean * (1 - smoothing) + mean_count['mean'] * smoothing
+        return mean_count[y.name].to_dict()
 
     def fit(self, X, y):
         """Encode categorical columns into average target values.
@@ -312,7 +326,7 @@ class TargetEncoder(base.BaseEstimator):
 
                 X.loc[:, col] = x / i_enc
 
-        return X
+        return X.astype(float)
 
     def fit_transform(self, X, y):
         """Encode categorical columns into average target values.
@@ -345,7 +359,7 @@ class TargetEncoder(base.BaseEstimator):
 
                     self.target_encoders[i].append(target_encoder)
 
-        return X
+        return X.astype(float)
 
 
 class EmbeddingEncoder(base.BaseEstimator):
