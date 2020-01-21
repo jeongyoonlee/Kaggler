@@ -9,6 +9,7 @@ import numpy as np
 from scipy import sparse
 from sklearn import base
 from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import KFold
 import pandas as pd
 import tensorflow as tf
 
@@ -17,6 +18,7 @@ from .const import NAN_INT, MIN_EMBEDDING
 
 logger = logging.getLogger('Kaggler')
 EMBEDDING_SUFFIX = '_emb'
+kfold = KFold(n_splits=5, shuffle=True, random_state=42)
 
 
 class LabelEncoder(base.BaseEstimator):
@@ -243,13 +245,13 @@ class TargetEncoder(base.BaseEstimator):
         target_encoders (list of dict): target encoders for columns
     """
 
-    def __init__(self, smoothing=1, min_samples=10, cv=None):
+    def __init__(self, smoothing=1, min_samples=10, cv=kfold):
         """Initialize the TargetEncoder class object.
 
         Args:
             smoothing (int): smoothing effect to balance between the categorical average vs global mean
             min_samples (int): minimum samples to take category average into account
-            cv (sklearn.model_selection._BaseKFold, optional): sklearn CV object
+            cv (sklearn.model_selection._BaseKFold, optional): sklearn CV object. default=KFold(5, True, 42)
         """
         assert (min_samples >= 0) and (smoothing >= 0), 'min_samples and smoothing should be positive'
         self.smoothing = smoothing

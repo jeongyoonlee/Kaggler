@@ -57,7 +57,7 @@ class BaseAutoML(object):
     """Base optimized regressor class."""
 
     def __init__(self, params, space, n_est=500, n_stop=10, sample_size=SAMPLE_SIZE, valid_size=VALID_SIZE,
-                 shuffle=True, feature_selection=True, n_fs=10, hyperparam_opt=True, n_hpopt=100,
+                 shuffle=True, feature_selection=True, n_fs=10, fs_th=1e-5, hyperparam_opt=True, n_hpopt=100,
                  minimize=True, n_random_col=10, random_state=RANDOM_SEED):
         """Initialize an optimized regressor class object.
 
@@ -72,6 +72,7 @@ class BaseAutoML(object):
                             last sample_size and valid_size will be used.
             feature_selection (bool): whether to select features
             n_fs (int): the number of iterations for feature selection
+            fs_th (float): the feature importance threshold. Only features whose importances are higher that it will be selected.
             hyperparam_opt (bool): whether to search optimal parameters
             n_hpopt (int): the number of iterations for hyper-parameter optimization
             minimize (bool): whether the lower the metric is the better
@@ -92,6 +93,7 @@ class BaseAutoML(object):
         self.valid_size = valid_size
         self.shuffle = True
         self.feature_selection = feature_selection
+        self.fs_th = fs_th
         self.hyperparam_opt = hyperparam_opt
         if minimize:
             self.loss_sign = 1
@@ -178,9 +180,9 @@ class BaseAutoML(object):
         imp = imp.sort_values('feature_importances', ascending=False).drop_duplicates()
 
         if len(random_cols) == 0:
-            imp = imp[imp['feature_importances'] != 0]
+            imp = imp[imp['feature_importances'] > self.fs_th]
         else:
-            th = imp.loc[imp.feature_names.isin(random_cols), 'feature_importances'].mean()
+            th = max(imp.loc[imp.feature_names.isin(random_cols), 'feature_importances'].median(), self.fs_th)
             logger.debug('feature importance (th={:.2f}):\n{}'.format(th, imp))
             imp = imp[(imp.feature_importances > th) & ~(imp.feature_names.isin(random_cols))]
 
@@ -204,7 +206,7 @@ class AutoXGB(BaseAutoML):
     }
 
     def __init__(self, objective='reg:linear', metric='rmse', boosting='gbtree', params=params, space=space,
-                 n_est=500, n_stop=10, sample_size=SAMPLE_SIZE, feature_selection=True, n_fs=10,
+                 n_est=500, n_stop=10, sample_size=SAMPLE_SIZE, feature_selection=True, n_fs=10, fs_th=1e-5,
                  hyperparam_opt=True, n_hpopt=100, n_random_col=10, random_state=RANDOM_SEED, shuffle=True):
 
         self.metric, minimize = self._get_metric_alias_minimize(metric)
@@ -215,7 +217,7 @@ class AutoXGB(BaseAutoML):
 
         super(AutoXGB, self).__init__(params=params, space=space, n_est=n_est, n_stop=n_stop,
                                       sample_size=sample_size, feature_selection=feature_selection,
-                                      n_fs=n_fs, hyperparam_opt=hyperparam_opt, n_hpopt=n_hpopt,
+                                      n_fs=n_fs, fs_th=1e-5, hyperparam_opt=hyperparam_opt, n_hpopt=n_hpopt,
                                       minimize=minimize, n_random_col=n_random_col, random_state=random_state,
                                       shuffle=shuffle)
 
@@ -305,7 +307,7 @@ class AutoLGB(BaseAutoML):
     }
 
     def __init__(self, objective='regression', metric='mae', boosting='gbdt', params=params, space=space,
-                 n_est=500, n_stop=10, sample_size=SAMPLE_SIZE, feature_selection=True, n_fs=10,
+                 n_est=500, n_stop=10, sample_size=SAMPLE_SIZE, feature_selection=True, n_fs=10, fs_th=1e-5,
                  hyperparam_opt=True, n_hpopt=100, n_random_col=10, random_state=RANDOM_SEED, shuffle=True):
 
         self.metric, minimize = self._get_metric_alias_minimize(metric)
@@ -317,7 +319,7 @@ class AutoLGB(BaseAutoML):
 
         super(AutoLGB, self).__init__(params=params, space=space, n_est=n_est, n_stop=n_stop,
                                       sample_size=sample_size, feature_selection=feature_selection,
-                                      n_fs=n_fs, hyperparam_opt=hyperparam_opt, n_hpopt=n_hpopt,
+                                      n_fs=n_fs, fs_th=1e-5, hyperparam_opt=hyperparam_opt, n_hpopt=n_hpopt,
                                       minimize=minimize, n_random_col=n_random_col, random_state=random_state,
                                       shuffle=shuffle)
 
