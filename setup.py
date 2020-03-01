@@ -51,11 +51,9 @@ class my_build_ext(build_ext):
 setup(
     name='Kaggler',
     version=kaggler.__version__,
-
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
-
-    python_requires=">=3.6"
+    python_requires=">=3.6",
     packages=['kaggler',
               'kaggler.feature_selection',
               'kaggler.ensemble',
@@ -65,15 +63,11 @@ setup(
               'kaggler.preprocessing'],
     url='https://github.com/jeongyoonlee/Kaggler',
     license='LICENSE',
-
     description='Code for Kaggle Data Science Competitions.',
     long_description=read_md('README.md'),
     long_description_content_type='text/markdown',
-
     install_requires=requirements,
-
     setup_requires=['setuptools>=18.0', 'cython>=0.29.0', 'numpy'],
-
     cmdclass={'build_ext': my_build_ext},
     ext_modules=[Extension('kaggler.online_model.ftrl',
                            ['kaggler/online_model/ftrl' + ext,
@@ -119,6 +113,5 @@ setup(
                            extra_compile_args=extra_compile_args,
                            extra_link_args=extra_link_args),
                  ],
-
     zip_safe=False,
 )
