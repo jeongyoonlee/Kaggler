@@ -1,6 +1,3 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import kaggler
 import platform
 from setuptools import setup, Extension
@@ -22,6 +19,10 @@ extra_link_args = []
 if platform.system() == "Darwin":
     extra_compile_args += ["-mmacosx-version-min=10.9"]
     extra_link_args += ["-mmacosx-version-min=10.9"]
+
+
+with open("requirements.txt") as f:
+    requirements = f.readlines()
 
 
 def read_md(path):
@@ -54,6 +55,7 @@ setup(
     author='Jeong-Yoon Lee',
     author_email='jeongyoon.lee1@gmail.com',
 
+    python_requires=">=3.6"
     packages=['kaggler',
               'kaggler.feature_selection',
               'kaggler.ensemble',
@@ -68,24 +70,9 @@ setup(
     long_description=read_md('README.md'),
     long_description_content_type='text/markdown',
 
-    install_requires=[
-        'setuptools>=41.0.0',
-        'cython>=0.29.0',
-        'h5py',
-        'hyperopt',
-        'ml_metrics',
-        'numpy',
-        'pandas',
-        'matplotlib',
-        'scipy>=0.14.0',
-        'scikit-learn>=0.15.0',
-        'statsmodels>=0.5.0',
-        'kaggle',
-        'tensorflow',
-        'keras',
-    ],
+    install_requires=requirements,
 
-    setup_requires=['cython>=0.29.0', 'numpy'],
+    setup_requires=['setuptools>=18.0', 'cython>=0.29.0', 'numpy'],
 
     cmdclass={'build_ext': my_build_ext},
     ext_modules=[Extension('kaggler.online_model.ftrl',

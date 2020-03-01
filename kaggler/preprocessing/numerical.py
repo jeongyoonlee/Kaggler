@@ -116,7 +116,7 @@ class Normalizer(base.BaseEstimator):
         self.ecdfs = [None] * X.shape[1]
 
         for col in range(X.shape[1]):
-            self.ecdfs[col] = ECDF(X[:, col])
+            self.ecdfs[col] = ECDF(X[col].values)
 
         return self
 
@@ -124,14 +124,14 @@ class Normalizer(base.BaseEstimator):
         """Normalize numerical columns.
 
         Args:
-            X (numpy.array) : numerical columns to normalize
+            X (pandas.DataFrame) : numerical columns to normalize
 
         Returns:
-            (numpy.array): normalized numerical columns
+            (pandas.DataFrame): normalized numerical columns
         """
 
         for col in range(X.shape[1]):
-            X[:, col] = self._transform_col(X[:, col], col)
+            X[col] = self._transform_col(X[col], col)
 
         return X
 
@@ -139,17 +139,17 @@ class Normalizer(base.BaseEstimator):
         """Normalize numerical columns.
 
         Args:
-            X (numpy.array) : numerical columns to normalize
+            X (pandas.DataFrame) : numerical columns to normalize
 
         Returns:
-            (numpy.array): normalized numerical columns
+            (pandas.DataFrame): normalized numerical columns
         """
 
         self.ecdfs = [None] * X.shape[1]
 
         for col in range(X.shape[1]):
-            self.ecdfs[col] = ECDF(X[:, col])
-            X[:, col] = self._transform_col(X[:, col], col)
+            self.ecdfs[col] = ECDF(X[col].values)
+            X[col] = self._transform_col(X[col], col)
 
         return X
 
@@ -157,14 +157,14 @@ class Normalizer(base.BaseEstimator):
         """Normalize one numerical column.
 
         Args:
-            x (numpy.array): a numerical column to normalize
+            x (pandas.Series): a numerical column to normalize
             col (int): column index
 
         Returns:
             A normalized feature vector.
         """
 
-        return norm.ppf(self.ecdfs[col](x) * .998 + .001)
+        return norm.ppf(self.ecdfs[col](x.values) * .998 + .001)
 
 
 class BandpassFilter(base.BaseEstimator):
