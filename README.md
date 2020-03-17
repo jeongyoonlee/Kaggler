@@ -72,11 +72,11 @@ save_data(X, y, 'train.sps')
 
 ## Feature Engineering
 
-### One-hot, label, and target encoding
+### One-Hot-, Label-, Target-, Frequency-, and Embedding-Encodings for Categorical Features
 ```python
 import numpy as np
 import pandas as pd
-from kaggler.preprocessing import OneHotEncoder, LabelEncoder, TargetEncoder, FrequencyEncoder
+from kaggler.preprocessing import OneHotEncoder, LabelEncoder, TargetEncoder, FrequencyEncoder, EmbeddingEncoder
 
 trn = pd.read_csv('train.csv')
 target_col = trn.columns[-1]
@@ -84,19 +84,22 @@ cat_cols = [col for col in trn.columns if trn[col].dtype == np.object]
 
 ohe = OneHotEncoder(min_obs=100) # grouping all categories with less than 100 occurences
 lbe = LabelEncoder(min_obs=100)  # grouping all categories with less than 100 occurences
-te = TargetEncoder()			 # replacing each category with the average target value for the category
-fe = FrequencyEncoder()			 # replacing each category with the frequency value for the category
+te = TargetEncoder()			       # replacing each category with the average target value of the category
+fe = FrequencyEncoder()			     # replacing each category with the frequency value of the category
+ee = EmbeddingEncoder()          # mapping each category to a vector of real numbers
 
-X_trn = ohe.fit_transform(trn[cat_cols])	# X_cat is a scipy sparse matrix
-trn.loc[:, cat_cols] = lbe.fit_transform(trn[cat_cols])
-trn.loc[:, cat_cols] = te.fit_transform(trn[cat_cols])
-trn.loc[:, cat_cols] = fe.fit_transform(trn[cat_cols])
+X_ohe = ohe.fit_transform(trn[cat_cols])	# X_ohe is a scipy sparse matrix
+trn[cat_cols] = lbe.fit_transform(trn[cat_cols])
+trn[cat_cols] = te.fit_transform(trn[cat_cols])
+trn[cat_cols] = fe.fit_transform(trn[cat_cols])
+X_ee = ee.fit_transform(trn[cat_cols])    # X_ee is a numpy matrix
 
 tst = pd.read_csv('test.csv')
-X_tst = ohe.transform(tst[cat_cols])
-tst.loc[:, cat_cols] = lbe.transform(tst[cat_cols])
-tst.loc[:, cat_cols] = te.transform(tst[cat_cols])
-tst.loc[:, cat_cols] = fe.transform(tst[cat_cols])
+X_ohe = ohe.transform(tst[cat_cols])
+tst[cat_cols] = lbe.transform(tst[cat_cols])
+tst[cat_cols] = te.transform(tst[cat_cols])
+tst[cat_cols] = fe.transform(tst[cat_cols])
+X_ee = ee.transform(tst[cat_cols])
 ```
 
 ## AutoML
