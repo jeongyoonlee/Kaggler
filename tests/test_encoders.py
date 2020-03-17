@@ -74,20 +74,20 @@ def test_FrequencyEncoder(generate_data):
     cat_cols = [x for x in feature_cols if df[x].nunique() < 100]
 
     te = FrequencyEncoder()
-    X_cat = te.fit_transform(df[cat_cols], df[TARGET_COL])
+    X_cat = te.fit_transform(df[cat_cols])
     print('Without CV:\n{}'.format(X_cat.head()))
 
     assert X_cat.shape[1] == len(cat_cols)
 
     cv = KFold(n_splits=N_FOLD, shuffle=True, random_state=RANDOM_SEED)
     te = FrequencyEncoder(cv=cv)
-    X_cat = te.fit_transform(df[cat_cols], df[TARGET_COL])
+    X_cat = te.fit_transform(df[cat_cols])
     print('With CV (fit_transform()):\n{}'.format(X_cat.head()))
 
     assert X_cat.shape[1] == len(cat_cols)
 
     te = FrequencyEncoder(cv=cv)
-    te.fit(df[cat_cols], df[TARGET_COL])
+    te.fit(df[cat_cols])
     X_cat = te.transform(df[cat_cols])
     print('With CV (fit() and transform() separately):\n{}'.format(X_cat.head()))
 

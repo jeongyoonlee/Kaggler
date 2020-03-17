@@ -566,31 +566,28 @@ class FrequencyEncoder(base.BaseEstimator):
     def __repr__(self):
         return('FrequencyEncoder(cv={})'.format(self.cv))
 
-    def _get_frequency_encoder(self, x, y):
-        """Return a mapping from categories to average target values.
+    def _get_frequency_encoder(self, x):
+        """Return a mapping from categories to frequency.
 
         Args:
             x (pandas.Series): a categorical column to encode.
-            y (pandas.Series): the target column
 
         Returns:
             (dict): mapping from categories to frequency
         """
 
-        assert len(x) == len(y)
-
         # NaN cannot be used as a key for dict. So replace it with a random
         # integer
-        df = pd.DataFrame({y.name: y, x.name: x.fillna('NaN')})
+        df = pd.DataFrame({x.name: x.fillna('NaN')})
         df[x.name + '_freq'] = df[x.name].map(df[x.name].value_counts())
         return df.groupby(x.name)[x.name + '_freq'].size().to_dict()
 
-    def fit(self, X, y):
+    def fit(self, X, y=None):
         """Encode categorical columns into frequency.
 
         Args:
             X (pandas.DataFrame): categorical columns to encode
-            y (pandas.Series): the target column
+            y (pandas.Series, optional): the target column
 
         Returns:
             (pandas.DataFrame): encoded columns
@@ -599,11 +596,11 @@ class FrequencyEncoder(base.BaseEstimator):
 
         for i, col in enumerate(X.columns):
             if self.cv is None:
-                self.frequency_encoders[i] = self._get_frequency_encoder(X[col], y)
+                self.frequency_encoders[i] = self._get_frequency_encoder(X[col])
             else:
                 self.frequency_encoders[i] = []
-                for i_cv, (i_trn, i_val) in enumerate(self.cv.split(X[col], y), 1):
-                    self.frequency_encoders[i].append(self._get_frequency_encoder(X.loc[i_trn, col], y[i_trn]))
+                for i_cv, (i_trn, i_val) in enumerate(self.cv.split(X[col]), 1):
+                    self.frequency_encoders[i].append(self._get_frequency_encoder(X.loc[i_trn, col]))
 
         return self
 
@@ -630,25 +627,25 @@ class FrequencyEncoder(base.BaseEstimator):
 
         return X
 
-    def fit_transform(self, X, y):
+    def fit_transform(self, X, y=None):
         """Encode categorical columns into feature frequency counts.
 
         Args:
             X (pandas.DataFrame): categorical columns to encode
-            y (pandas.Series): the target column
+            y (pandas.Series, optional): the target column
         """
         self.frequency_encoders = [None] * X.shape[1]
 
         for i, col in enumerate(X.columns):
             if self.cv is None:
-                self.frequency_encoders[i] = self._get_frequency_encoder(X[col], y)
+                self.frequency_encoders[i] = self._get_frequency_encoder(X[col])
 
                 X.loc[:, col] = (X[col].fillna('NaN')
                                        .map(self.frequency_encoders[i]))
             else:
                 self.frequency_encoders[i] = []
-                for i_cv, (i_trn, i_val) in enumerate(self.cv.split(X[col], y), 1):
-                    frequency_encoder = self._get_frequency_encoder(X.loc[i_trn, col], y[i_trn])
+                for i_cv, (i_trn, i_val) in enumerate(self.cv.split(X[col]), 1):
+                    frequency_encoder = self._get_frequency_encoder(X.loc[i_trn, col])
 
                     X.loc[i_val, col] = X.loc[i_val, col].fillna('NaN').map(frequency_encoder)
                     self.frequency_encoders[i].append(frequency_encoder)
