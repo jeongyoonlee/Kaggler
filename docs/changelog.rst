@@ -3,6 +3,12 @@
 Changelog
 =========
 
+0.8.11 (2020-03-30)
+-------------------
+
+- Fix a bug that ``preprocessing.FrequencyEncoder`` fails on unobserved categories by @jeongyoonlee
+
+
 0.8.10 (2020-03-17)
 -------------------
 
