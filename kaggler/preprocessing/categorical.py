@@ -615,13 +615,13 @@ class FrequencyEncoder(base.BaseEstimator):
         """
         for i, col in enumerate(X.columns):
             if self.cv is None:
-                X.loc[:, col] = X[col].fillna('NaN').map(self.frequency_encoders[i])
+                X.loc[:, col] = X[col].fillna('NaN').map(self.frequency_encoders[i]).fillna(0)
             else:
                 for i_enc, frequency_encoder in enumerate(self.frequency_encoders[i], 1):
                     if i_enc == 1:
-                        x = X[col].fillna('NaN').map(frequency_encoder)
+                        x = X[col].fillna('NaN').map(frequency_encoder).fillna(0)
                     else:
-                        x += X[col].fillna('NaN').map(frequency_encoder)
+                        x += X[col].fillna('NaN').map(frequency_encoder).fillna(0)
 
                 X.loc[:, col] = x / i_enc
 
@@ -640,14 +640,13 @@ class FrequencyEncoder(base.BaseEstimator):
             if self.cv is None:
                 self.frequency_encoders[i] = self._get_frequency_encoder(X[col])
 
-                X.loc[:, col] = (X[col].fillna('NaN')
-                                       .map(self.frequency_encoders[i]))
+                X.loc[:, col] = X[col].fillna('NaN').map(self.frequency_encoders[i]).fillna(0)
             else:
                 self.frequency_encoders[i] = []
                 for i_cv, (i_trn, i_val) in enumerate(self.cv.split(X[col]), 1):
                     frequency_encoder = self._get_frequency_encoder(X.loc[i_trn, col])
 
-                    X.loc[i_val, col] = X.loc[i_val, col].fillna('NaN').map(frequency_encoder)
+                    X.loc[i_val, col] = X.loc[i_val, col].fillna('NaN').map(frequency_encoder).fillna(0)
                     self.frequency_encoders[i].append(frequency_encoder)
 
         return X
