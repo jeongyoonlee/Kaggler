@@ -35,7 +35,7 @@ If installation fails because it cannot find `MurmurHash3.h`, please add `.` to
 If you want to install it from source code:
 ```
 python setup.py build_ext --inplace
-sudo python setup.py install
+(sudo) python setup.py install
 ```
 
 ## Data I/O
