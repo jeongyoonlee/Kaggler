@@ -301,7 +301,8 @@ class TargetEncoder(base.BaseEstimator):
             else:
                 self.target_encoders[i] = []
                 for i_cv, (i_trn, i_val) in enumerate(self.cv.split(X[col], y), 1):
-                    self.target_encoders[i].append(self._get_target_encoder(X.loc[i_trn, col], y[i_trn]))
+                    i_trn, i_val = X.index[i_trn], X.index[i_val]
+                    self.target_encoders[i].append(self._get_target_encoder(X.loc[i_trn, col], y.loc[i_trn]))
 
         return self
 
@@ -353,6 +354,7 @@ class TargetEncoder(base.BaseEstimator):
             else:
                 self.target_encoders[i] = []
                 for i_cv, (i_trn, i_val) in enumerate(self.cv.split(X[col], y), 1):
+                    i_trn, i_val = X.index[i_trn], X.index[i_val]
                     target_encoder = self._get_target_encoder(X.loc[i_trn, col], y[i_trn])
 
                     X.loc[i_val, col] = (X.loc[i_val, col].fillna(NAN_INT)
@@ -484,15 +486,16 @@ class EmbeddingEncoder(base.BaseEstimator):
             self.embs = []
             n_fold = self.cv.get_n_splits(X)
             for i_cv, (i_trn, i_val) in enumerate(self.cv.split(X, y), 1):
+                i_trn, i_val = X.index[i_trn], X.index[i_val]
                 model, self.n_emb, _ = self._get_model(X_cat, self.cat_cols, self.num_cols, n_uniq, self.n_emb,
                                                        output_activation)
                 model.compile(optimizer=Adam(lr=0.01), loss=loss, metrics=metrics)
 
-                features_trn = [X_cat[col][i_trn] for col in self.cat_cols]
-                features_val = [X_cat[col][i_val] for col in self.cat_cols]
+                features_trn = [X_cat.loc[i_trn, col] for col in self.cat_cols]
+                features_val = [X_cat.loc[i_val, col] for col in self.cat_cols]
                 if self.num_cols:
-                    features_trn += [X[self.num_cols].values[i_trn]]
-                    features_val += [X[self.num_cols].values[i_val]]
+                    features_trn += [X.loc[i_trn, self.num_cols]]
+                    features_val += [X.loc[i_val, self.num_cols]]
 
                 es = EarlyStopping(monitor=monitor, min_delta=.001, patience=5, verbose=1, mode=mode,
                                    baseline=None, restore_best_weights=True)
@@ -600,7 +603,7 @@ class FrequencyEncoder(base.BaseEstimator):
             else:
                 self.frequency_encoders[i] = []
                 for i_cv, (i_trn, i_val) in enumerate(self.cv.split(X[col]), 1):
-                    self.frequency_encoders[i].append(self._get_frequency_encoder(X.loc[i_trn, col]))
+                    self.frequency_encoders[i].append(self._get_frequency_encoder(X.iloc[i_trn][col]))
 
         return self
 
@@ -644,6 +647,7 @@ class FrequencyEncoder(base.BaseEstimator):
             else:
                 self.frequency_encoders[i] = []
                 for i_cv, (i_trn, i_val) in enumerate(self.cv.split(X[col]), 1):
+                    i_trn, i_val = X.index[i_trn], X.index[i_val]
                     frequency_encoder = self._get_frequency_encoder(X.loc[i_trn, col])
 
                     X.loc[i_val, col] = X.loc[i_val, col].fillna('NaN').map(frequency_encoder).fillna(0)
