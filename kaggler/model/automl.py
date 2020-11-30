@@ -293,6 +293,7 @@ class AutoLGB(BaseAutoML):
         "verbosity": -1,
         "seed": RANDOM_SEED,
         "num_threads": -1,
+        "feature_pre_filter": False,
     }
 
     space = {
