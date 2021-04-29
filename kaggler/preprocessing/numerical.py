@@ -1,15 +1,12 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from logging import getLogger
+import numpy as np
 from scipy.signal import butter, lfilter
 from scipy.stats import norm
 from sklearn import base
 from statsmodels.distributions.empirical_distribution import ECDF
-import logging
-import numpy as np
 
 
-logger = logging.getLogger('Kaggler')
+logger = getLogger(__name__)
 
 
 class QuantileEncoder(base.BaseEstimator):

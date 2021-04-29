@@ -1,24 +1,19 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from io import open
-from sklearn.datasets import load_svmlight_file, dump_svmlight_file
-from scipy import sparse
-
 import csv
 import datetime
+import h5py
 import heapq
+from io import open
 import json
+from logging import getLogger
+import numpy as np
 import os
 import pickle
+from sklearn.datasets import load_svmlight_file, dump_svmlight_file
+from scipy import sparse
 import time
-import logging
-
-import h5py
-import numpy as np
 
 
-logger = logging.getLogger('Kaggler')
+logger = getLogger(__name__)
 
 
 def is_number(s):

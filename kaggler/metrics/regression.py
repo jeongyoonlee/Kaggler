@@ -1,12 +1,8 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from ml_metrics import quadratic_weighted_kappa as kappa    # noqa
+import numpy as np
 from sklearn.metrics import mean_squared_error as mse
 from sklearn.metrics import mean_absolute_error as mae  # noqa
 from sklearn.metrics import r2_score as r2              # noqa
-from ml_metrics import quadratic_weighted_kappa as kappa    # noqa
-
-import numpy as np
 
 from ..const import EPS
 

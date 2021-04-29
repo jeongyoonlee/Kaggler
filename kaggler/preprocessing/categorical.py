@@ -1,23 +1,19 @@
-
-from __future__ import print_function, division, absolute_import
-from keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from keras.layers import Embedding, Dense, Dropout, Input, Reshape, Concatenate, BatchNormalization
-from keras.models import Model
-from keras.optimizers import Adam
-import logging
+from logging import getLogger
 import numpy as np
 from scipy import sparse
 from sklearn import base
-from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import KFold
 import pandas as pd
-import tensorflow as tf
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from tensorflow.keras.layers import Embedding, Dense, Dropout, Input, Reshape, Concatenate, BatchNormalization
+from tensorflow.keras.metrics import AUC
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
 
-from .const import NAN_INT, MIN_EMBEDDING
+from .const import EMBEDDING_SUFFIX, MIN_EMBEDDING, NAN_INT
 
 
-logger = logging.getLogger('Kaggler')
-EMBEDDING_SUFFIX = '_emb'
+logger = getLogger(__name__)
 kfold = KFold(n_splits=5, shuffle=True, random_state=42)
 
 
@@ -131,7 +127,7 @@ class LabelEncoder(base.BaseEstimator):
 
             X.loc[:, col] = (X[col].fillna(NAN_INT)
                              .map(self.label_encoders[i])
-                             .fillna(0))
+                             .fillna(0).astype(int))
 
         return X
 
@@ -410,10 +406,6 @@ class EmbeddingEncoder(base.BaseEstimator):
         self.lbe = LabelEncoder(min_obs=self.min_obs)
 
     @staticmethod
-    def auc(y, p):
-        return tf.py_function(roc_auc_score, (y, p), tf.double)
-
-    @staticmethod
     def _get_model(X, cat_cols, num_cols, n_uniq, n_emb, output_activation):
         inputs = []
         num_inputs = []
@@ -471,7 +463,7 @@ class EmbeddingEncoder(base.BaseEstimator):
             assert np.isin(y, [0, 1]).all(), 'Target values should be 0 or 1 for classification.'
             output_activation = 'sigmoid'
             loss = 'binary_crossentropy'
-            metrics = [self.auc]
+            metrics = [AUC()]
             monitor = 'val_auc'
             mode = 'max'
         else:

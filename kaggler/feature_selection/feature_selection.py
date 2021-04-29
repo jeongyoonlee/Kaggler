@@ -1,9 +1,6 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+import numpy as np
 from scipy import sparse
 from sklearn import base
-import numpy as np
 
 
 class DropInactive(base.BaseEstimator, base.TransformerMixin):

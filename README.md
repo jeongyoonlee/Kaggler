@@ -26,7 +26,7 @@ Python packages required are listed in `requirements.txt`
 ### Using pip
 Python package is available at PyPi for pip installation:
 ```
-(sudo) pip install -U Kaggler
+pip install -U Kaggler
 ```
 If installation fails because it cannot find `MurmurHash3.h`, please add `.` to
 `LD_LIBRARY_PATH` as described [here](https://github.com/jeongyoonlee/Kaggler/issues/32).
@@ -35,65 +35,32 @@ If installation fails because it cannot find `MurmurHash3.h`, please add `.` to
 If you want to install it from source code:
 ```
 python setup.py build_ext --inplace
-(sudo) python setup.py install
-```
-
-## Data I/O
-Kaggler supports CSV (`.csv`), LibSVM (`.sps`), and HDF5 (`.h5`) file formats:
-```
-# CSV format: target,feature1,feature2,...
-1,1,0,0,1,0.5
-0,0,1,0,0,5
-
-# LibSVM format: target feature-index1:feature-value1 feature-index2:feature-value2
-1 1:1 4:1 5:0.5
-0 2:1 5:1
-
-# HDF5
-- issparse: binary flag indicating whether it stores sparse data or not.
-- target: stores a target variable as a numpy.array
-- shape: available only if issparse == 1. shape of scipy.sparse.csr_matrix
-- indices: available only if issparse == 1. indices of scipy.sparse.csr_matrix
-- indptr: available only if issparse == 1. indptr of scipy.sparse.csr_matrix
-- data: dense feature matrix if issparse == 0 else data of scipy.sparse.csr_matrix
-```
-
-```python
-from kaggler.data_io import load_data, save_data
-
-X, y = load_data('train.csv')	# use the first column as a target variable
-X, y = load_data('train.h5')	# load the feature matrix and target vector from a HDF5 file.
-X, y = load_data('train.sps')	# load the feature matrix and target vector from LibSVM file.
-
-save_data(X, y, 'train.csv')
-save_data(X, y, 'train.h5')
-save_data(X, y, 'train.sps')
+python setup.py install
 ```
 
 
 ## Feature Engineering
 
-### One-Hot-, Label-, Target-, Frequency-, and Embedding-Encodings for Categorical Features
+### One-Hot, Label, Target, Frequency, and Embedding Encoders for Categorical Features
 ```python
-import numpy as np
 import pandas as pd
 from kaggler.preprocessing import OneHotEncoder, LabelEncoder, TargetEncoder, FrequencyEncoder, EmbeddingEncoder
 
 trn = pd.read_csv('train.csv')
 target_col = trn.columns[-1]
-cat_cols = [col for col in trn.columns if trn[col].dtype == np.object]
+cat_cols = [col for col in trn.columns if trn[col].dtype == 'object']
 
 ohe = OneHotEncoder(min_obs=100) # grouping all categories with less than 100 occurences
 lbe = LabelEncoder(min_obs=100)  # grouping all categories with less than 100 occurences
-te = TargetEncoder()			       # replacing each category with the average target value of the category
-fe = FrequencyEncoder()			     # replacing each category with the frequency value of the category
+te = TargetEncoder()			 # replacing each category with the average target value of the category
+fe = FrequencyEncoder()	         # replacing each category with the frequency value of the category
 ee = EmbeddingEncoder()          # mapping each category to a vector of real numbers
 
-X_ohe = ohe.fit_transform(trn[cat_cols])	# X_ohe is a scipy sparse matrix
+X_ohe = ohe.fit_transform(trn[cat_cols])	    # X_ohe is a scipy sparse matrix
 trn[cat_cols] = lbe.fit_transform(trn[cat_cols])
 trn[cat_cols] = te.fit_transform(trn[cat_cols])
 trn[cat_cols] = fe.fit_transform(trn[cat_cols])
-X_ee = ee.fit_transform(trn[cat_cols])    # X_ee is a numpy matrix
+X_ee = ee.fit_transform(trn[cat_cols])          # X_ee is a numpy matrix
 
 tst = pd.read_csv('test.csv')
 X_ohe = ohe.transform(tst[cat_cols])
@@ -101,6 +68,21 @@ tst[cat_cols] = lbe.transform(tst[cat_cols])
 tst[cat_cols] = te.transform(tst[cat_cols])
 tst[cat_cols] = fe.transform(tst[cat_cols])
 X_ee = ee.transform(tst[cat_cols])
+```
+
+### Denoising AutoEncoder (DAE)
+```python
+import pandas as pd
+from kaggler.preprocessing import DAE
+
+trn = pd.read_csv('train.csv')
+tst = pd.read_csv('test.csv')
+target_col = trn.columns[-1]
+cat_cols = [col for col in trn.columns if trn[col].dtype == 'object']
+num_cols = [col for col in trn.columns if col not in cat_cols + [target_col]]
+
+dae = DAE(cat_cols=cat_cols, num_cols=num_cols, n_encoding=128)
+X = dae.fit_transform(pd.concat([trn, tst], axis=0))    # encoding input features into the encoding vectors with size of 128
 ```
 
 ## AutoML
@@ -225,6 +207,38 @@ X, y = load_data('train.sps')
 
 clf.fit(X, y)
 p = clf.predict(X)
+```
+
+## Data I/O
+Kaggler supports CSV (`.csv`), LibSVM (`.sps`), and HDF5 (`.h5`) file formats:
+```
+# CSV format: target,feature1,feature2,...
+1,1,0,0,1,0.5
+0,0,1,0,0,5
+
+# LibSVM format: target feature-index1:feature-value1 feature-index2:feature-value2
+1 1:1 4:1 5:0.5
+0 2:1 5:1
+
+# HDF5
+- issparse: binary flag indicating whether it stores sparse data or not.
+- target: stores a target variable as a numpy.array
+- shape: available only if issparse == 1. shape of scipy.sparse.csr_matrix
+- indices: available only if issparse == 1. indices of scipy.sparse.csr_matrix
+- indptr: available only if issparse == 1. indptr of scipy.sparse.csr_matrix
+- data: dense feature matrix if issparse == 0 else data of scipy.sparse.csr_matrix
+```
+
+```python
+from kaggler.data_io import load_data, save_data
+
+X, y = load_data('train.csv')	# use the first column as a target variable
+X, y = load_data('train.h5')	# load the feature matrix and target vector from a HDF5 file.
+X, y = load_data('train.sps')	# load the feature matrix and target vector from LibSVM file.
+
+save_data(X, y, 'train.csv')
+save_data(X, y, 'train.h5')
+save_data(X, y, 'train.sps')
 ```
 
 ## Documentation

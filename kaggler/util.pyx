@@ -1,16 +1,12 @@
 # cython: boundscheck=False
 # cython: wraparound=False
 # cython: cdivision=True
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from scipy import sparse
-from keras import backend as K
-
-import logging
+from logging import getLogger
 import numpy as np
-import tensorflow as tf
 import os
+from scipy import sparse
+import tensorflow as tf
+from tensorflow.keras import backend as K
 
 cimport cython
 from libc.math cimport exp, log, abs, sqrt
@@ -19,7 +15,7 @@ from .util cimport DTYPE_t
 
 
 np.import_array()
-logger = logging.getLogger('Kaggler')
+logger = getLogger(__name__)
 
 
 cdef double sigm(double x):

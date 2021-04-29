@@ -9,7 +9,7 @@ the competition website (https://www.4paradigm.com/competition/kddcup2019).
 import hyperopt
 from hyperopt import STATUS_OK, Trials, hp, space_eval, tpe
 import lightgbm as lgb
-import logging
+from logging import getLogger
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -18,7 +18,7 @@ from xgboost import XGBModel
 from ..const import RANDOM_SEED
 
 
-logger = logging.getLogger('kaggler')
+logger = getLogger(__name__)
 SAMPLE_SIZE = 10000
 VALID_SIZE = .2
 
@@ -72,7 +72,7 @@ class BaseAutoML(object):
                             last sample_size and valid_size will be used.
             feature_selection (bool): whether to select features
             n_fs (int): the number of iterations for feature selection
-            fs_th (float): the feature importance threshold. Only features whose importances are higher that it will be selected.
+            fs_th (float): the feature importance threshold. Features with importances higher than it will be selected.
             hyperparam_opt (bool): whether to search optimal parameters
             n_hpopt (int): the number of iterations for hyper-parameter optimization
             minimize (bool): whether the lower the metric is the better
@@ -127,7 +127,7 @@ class BaseAutoML(object):
 
         if self.feature_selection:
             self.features = self.select_features(X_s, y_s)
-            logger.info('selecting top {} out of {} features'.format(len(self.features), X.shape[1]))
+            logger.info(f'selecting top {len(self.features)} out of {X.shape[1]} features')
         else:
             self.features = X.columns.tolist()
 
@@ -139,8 +139,8 @@ class BaseAutoML(object):
 
             self.params.update(hyperparams)
             self.n_best = trials.best_trial['result']['model'].best_iteration
-            logger.info('best parameters: {}'.format(self.params))
-            logger.info('best iterations: {}'.format(self.n_best))
+            logger.info(f'best parameters: {self.params}')
+            logger.info(f'best iterations: {self.n_best}')
 
         return self
 
@@ -183,7 +183,7 @@ class BaseAutoML(object):
             imp = imp[imp['feature_importances'] > self.fs_th]
         else:
             th = max(imp.loc[imp.feature_names.isin(random_cols), 'feature_importances'].median(), self.fs_th)
-            logger.debug('feature importance (th={:.2f}):\n{}'.format(th, imp))
+            logger.debug(f'feature importance (th={th:.2f}):\n{imp}')
             imp = imp[(imp.feature_importances > th) & ~(imp.feature_names.isin(random_cols))]
 
         return imp['feature_names'].tolist()

@@ -1,6 +1,3 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import cProfile
 import numpy as np
 import pandas as pd
@@ -13,8 +10,7 @@ N_CATEGORY = 1000
 
 
 def test():
-    df = pd.DataFrame(np.random.randint(0, N_CATEGORY,
-                                        size=(N_OBS, N_FEATURE)),
+    df = pd.DataFrame(np.random.randint(0, N_CATEGORY, size=(N_OBS, N_FEATURE)),
                       columns=['c{}'.format(x) for x in range(N_FEATURE)])
     profiler = cProfile.Profile(subcalls=True, builtins=True, timeunit=.001)
     ohe = OneHotEncoder(min_obs=100)

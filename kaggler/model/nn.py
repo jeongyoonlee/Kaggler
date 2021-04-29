@@ -1,18 +1,15 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from logging import getLogger
+import numpy as np
 from scipy import sparse
 from scipy.optimize import minimize
 from sklearn.metrics import roc_auc_score
-
-import logging
-import numpy as np
 import time
+
 
 from ..const import SEC_PER_MIN
 
 
-logger = logging.getLogger('Kaggler')
+logger = getLogger(__name__)
 
 
 class NN(object):

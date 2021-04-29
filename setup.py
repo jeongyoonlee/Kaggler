@@ -67,7 +67,7 @@ setup(
     long_description=read_md('README.md'),
     long_description_content_type='text/markdown',
     install_requires=requirements,
-    setup_requires=['setuptools>=18.0', 'cython>=0.29.0', 'numpy'],
+    setup_requires=['setuptools>=18.0', 'cython>=0.29.0', 'numpy', 'setupmeta'],
     cmdclass={'build_ext': my_build_ext},
     ext_modules=[Extension('kaggler.online_model.ftrl',
                            ['kaggler/online_model/ftrl' + ext,
