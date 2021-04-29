@@ -1,5 +1,5 @@
 [![PyPI version](https://badge.fury.io/py/Kaggler.svg)](https://badge.fury.io/py/Kaggler)
-[![Build Status](https://travis-ci.org/jeongyoonlee/Kaggler.svg?branch=master)](https://travis-ci.org/jeongyoonlee/Kaggler)
+[![Build Status](https://travis-ci.com/jeongyoonlee/Kaggler.svg?branch=master)](https://travis-ci.com/jeongyoonlee/Kaggler)
 [![Downloads](https://pepy.tech/badge/kaggler)](https://pepy.tech/project/kaggler)
 [![codecov](https://codecov.io/gh/jeongyoonlee/Kaggler/branch/master/graph/badge.svg)](https://codecov.io/gh/jeongyoonlee/Kaggler)
 
