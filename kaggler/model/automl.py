@@ -210,7 +210,7 @@ class AutoXGB(BaseAutoML):
     }
 
     def __init__(self, objective='reg:linear', metric='rmse', boosting='gbtree', params=params, space=space,
-                 n_est=500, n_stop=10, sample_size=SAMPLE_SIZE, feature_selection=True, n_fs=10, fs_th=1e-5,
+                 n_est=500, n_stop=10, sample_size=SAMPLE_SIZE, feature_selection=True, n_fs=10, fs_th=1e-5, fs_pct=.1,
                  hyperparam_opt=True, n_hpopt=100, n_random_col=10, random_state=RANDOM_SEED, shuffle=True):
 
         self.metric, minimize = self._get_metric_alias_minimize(metric)
@@ -220,8 +220,8 @@ class AutoXGB(BaseAutoML):
                             'booster': boosting})
 
         super(AutoXGB, self).__init__(params=self.params, space=space, n_est=n_est, n_stop=n_stop,
-                                      sample_size=sample_size, feature_selection=feature_selection,
-                                      n_fs=n_fs, fs_th=1e-5, hyperparam_opt=hyperparam_opt, n_hpopt=n_hpopt,
+                                      sample_size=sample_size, feature_selection=feature_selection, n_fs=n_fs,
+                                      fs_th=fs_th, fs_pct=fs_pct, hyperparam_opt=hyperparam_opt, n_hpopt=n_hpopt,
                                       minimize=minimize, n_random_col=n_random_col, random_state=random_state,
                                       shuffle=shuffle)
 
@@ -312,7 +312,7 @@ class AutoLGB(BaseAutoML):
     }
 
     def __init__(self, objective='regression', metric='mae', boosting='gbdt', params=params, space=space,
-                 n_est=500, n_stop=10, sample_size=SAMPLE_SIZE, feature_selection=True, n_fs=10, fs_th=1e-5,
+                 n_est=500, n_stop=10, sample_size=SAMPLE_SIZE, feature_selection=True, n_fs=10, fs_th=1e-5, fs_pct=.1,
                  hyperparam_opt=True, n_hpopt=100, n_random_col=10, random_state=RANDOM_SEED, shuffle=True):
 
         self.metric, minimize = self._get_metric_alias_minimize(metric)
@@ -323,7 +323,7 @@ class AutoLGB(BaseAutoML):
                             'boosting': boosting})
         super(AutoLGB, self).__init__(params=self.params, space=space, n_est=n_est, n_stop=n_stop,
                                       sample_size=sample_size, feature_selection=feature_selection,
-                                      n_fs=n_fs, fs_th=1e-5, hyperparam_opt=hyperparam_opt, n_hpopt=n_hpopt,
+                                      n_fs=n_fs, fs_th=fs_th, fs_pct=fs_pct, hyperparam_opt=hyperparam_opt, n_hpopt=n_hpopt,
                                       minimize=minimize, n_random_col=n_random_col, random_state=random_state,
                                       shuffle=shuffle)
 
