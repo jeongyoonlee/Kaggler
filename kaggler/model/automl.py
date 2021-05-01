@@ -57,8 +57,8 @@ class BaseAutoML(object):
     """Base optimized regressor class."""
 
     def __init__(self, params, space, n_est=500, n_stop=10, sample_size=SAMPLE_SIZE, valid_size=VALID_SIZE,
-                 shuffle=True, feature_selection=True, n_fs=10, fs_th=1e-5, hyperparam_opt=True, n_hpopt=100,
-                 minimize=True, n_random_col=10, random_state=RANDOM_SEED):
+                 shuffle=True, feature_selection=True, n_fs=10, fs_th=1e-5, fs_pct=.1, hyperparam_opt=True,
+                 n_hpopt=100, minimize=True, n_random_col=10, random_state=RANDOM_SEED):
         """Initialize an optimized regressor class object.
 
         Args:
@@ -69,10 +69,12 @@ class BaseAutoML(object):
             sample_size (int): the number of samples for feature selection and parameter search
             valid_size (float): the fraction of samples for feature selection and/or hyperparameter tuning
             shuffle (bool): if true, it uses random sampling for sampling and training/validation split. Otherwise
-                            last sample_size and valid_size will be used.
+                last sample_size and valid_size will be used.
             feature_selection (bool): whether to select features
             n_fs (int): the number of iterations for feature selection
             fs_th (float): the feature importance threshold. Features with importances higher than it will be selected.
+            fs_pct (float): the feature importance percentile. Features with importances higher than bottom x% of ranom
+                features
             hyperparam_opt (bool): whether to search optimal parameters
             n_hpopt (int): the number of iterations for hyper-parameter optimization
             minimize (bool): whether the lower the metric is the better
@@ -94,6 +96,7 @@ class BaseAutoML(object):
         self.shuffle = True
         self.feature_selection = feature_selection
         self.fs_th = fs_th
+        self.fs_pct = fs_pct
         self.hyperparam_opt = hyperparam_opt
         if minimize:
             self.loss_sign = 1
@@ -182,7 +185,8 @@ class BaseAutoML(object):
         if len(random_cols) == 0:
             imp = imp[imp['feature_importances'] > self.fs_th]
         else:
-            th = max(imp.loc[imp.feature_names.isin(random_cols), 'feature_importances'].median(), self.fs_th)
+            imp_random = imp.loc[imp.feature_names.isin(random_cols), 'feature_importances'].values
+            th = max(np.percentile(imp_random, self.fs_pct * 100), self.fs_th)
             logger.debug(f'feature importance (th={th:.2f}):\n{imp}')
             imp = imp[(imp.feature_importances > th) & ~(imp.feature_names.isin(random_cols))]
 
