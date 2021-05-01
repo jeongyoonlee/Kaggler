@@ -126,7 +126,7 @@ class DAE(base.BaseEstimator):
 
         if self.num_cols:
             num_inputs = Input(shape=(len(self.num_cols),), name='num_inputs')
-            merged_inputs = Concatenate()(embeddings + [num_inputs])
+            merged_inputs = Concatenate()(embeddings + [num_inputs]) if embeddings else num_inputs
 
             inputs = inputs + [num_inputs]
         else:
