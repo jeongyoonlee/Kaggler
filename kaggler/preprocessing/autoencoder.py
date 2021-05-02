@@ -4,7 +4,8 @@ from sklearn import base
 import tensorflow as tf
 from tensorflow.keras import Input, Model, backend as K
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from tensorflow.keras.layers import Concatenate, Dense, Dropout, Embedding, Layer, Reshape
+from tensorflow.keras.layers import Concatenate, Dense, Dropout, Embedding, Layer, Reshape, GaussianNoise
+from tensorflow.keras.losses import mean_squared_error
 from tensorflow.python.keras.utils import control_flow_util
 
 from .categorical import LabelEncoder
@@ -15,18 +16,55 @@ logger = getLogger(__name__)
 
 
 @tf.keras.utils.register_keras_serializable()
-class SwapNoiseMasker(Layer):
-    """A custom Keras layer that swaps inputs randomly."""
+class BaseMasker(Layer):
+    """A base class for all masking layers."""
+
     def __init__(self, probs, seed=[42, 33], **kwargs):
         """Initialize the layer.
 
         Args:
-            probs (list of float): swap noise probabilities. should have the same len as inputs.
+            probs (list of float): noise/masking probabilities. should have the same len as inputs.
             seed (list of float): two random seeds for two random sampling in the layer.
         """
         super().__init__(**kwargs)
         self.seed = seed
         self.probs = probs
+
+    def call(self, inputs, training=True):
+        raise NotImplementedError()
+
+    def get_config(self):
+        config = super().get_config().copy()
+        config.update({'probs': self.probs,
+                       'seed': self.seed})
+
+
+@tf.keras.utils.register_keras_serializable()
+class ZeroNoiseMasker(BaseMasker):
+    """A custom Keras layer that masks inputs randomly."""
+
+    def call(self, inputs, training=True):
+        if training is None:
+            training = K.learning_phase()
+
+        def mask_inputs():
+            mask = tf.random.stateless_binomial(shape=tf.shape(inputs),
+                                                seed=self.seed,
+                                                counts=tf.ones((tf.shape(inputs)[1],)),
+                                                probs=self.probs)
+
+            return tf.where(mask == 1, tf.zeros_like(inputs), inputs)
+
+        outputs = control_flow_util.smart_cond(training,
+                                               mask_inputs,
+                                               lambda: inputs)
+
+        return outputs
+
+
+@tf.keras.utils.register_keras_serializable()
+class SwapNoiseMasker(BaseMasker):
+    """A custom Keras layer that swaps inputs randomly."""
 
     def call(self, inputs, training=True):
         if training is None:
@@ -50,25 +88,87 @@ class SwapNoiseMasker(Layer):
 
         return outputs
 
+
+@tf.keras.utils.register_keras_serializable()
+class DAELayer(Layer):
+    """A DAE layer with one pair of the encoder and decoder."""
+
+    def __init__(self, encoding_dim=128, noise_std=.0, swap_prob=.2, mask_prob=.0, random_state=42, **kwargs):
+        """Initialize a DAE (Denoising AutoEncoder) layer.
+
+        Args:
+            encoding_dim (int): the numbers of hidden units in encoding/decoding layers.
+            noise_std (float): standard deviation of  gaussian noise to be added to features.
+            swap_prob (float): probability to add swap noise to features.
+            mask_prob (float): probability to add zero masking to features.
+            dropout (float): dropout probability in embedding layers
+            random_state (int): random seed.
+        """
+        super().__init__(**kwargs)
+
+        self.encoding_dim = encoding_dim
+        self.noise_std = noise_std
+        self.swap_prob = swap_prob
+        self.mask_prob = mask_prob
+        self.seed = random_state
+
+        self.encoder = Dense(encoding_dim, activation='relu', name=f'{self.name}_encoder')
+
+    def build(self, input_shape):
+        self.input_dim = input_shape[-1]
+        self.decoder = Dense(self.input_dim, activation='linear', name=f'{self.name}_decoder')
+
+    def call(self, inputs, training):
+        if training is None:
+            training = K.learning_phase()
+
+        masked_inputs = inputs
+        if training:
+            if self.noise_std > 0:
+                masked_inputs = GaussianNoise(self.noise_std)(masked_inputs)
+
+            if self.swap_prob > 0:
+                masked_inputs = SwapNoiseMasker(probs=[self.swap_prob] * self.input_dim,
+                                                seed=[self.seed] * 2)(masked_inputs)
+
+            if self.mask_prob > 0:
+                masked_inputs = ZeroNoiseMasker(probs=[self.mask_prob] * self.input_dim,
+                                                seed=[self.seed] * 2)(masked_inputs)
+
+        encoded = self.encoder(masked_inputs)
+        decoded = self.decoder(encoded)
+
+        rec_loss = K.mean(mean_squared_error(inputs, decoded))
+        self.add_loss(rec_loss)
+
+        return encoded, decoded
+
     def get_config(self):
         config = super().get_config().copy()
-        config.update({'probs': self.probs,
-                       'seed': self.seed})
-        return config
+        config.update({'encoding_dim': self.encoding_dim,
+                       'noise_std': self.noise_std,
+                       'swap_prob': self.swap_prob,
+                       'mask_prob': self.mask_prob,
+                       'random_state': self.seed})
 
 
 class DAE(base.BaseEstimator):
     """Denoising AutoEncoder feature transformer."""
 
-    def __init__(self, cat_cols=[], num_cols=[], n_emb=[], encoding_dim=128, noise_prob=.2,
-                 dropout=.2, min_obs=10, n_epoch=20, batch_size=1024, random_state=42):
+    def __init__(self, cat_cols=[], num_cols=[], n_emb=[], encoding_dim=128, n_layer=1, noise_std=.0,
+                 swap_prob=.2, mask_prob=.0, dropout=.2, min_obs=10, n_epoch=100, batch_size=1024,
+                 random_state=42):
         """Initialize a DAE (Denoising AutoEncoder) class object.
 
         Args:
             cat_cols (list of str): the names of categorical features to create embeddings for.
             num_cols (list of str): the names of numerical features to train embeddings with.
             n_emb (int or list of int): the numbers of embedding features used for columns.
-            noise_prob (float): probability to add swap noise to features.
+            encoding_dim (int): the numbers of hidden units in encoding/decoding layers.
+            n_layer (int): the numbers of the encoding/decoding layer pairs
+            noise_std (float): standard deviation of  gaussian noise to be added to features.
+            swap_prob (float): probability to add swap noise to features.
+            mask_prob (float): probability to add zero masking to features.
             dropout (float): dropout probability in embedding layers
             min_obs (int): categories observed less than it will be grouped together before training embeddings
             n_epoch (int): the number of epochs to train a neural network with embedding layer
@@ -90,11 +190,14 @@ class DAE(base.BaseEstimator):
         else:
             raise ValueError('n_emb should be int or list')
 
-        assert encoding_dim > 0
+        assert (encoding_dim > 0) and (n_layer > 0)
         self.encoding_dim = encoding_dim
+        self.n_layer = n_layer
 
-        assert (0. <= noise_prob < 1.) and (0. <= dropout < 1.)
-        self.noise_prob = noise_prob
+        assert (0. <= noise_std) and (0. <= swap_prob < 1.) and (0. <= mask_prob < 1.) and (0. <= dropout < 1.)
+        self.noise_std = noise_std
+        self.swap_prob = swap_prob
+        self.mask_prob = mask_prob
         self.dropout = dropout
 
         assert (min_obs > 0) and (n_epoch > 0) and (batch_size > 0)
@@ -132,16 +235,18 @@ class DAE(base.BaseEstimator):
         else:
             merged_inputs = Concatenate()(embeddings)
 
-        input_dim = sum(self.n_emb) + len(self.num_cols)
+        dae_layers = []
+        for i in range(self.n_layer):
+            dae_layers.append(DAELayer(encoding_dim=self.encoding_dim, noise_std=self.noise_std,
+                                       swap_prob=self.swap_prob, mask_prob=self.mask_prob,
+                                       random_state=self.seed, name=f'dae_layer_{i}'))
 
-        masked_inputs = SwapNoiseMasker(probs=[self.noise_prob] * input_dim, seed=[self.seed] * 2)(merged_inputs)
-        encoded = Dense(self.encoding_dim, activation='relu', name='encoder')(masked_inputs)
-        decoded = Dense(input_dim, activation='linear', name='decoder')(encoded)
+            encoded, decoded = dae_layers[i](merged_inputs)
+            _, merged_inputs = dae_layers[i](merged_inputs, training=False)
 
         self.encoder = Model(inputs=inputs, outputs=encoded)
         self.dae = Model(inputs=inputs, outputs=decoded)
-
-        self.dae.compile(optimizer='adam', loss='mean_squared_error')
+        self.dae.compile(optimizer='adam')
 
     def fit(self, X, y=None):
         """Train DAE
@@ -162,7 +267,7 @@ class DAE(base.BaseEstimator):
         if self.num_cols:
             features += [X[self.num_cols].values]
 
-        es = EarlyStopping(monitor='val_loss', min_delta=.001, patience=5, verbose=1, mode='min',
+        es = EarlyStopping(monitor='val_loss', min_delta=.0, patience=5, verbose=1, mode='min',
                            baseline=None, restore_best_weights=True)
         rlr = ReduceLROnPlateau(monitor='val_loss', factor=.5, patience=3, min_lr=1e-6, mode='min')
         self.dae.fit(x=features, y=features,
