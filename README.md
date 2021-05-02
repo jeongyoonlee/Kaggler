@@ -71,6 +71,7 @@ X_ee = ee.transform(tst[cat_cols])
 ```
 
 ### Denoising AutoEncoder (DAE)
+For reference for DAE, please check out [Vincent et al. (2010), "Stacked Denoising Autoencoders"](https://www.jmlr.org/papers/volume11/vincent10a/vincent10a.pdf).
 ```python
 import pandas as pd
 from kaggler.preprocessing import DAE
@@ -81,8 +82,14 @@ target_col = trn.columns[-1]
 cat_cols = [col for col in trn.columns if trn[col].dtype == 'object']
 num_cols = [col for col in trn.columns if col not in cat_cols + [target_col]]
 
+# Default DAE with only the swapping noise and a single encoder/decoder pair.
 dae = DAE(cat_cols=cat_cols, num_cols=num_cols, n_encoding=128)
 X = dae.fit_transform(pd.concat([trn, tst], axis=0))    # encoding input features into the encoding vectors with size of 128
+
+# Stacked DAE with the Gaussian noise, swapping noise and zero masking in 3 pairs of the encoder/decoder.
+sdae = DAE(cat_cols=cat_cols, num_cols=num_cols, n_encoding=128, n_layer=3,
+           noise_std=.05, swap_prob=.2, mask_prob=.1)
+X = sdae.fit_transform(pd.concat([trn, tst], axis=0))
 ```
 
 ## AutoML
