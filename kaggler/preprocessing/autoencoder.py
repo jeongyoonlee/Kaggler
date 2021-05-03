@@ -270,7 +270,7 @@ class DAE(base.BaseEstimator):
         es = EarlyStopping(monitor='val_loss', min_delta=.0, patience=5, verbose=1, mode='min',
                            baseline=None, restore_best_weights=True)
         rlr = ReduceLROnPlateau(monitor='val_loss', factor=.5, patience=3, min_lr=1e-6, mode='min')
-        self.dae.fit(x=features, y=features,
+        self.dae.fit(x=features, y=y,
                      epochs=self.n_epoch,
                      validation_split=.2,
                      batch_size=self.batch_size,

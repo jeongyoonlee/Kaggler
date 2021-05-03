@@ -57,7 +57,7 @@ class BaseAutoML(object):
     """Base optimized regressor class."""
 
     def __init__(self, params, space, n_est=500, n_stop=10, sample_size=SAMPLE_SIZE, valid_size=VALID_SIZE,
-                 shuffle=True, feature_selection=True, n_fs=10, fs_th=1e-5, fs_pct=.1, hyperparam_opt=True,
+                 shuffle=True, feature_selection=True, n_fs=10, fs_th=0., fs_pct=.0, hyperparam_opt=True,
                  n_hpopt=100, minimize=True, n_random_col=10, random_state=RANDOM_SEED):
         """Initialize an optimized regressor class object.
 
