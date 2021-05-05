@@ -4,6 +4,8 @@ import numpy as np
 def netflix(es, ps, e0, l=.0001):
     """Combine predictions with the optimal weights to minimize RMSE.
 
+    Ref: Töscher, A., Jahrer, M., & Bell, R. M. (2009). The bigchaos solution to the netflix grand prize.
+
     Args:
         es (list of float): RMSEs of predictions
         ps (list of np.array): predictions
