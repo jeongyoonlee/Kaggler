@@ -77,6 +77,7 @@ class QuantileEncoder(base.BaseEstimator):
         Returns:
             Encoded features (pandas.DataFrame).
         """
+        X = X.copy()
         for i, col in enumerate(X.columns):
             X.loc[:, col] = self._transform_col(X[col], i)
 
@@ -127,6 +128,7 @@ class Normalizer(base.BaseEstimator):
             (pandas.DataFrame): normalized numerical columns
         """
 
+        X = X.copy()
         for col in range(X.shape[1]):
             X[col] = self._transform_col(X[col], col)
 
@@ -144,6 +146,7 @@ class Normalizer(base.BaseEstimator):
 
         self.ecdfs = [None] * X.shape[1]
 
+        X = X.copy()
         for col in range(X.shape[1]):
             self.ecdfs[col] = ECDF(X[col].values)
             X[col] = self._transform_col(X[col], col)

@@ -121,6 +121,7 @@ class LabelEncoder(base.BaseEstimator):
         self.label_encoders = [None] * X.shape[1]
         self.label_maxes = [None] * X.shape[1]
 
+        X = X.copy()
         for i, col in enumerate(X.columns):
             self.label_encoders[i], self.label_maxes[i] = \
                 self._get_label_encoder_and_max(X[col])
@@ -311,6 +312,7 @@ class TargetEncoder(base.BaseEstimator):
         Returns:
             (pandas.DataFrame): encoded columns
         """
+        X = X.copy()
         for i, col in enumerate(X.columns):
             if self.cv is None:
                 X.loc[:, col] = (X[col].fillna(NAN_INT)
@@ -340,6 +342,7 @@ class TargetEncoder(base.BaseEstimator):
         self.target_encoders = [None] * X.shape[1]
         self.target_mean = y.mean()
 
+        X = X.copy()
         for i, col in enumerate(X.columns):
             if self.cv is None:
                 self.target_encoders[i] = self._get_target_encoder(X[col], y)
@@ -608,6 +611,7 @@ class FrequencyEncoder(base.BaseEstimator):
         Returns:
             (pandas.DataFrame): encoded columns
         """
+        X = X.copy()
         for i, col in enumerate(X.columns):
             if self.cv is None:
                 X.loc[:, col] = X[col].fillna('NaN').map(self.frequency_encoders[i]).fillna(0)
@@ -631,6 +635,7 @@ class FrequencyEncoder(base.BaseEstimator):
         """
         self.frequency_encoders = [None] * X.shape[1]
 
+        X = X.copy()
         for i, col in enumerate(X.columns):
             if self.cv is None:
                 self.frequency_encoders[i] = self._get_frequency_encoder(X[col])
