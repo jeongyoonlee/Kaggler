@@ -60,7 +60,7 @@ X_ohe = ohe.fit_transform(trn[cat_cols])	    # X_ohe is a scipy sparse matrix
 trn[cat_cols] = lbe.fit_transform(trn[cat_cols])
 trn[cat_cols] = te.fit_transform(trn[cat_cols])
 trn[cat_cols] = fe.fit_transform(trn[cat_cols])
-X_ee = ee.fit_transform(trn[cat_cols])          # X_ee is a numpy matrix
+X_ee = ee.fit_transform(trn[cat_cols], trn[target_col])          # X_ee is a numpy matrix
 
 tst = pd.read_csv('test.csv')
 X_ohe = ohe.transform(tst[cat_cols])
