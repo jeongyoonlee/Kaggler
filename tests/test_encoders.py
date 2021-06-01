@@ -1,4 +1,4 @@
-from kaggler.preprocessing import DAE, TargetEncoder, EmbeddingEncoder, FrequencyEncoder
+from kaggler.preprocessing import DAE, SDAE, TargetEncoder, EmbeddingEncoder, FrequencyEncoder
 from sklearn.model_selection import KFold
 
 from .const import RANDOM_SEED, TARGET_COL
@@ -17,6 +17,19 @@ def test_DAE(generate_data):
 
     dae = DAE(cat_cols=cat_cols, num_cols=num_cols, encoding_dim=encoding_dim, random_state=RANDOM_SEED)
     X = dae.fit_transform(df[feature_cols])
+    assert X.shape[1] == encoding_dim
+
+
+def test_SDAE(generate_data):
+    encoding_dim = 10
+
+    df = generate_data()
+    feature_cols = [x for x in df.columns if x != TARGET_COL]
+    cat_cols = [x for x in feature_cols if df[x].nunique() < 100]
+    num_cols = [x for x in feature_cols if x not in cat_cols]
+
+    dae = SDAE(cat_cols=cat_cols, num_cols=num_cols, encoding_dim=encoding_dim, random_state=RANDOM_SEED)
+    X = dae.fit_transform(df[feature_cols], df[TARGET_COL])
     assert X.shape[1] == encoding_dim
 
 

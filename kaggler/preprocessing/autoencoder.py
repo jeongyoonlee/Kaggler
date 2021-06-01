@@ -208,7 +208,7 @@ class DAE(base.BaseEstimator):
         self.seed = random_state
         self.lbe = LabelEncoder(min_obs=min_obs)
 
-    def build_model(self, X):
+    def build_model(self, X, y=None):
         inputs = []
         num_inputs = []
         embeddings = []
@@ -244,8 +244,8 @@ class DAE(base.BaseEstimator):
             encoded, decoded = dae_layers[i](merged_inputs)
             _, merged_inputs = dae_layers[i](merged_inputs, training=False)
 
-        self.encoder = Model(inputs=inputs, outputs=encoded)
-        self.dae = Model(inputs=inputs, outputs=decoded)
+        self.encoder = Model(inputs=inputs, outputs=encoded, name='encoder_head')
+        self.dae = Model(inputs=inputs, outputs=decoded, name='decoder_head')
         self.dae.compile(optimizer='adam')
 
     def fit(self, X, y=None):
@@ -256,12 +256,12 @@ class DAE(base.BaseEstimator):
             y (pandas.Series, optional): not used
 
         Returns:
-            A trained AutoEncoder object.
+            A trained DAE object.
         """
         if self.cat_cols:
             X[self.cat_cols] = self.lbe.fit_transform(X[self.cat_cols])
 
-        self.build_model(X)
+        self.build_model(X, y)
 
         features = [X[col].values for col in self.cat_cols]
         if self.num_cols:
@@ -306,3 +306,83 @@ class DAE(base.BaseEstimator):
         """
         self.fit(X, y)
         return self.transform(X)
+
+
+class SDAE(DAE):
+    """Supervised Denoising AutoEncoder feature transformer."""
+
+    def build_model(self, X, y=None):
+        inputs = []
+        num_inputs = []
+        embeddings = []
+
+        if self.cat_cols:
+            for i, col in enumerate(self.cat_cols):
+                n_uniq = X[col].nunique()
+                if not self.n_emb[i]:
+                    self.n_emb[i] = max(MIN_EMBEDDING, 2 * int(np.log2(n_uniq)))
+
+                inp = Input(shape=(1,), name=col)
+                emb = Embedding(input_dim=n_uniq, output_dim=self.n_emb[i], name=col + EMBEDDING_SUFFIX)(inp)
+                emb = Dropout(self.dropout)(emb)
+                emb = Reshape((self.n_emb[i],))(emb)
+
+                inputs.append(inp)
+                embeddings.append(emb)
+
+        if self.num_cols:
+            num_inputs = Input(shape=(len(self.num_cols),), name='num_inputs')
+            merged_inputs = Concatenate()(embeddings + [num_inputs]) if embeddings else num_inputs
+
+            inputs = inputs + [num_inputs]
+        else:
+            merged_inputs = Concatenate()(embeddings)
+
+        dae_layers = []
+        for i in range(self.n_layer):
+            dae_layers.append(DAELayer(encoding_dim=self.encoding_dim, noise_std=self.noise_std,
+                                       swap_prob=self.swap_prob, mask_prob=self.mask_prob,
+                                       random_state=self.seed, name=f'dae_layer_{i}'))
+
+            encoded, decoded = dae_layers[i](merged_inputs)
+            _, merged_inputs = dae_layers[i](merged_inputs, training=False)
+
+        self.encoder = Model(inputs=inputs, outputs=encoded, name='encoder_head')
+
+        if y.dtype in [np.int32, np.int64]:
+            n_uniq = len(np.unique(y))
+            if n_uniq == 2:
+                self.n_class = 1
+                self.output_activation = 'binary_crossentropy'
+                self.output_loss = 'binary_crossentropy'
+            elif n_uniq > 2:
+                self.n_class = n_uniq
+                self.output_activation = 'sparse_categorical_crossentropy'
+                self.output_loss = 'sparse_categorical_crossentropy'
+        else:
+            self.n_class = 1
+            self.output_activation = 'linear'
+            self.output_loss = 'mean_squared_error'
+
+        # supervised head
+        supervised_inputs = Input((self.encoding_dim,), name='supervised_inputs')
+        x = Dense(1024, 'relu')(supervised_inputs)
+        x = Dropout(.3, seed=self.seed)(x)
+        supervised_outputs = Dense(self.n_class, activation=self.output_activation)(x)
+        self.supervised = Model(inputs=supervised_inputs, outputs=supervised_outputs, name='supervised_head')
+
+        self.dae = Model(inputs=inputs, outputs=self.supervised(self.encoder(inputs)), name='decoder_head')
+        self.dae.compile(optimizer='adam', loss=self.output_loss)
+
+    def fit(self, X, y):
+        """Train supervised DAE
+
+        Args:
+            X (pandas.DataFrame): features to encode
+            y (pandas.Series): target variable
+
+        Returns:
+            A trained SDAE object.
+        """
+        assert y is not None, 'SDAE needs y (target variable) for fit()'
+        super().fit(X, y)
