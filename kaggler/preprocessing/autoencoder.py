@@ -353,11 +353,11 @@ class SDAE(DAE):
             n_uniq = len(np.unique(y))
             if n_uniq == 2:
                 self.n_class = 1
-                self.output_activation = 'binary_crossentropy'
+                self.output_activation = 'sigmoid'
                 self.output_loss = 'binary_crossentropy'
             elif n_uniq > 2:
                 self.n_class = n_uniq
-                self.output_activation = 'sparse_categorical_crossentropy'
+                self.output_activation = 'softmax'
                 self.output_loss = 'sparse_categorical_crossentropy'
         else:
             self.n_class = 1
