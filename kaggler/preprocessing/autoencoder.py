@@ -285,6 +285,7 @@ class DAE(base.BaseEstimator):
         Returns:
             Encoding matrix for features
         """
+        X = X.copy()
         if self.cat_cols:
             X[self.cat_cols] = self.lbe.transform(X[self.cat_cols])
 
