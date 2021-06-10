@@ -1,5 +1,5 @@
 from kaggler.preprocessing import DAE, SDAE, TargetEncoder, EmbeddingEncoder, FrequencyEncoder
-from sklearn.model_selection import KFold
+from sklearn.model_selection import KFold, train_test_split
 
 from .const import RANDOM_SEED, TARGET_COL
 
@@ -20,6 +20,35 @@ def test_DAE(generate_data):
     assert X.shape[1] == encoding_dim
 
 
+def test_DAE_with_validation_data(generate_data):
+    encoding_dim = 10
+
+    df = generate_data()
+    feature_cols = [x for x in df.columns if x != TARGET_COL]
+    cat_cols = [x for x in feature_cols if df[x].nunique() < 100]
+    num_cols = [x for x in feature_cols if x not in cat_cols]
+
+    dae = DAE(cat_cols=cat_cols, num_cols=num_cols, encoding_dim=encoding_dim, random_state=RANDOM_SEED)
+    trn, val = train_test_split(df, test_size=.2, shuffle=True, random_state=RANDOM_SEED)
+    X = dae.fit_transform(trn[feature_cols], validation_data=[val[feature_cols]])
+    assert X.shape[1] == encoding_dim
+
+
+def test_DAE_with_multiple_encoders(generate_data):
+    encoding_dim = 10
+    n_encoder = 3
+
+    df = generate_data()
+    feature_cols = [x for x in df.columns if x != TARGET_COL]
+    cat_cols = [x for x in feature_cols if df[x].nunique() < 100]
+    num_cols = [x for x in feature_cols if x not in cat_cols]
+
+    dae = DAE(cat_cols=cat_cols, num_cols=num_cols, encoding_dim=encoding_dim, n_encoder=n_encoder,
+              random_state=RANDOM_SEED)
+    X = dae.fit_transform(df[feature_cols])
+    assert X.shape[1] == encoding_dim * n_encoder
+
+
 def test_SDAE(generate_data):
     encoding_dim = 10
 
@@ -31,6 +60,17 @@ def test_SDAE(generate_data):
     dae = SDAE(cat_cols=cat_cols, num_cols=num_cols, encoding_dim=encoding_dim, random_state=RANDOM_SEED)
     X = dae.fit_transform(df[feature_cols], df[TARGET_COL])
     assert X.shape[1] == encoding_dim
+
+    trn, val = train_test_split(df, test_size=.2, shuffle=True, random_state=RANDOM_SEED)
+    X = dae.fit_transform(trn[feature_cols], trn[TARGET_COL],
+                          validation_data=(val[feature_cols], val[TARGET_COL]))
+    assert X.shape[1] == encoding_dim
+
+    n_encoder = 3
+    dae = SDAE(cat_cols=cat_cols, num_cols=num_cols, encoding_dim=encoding_dim, n_encoder=n_encoder,
+              random_state=RANDOM_SEED)
+    X = dae.fit_transform(df[feature_cols], df[TARGET_COL])
+    assert X.shape[1] == encoding_dim * n_encoder
 
 
 def test_TargetEncoder(generate_data):
