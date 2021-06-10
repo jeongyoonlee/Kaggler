@@ -1,6 +1,7 @@
 from logging import getLogger
 import numpy as np
 from sklearn import base
+from sklearn.utils import check_random_state
 import tensorflow as tf
 from tensorflow.keras import Input, Model, backend as K
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
@@ -93,7 +94,7 @@ class SwapNoiseMasker(BaseMasker):
 class DAELayer(Layer):
     """A DAE layer with one pair of the encoder and decoder."""
 
-    def __init__(self, encoding_dim=128, noise_std=.0, swap_prob=.2, mask_prob=.0, random_state=42, **kwargs):
+    def __init__(self, encoding_dim=128, noise_std=.0, swap_prob=.2, mask_prob=.0, seed=42, **kwargs):
         """Initialize a DAE (Denoising AutoEncoder) layer.
 
         Args:
@@ -102,7 +103,7 @@ class DAELayer(Layer):
             swap_prob (float): probability to add swap noise to features.
             mask_prob (float): probability to add zero masking to features.
             dropout (float): dropout probability in embedding layers
-            random_state (int): random seed.
+            seed (int): random seed.
         """
         super().__init__(**kwargs)
 
@@ -110,7 +111,7 @@ class DAELayer(Layer):
         self.noise_std = noise_std
         self.swap_prob = swap_prob
         self.mask_prob = mask_prob
-        self.seed = random_state
+        self.seed = seed
 
         self.encoder = Dense(encoding_dim, activation='relu', name=f'{self.name}_encoder')
 
@@ -173,7 +174,7 @@ class DAE(base.BaseEstimator):
             min_obs (int): categories observed less than it will be grouped together before training embeddings
             n_epoch (int): the number of epochs to train a neural network with embedding layer
             batch_size (int): the size of mini-batches in model training
-            random_state (int): random seed.
+            random_state (int or np.RandomState): random seed.
         """
         assert cat_cols or num_cols
         self.cat_cols = cat_cols
@@ -205,7 +206,15 @@ class DAE(base.BaseEstimator):
         self.n_epoch = n_epoch
         self.batch_size = batch_size
 
-        self.seed = random_state
+        # Following Scikit-Learn's coding guidelines (https://scikit-learn.org/stable/developers/develop.html):
+        # 1. Every keyword argument accepted by __init__ should correspond to an attribute on the instance.
+        # 2. The routine should accept a keyword random_state and use this to construct a np.random.RandomState
+        #    object
+        self.random_state = random_state
+        self.random_state_ = check_random_state(self.random_state)
+
+        # Get an integer seed from np.random.RandomState to use it for tensorflow
+        self.seed = self.random_state_.get_state()[1][0]
         self.lbe = LabelEncoder(min_obs=min_obs)
 
     def build_model(self, X, y=None):
@@ -239,7 +248,7 @@ class DAE(base.BaseEstimator):
         for i in range(self.n_layer):
             dae_layers.append(DAELayer(encoding_dim=self.encoding_dim, noise_std=self.noise_std,
                                        swap_prob=self.swap_prob, mask_prob=self.mask_prob,
-                                       random_state=self.seed, name=f'dae_layer_{i}'))
+                                       seed=self.seed, name=f'dae_layer_{i}'))
 
             encoded, decoded = dae_layers[i](merged_inputs)
             _, merged_inputs = dae_layers[i](merged_inputs, training=False)
@@ -343,7 +352,7 @@ class SDAE(DAE):
         for i in range(self.n_layer):
             dae_layers.append(DAELayer(encoding_dim=self.encoding_dim, noise_std=self.noise_std,
                                        swap_prob=self.swap_prob, mask_prob=self.mask_prob,
-                                       random_state=self.seed, name=f'dae_layer_{i}'))
+                                       seed=self.seed, name=f'dae_layer_{i}'))
 
             encoded, decoded = dae_layers[i](merged_inputs)
             _, merged_inputs = dae_layers[i](merged_inputs, training=False)
@@ -368,7 +377,7 @@ class SDAE(DAE):
         # supervised head
         supervised_inputs = Input((self.encoding_dim,), name='supervised_inputs')
         x = Dense(1024, 'relu')(supervised_inputs)
-        x = Dropout(.3, seed=self.seed)(x)
+        x = Dropout(.3)(x)
         supervised_outputs = Dense(self.n_class, activation=self.output_activation)(x)
         self.supervised = Model(inputs=supervised_inputs, outputs=supervised_outputs, name='supervised_head')
 
