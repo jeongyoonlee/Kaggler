@@ -90,6 +90,12 @@ X = dae.fit_transform(pd.concat([trn, tst], axis=0))    # encoding input feature
 sdae = DAE(cat_cols=cat_cols, num_cols=num_cols, n_encoding=128, n_layer=3,
            noise_std=.05, swap_prob=.2, mask_prob=.1)
 X = sdae.fit_transform(pd.concat([trn, tst], axis=0))
+
+# Supervised DAE with the Gaussian noise, swapping noise and zero masking in 3 encoders in the encoder/decoder pair.
+sdae = SDAE(cat_cols=cat_cols, num_cols=num_cols, n_encoding=128, n_encoder=3,
+           noise_std=.05, swap_prob=.2, mask_prob=.1)
+X = sdae.fit_transform(trn, trn[target_col])
+
 ```
 
 ## AutoML
