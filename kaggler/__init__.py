@@ -1,4 +1,4 @@
-__version__ = '0.9.10'
+__version__ = '0.9.11'
 __all__ = ['const',
            'data_io',
            'ensemble',
