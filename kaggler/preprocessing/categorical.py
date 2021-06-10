@@ -372,7 +372,7 @@ class EmbeddingEncoder(base.BaseEstimator):
     at https://www.kaggle.com/abhishek/entity-embeddings-to-handle-categories
     """
 
-    def __init__(self, cat_cols, num_cols=[], n_emb=[], min_obs=10, n_epoch=100, batch_size=1024, cv=None,
+    def __init__(self, cat_cols, num_cols=[], n_emb=[], min_obs=10, n_epoch=10, batch_size=1024, cv=None,
                  random_state=42):
         """Initialize an EmbeddingEncoder class object.
 
