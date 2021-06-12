@@ -34,6 +34,7 @@ class LabelEncoder(base.BaseEstimator):
         """
 
         self.min_obs = min_obs
+        self.is_fitted = False
 
     def __repr__(self):
         return ('LabelEncoder(min_obs={})').format(self.min_obs)
@@ -90,6 +91,7 @@ class LabelEncoder(base.BaseEstimator):
             self.label_encoders[i], self.label_maxes[i] = \
                 self._get_label_encoder_and_max(X[col])
 
+        self.is_fitted = True
         return self
 
     def transform(self, X):
@@ -101,6 +103,8 @@ class LabelEncoder(base.BaseEstimator):
         Returns:
             (pandas.DataFrame): label encoded columns
         """
+
+        assert self.is_fitted, "fit() or fit_transform() must be called before transform()."
 
         X = X.copy()
         for i, col in enumerate(X.columns):
@@ -130,6 +134,7 @@ class LabelEncoder(base.BaseEstimator):
                              .map(self.label_encoders[i])
                              .fillna(0).astype(int))
 
+        self.is_fitted = True
         return X
 
 
@@ -153,6 +158,7 @@ class OneHotEncoder(base.BaseEstimator):
 
         self.min_obs = min_obs
         self.label_encoder = LabelEncoder(min_obs)
+        self.is_fitted = False
 
     def __repr__(self):
         return ('OneHotEncoder(min_obs={})').format(self.min_obs)
@@ -186,6 +192,7 @@ class OneHotEncoder(base.BaseEstimator):
 
     def fit(self, X, y=None):
         self.label_encoder.fit(X)
+        self.is_fitted = True
 
         return self
 
@@ -199,6 +206,7 @@ class OneHotEncoder(base.BaseEstimator):
             (scipy.sparse.coo_matrix): sparse matrix encoding categorical
                                        variables into dummy variables
         """
+        assert self.is_fitted, "fit() or fit_transform() must be called before transform()."
 
         for i, col in enumerate(X.columns):
             X_col = self._transform_col(X[col], i)
@@ -254,6 +262,7 @@ class TargetEncoder(base.BaseEstimator):
         self.smoothing = smoothing
         self.min_samples = min_samples
         self.cv = cv
+        self.is_fitted = False
 
     def __repr__(self):
         return('TargetEncoder(smoothing={}, min_samples={}, cv={})'.format(self.smoothing, self.min_samples, self.cv))
@@ -301,6 +310,7 @@ class TargetEncoder(base.BaseEstimator):
                     i_trn, i_val = X.index[i_trn], X.index[i_val]
                     self.target_encoders[i].append(self._get_target_encoder(X.loc[i_trn, col], y.loc[i_trn]))
 
+        self.is_fitted = True
         return self
 
     def transform(self, X):
@@ -312,6 +322,8 @@ class TargetEncoder(base.BaseEstimator):
         Returns:
             (pandas.DataFrame): encoded columns
         """
+        assert self.is_fitted, "fit() or fit_transform() must be called before transform()."
+
         X = X.copy()
         for i, col in enumerate(X.columns):
             if self.cv is None:
@@ -362,6 +374,7 @@ class TargetEncoder(base.BaseEstimator):
 
                     self.target_encoders[i].append(target_encoder)
 
+        self.is_fitted = True
         return X.astype(float)
 
 
@@ -407,6 +420,7 @@ class EmbeddingEncoder(base.BaseEstimator):
         self.random_state = random_state
 
         self.lbe = LabelEncoder(min_obs=self.min_obs)
+        self.is_fitted = False
 
     @staticmethod
     def _get_model(X, cat_cols, num_cols, n_uniq, n_emb, output_activation):
@@ -533,7 +547,12 @@ class EmbeddingEncoder(base.BaseEstimator):
                 self.embs.append(model.get_layer(col + EMBEDDING_SUFFIX).get_weights()[0])
                 logger.debug('{}: {}'.format(col, self.embs[i].shape))
 
+        self.is_fitted = True
+        return self
+
     def transform(self, X):
+        assert self.is_fitted, "fit() or fit_transform() must be called before transform()."
+
         X_cat = self.lbe.transform(X[self.cat_cols])
         X_emb = []
 
@@ -560,6 +579,7 @@ class FrequencyEncoder(base.BaseEstimator):
             cv (sklearn.model_selection._BaseKFold, optional): sklearn CV object
         """
         self.cv = cv
+        self.is_fitted = False
 
     def __repr__(self):
         return('FrequencyEncoder(cv={})'.format(self.cv))
@@ -600,6 +620,7 @@ class FrequencyEncoder(base.BaseEstimator):
                 for i_cv, (i_trn, i_val) in enumerate(self.cv.split(X[col]), 1):
                     self.frequency_encoders[i].append(self._get_frequency_encoder(X.iloc[i_trn][col]))
 
+        self.is_fitted = True
         return self
 
     def transform(self, X):
@@ -611,6 +632,8 @@ class FrequencyEncoder(base.BaseEstimator):
         Returns:
             (pandas.DataFrame): encoded columns
         """
+        assert self.is_fitted, "fit() or fit_transform() must be called before transform()."
+
         X = X.copy()
         for i, col in enumerate(X.columns):
             if self.cv is None:
@@ -650,4 +673,5 @@ class FrequencyEncoder(base.BaseEstimator):
                     X.loc[i_val, col] = X.loc[i_val, col].fillna('NaN').map(frequency_encoder).fillna(0)
                     self.frequency_encoders[i].append(frequency_encoder)
 
+        self.is_fitted = True
         return X
