@@ -169,7 +169,7 @@ class DAE(base.BaseEstimator):
 
     def __init__(self, cat_cols=[], num_cols=[], n_emb=[], encoding_dim=128, n_layer=1, n_encoder=1,
                  noise_std=.0, swap_prob=.2, mask_prob=.0, dropout=.2, min_obs=1, n_epoch=10, batch_size=1024,
-                 random_state=42, label_encoding=False):
+                 random_state=42, label_encoding=True):
         """Initialize a DAE (Denoising AutoEncoder) class object.
 
         Args:
