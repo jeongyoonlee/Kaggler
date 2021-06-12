@@ -27,6 +27,7 @@ class QuantileEncoder(base.BaseEstimator):
         self.n_label = n_label
         self.sample = sample
         self.random_state = random_state
+        self.is_fitted = False
 
     def fit(self, X, y=None):
         """Get empirical CDFs of numerical features.
@@ -53,6 +54,7 @@ class QuantileEncoder(base.BaseEstimator):
                                       _calculate_ecdf, axis=0
                                   )
 
+        self.is_fitted = True
         return self
 
     def fit_transform(self, X, y=None):
@@ -77,6 +79,8 @@ class QuantileEncoder(base.BaseEstimator):
         Returns:
             Encoded features (pandas.DataFrame).
         """
+        assert self.is_fitted, "fit() or fit_transform() must be called before transform()."
+
         X = X.copy()
         for i, col in enumerate(X.columns):
             X.loc[:, col] = self._transform_col(X[col], i)
@@ -127,7 +131,6 @@ class Normalizer(base.BaseEstimator):
         Returns:
             (pandas.DataFrame): normalized numerical columns
         """
-
         X = X.copy()
         for col in range(X.shape[1]):
             X[col] = self._transform_col(X[col], col)

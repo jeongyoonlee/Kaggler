@@ -73,6 +73,32 @@ def test_SDAE(generate_data):
     assert X.shape[1] == encoding_dim * n_encoder
 
 
+def test_DAE_with_pretrained_model(generate_data):
+    encoding_dim = 10
+
+    df = generate_data()
+    feature_cols = [x for x in df.columns if x != TARGET_COL]
+    cat_cols = [x for x in feature_cols if df[x].nunique() < 100]
+    num_cols = [x for x in feature_cols if x not in cat_cols]
+
+    trn, val = train_test_split(df, test_size=.2, shuffle=True, random_state=RANDOM_SEED)
+
+    sdae = SDAE(cat_cols=cat_cols, num_cols=num_cols, encoding_dim=encoding_dim, random_state=RANDOM_SEED)
+    _ = sdae.fit_transform(trn[feature_cols], trn[TARGET_COL])
+
+    dae = DAE(cat_cols=cat_cols, num_cols=num_cols, encoding_dim=encoding_dim, random_state=RANDOM_SEED,
+              pretrained_model=sdae, freeze_embedding=True)
+    _ = dae.fit_transform(df[feature_cols])
+
+    assert not any([layer.trainable for layer in dae.dae.layers if layer.name.endswith('_emb')])
+
+    sdae2 = SDAE(cat_cols=cat_cols, num_cols=num_cols, encoding_dim=encoding_dim, random_state=RANDOM_SEED,
+                 pretrained_model=dae, freeze_embedding=False)
+    _ = sdae2.fit_transform(trn[feature_cols], trn[TARGET_COL])
+
+    assert all([layer.trainable for layer in sdae2.dae.layers if layer.name.endswith('_emb')])
+
+
 def test_TargetEncoder(generate_data):
     df = generate_data()
     feature_cols = [x for x in df.columns if x != TARGET_COL]
