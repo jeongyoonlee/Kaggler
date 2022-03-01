@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, precision_recall_curve, log_loss
 from sklearn.metrics import roc_auc_score as auc            # noqa 
-from sklearn.metrics import average_precision_score as apr  # noqa
+from sklearn.metrics import average_precision_score as ap   # noqa
 
 from ..const import EPS
 
