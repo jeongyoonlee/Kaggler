@@ -15,8 +15,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        python_version: [3.7]
+        os: [ubuntu-latest]
+        python_version: [3.8]
 
     steps:
     - uses: actions/checkout@v1
@@ -31,25 +31,14 @@ jobs:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-000
 
-    - uses: actions/cache@v1
-      if: startsWith(runner.os, 'macOS')
-      with:
-        path: ~/Library/Caches/pip
-        key: ${{ runner.os }}-pip-000
-
     - name: paths
       run: |
         echo "$HOME/.local/bin" >> $GITHUB_PATH
         echo "LD_LIBRARY_PATH=$HOME/.local/lib" >> $GITHUB_ENV
 
-    - name: libomp
-      if: startsWith(runner.os, 'macOS')
-      run: brew list libomp &>/dev/null || HOMEBREW_NO_AUTO_UPDATE=1 brew install libomp
-
     - name: pip
       run: |
-        pip install -U pip
-        pip install codecov
+        pip install -U pip codecov
         pip install -r requirements.txt -r requirements-test.txt
         python setup.py build_ext --inplace
         python setup.py install
