@@ -1,8 +1,8 @@
-from ml_metrics import quadratic_weighted_kappa as kappa    # noqa
 import numpy as np
+from sklearn.metrics import cohen_kappa_score as kappa  # noqa
 from sklearn.metrics import mean_squared_error as mse
 from sklearn.metrics import mean_absolute_error as mae  # noqa
-from sklearn.metrics import r2_score as r2              # noqa
+from sklearn.metrics import r2_score as r2  # noqa
 
 from ..const import EPS
 
@@ -64,7 +64,7 @@ def gini(y, p):
     # get Lorenz curves
     l_true = np.cumsum(true_order) / np.sum(true_order)
     l_pred = np.cumsum(pred_order) / np.sum(pred_order)
-    l_ones = np.linspace(1/n_samples, 1, n_samples)
+    l_ones = np.linspace(1 / n_samples, 1, n_samples)
 
     # get Gini coefficients (area between curves)
     g_true = np.sum(l_ones - l_true)
