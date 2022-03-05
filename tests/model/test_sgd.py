@@ -12,13 +12,12 @@ DUMMY_LEN_X = [3, 2, 4]
 
 
 class TestSGD(unittest.TestCase):
-
     def setUp(self):
         self.model = SGD(n=2**10, a=0.1, l1=1, l2=1, interaction=True)
-        self.sparse_file = '/tmp/dummy.sps'
+        self.sparse_file = "/tmp/dummy.sps"
 
         """Create dummpy sparse files."""
-        with open(self.sparse_file, 'w') as f:
+        with open(self.sparse_file, "w") as f:
             f.write(DUMMY_SPARSE_STR)
 
     def tearDown(self):
@@ -43,5 +42,5 @@ class TestSGD(unittest.TestCase):
         self.assertEqual(len_xs, DUMMY_LEN_X)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
