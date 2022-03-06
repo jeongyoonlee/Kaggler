@@ -6,5 +6,4 @@ from .sgd import SGD
 from .classification_tree import ClassificationTree
 
 
-__all__ = ['FTRL', 'FM', 'NN', 'NN_H2', 'SGD',
-           'ClassificationTree']
+__all__ = ["FTRL", "FM", "NN", "NN_H2", "SGD", "ClassificationTree"]

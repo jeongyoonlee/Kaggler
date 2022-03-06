@@ -10,9 +10,11 @@ N_CATEGORY = 1000
 
 
 def test():
-    df = pd.DataFrame(np.random.randint(0, N_CATEGORY, size=(N_OBS, N_FEATURE)),
-                      columns=['c{}'.format(x) for x in range(N_FEATURE)])
-    profiler = cProfile.Profile(subcalls=True, builtins=True, timeunit=.001)
+    df = pd.DataFrame(
+        np.random.randint(0, N_CATEGORY, size=(N_OBS, N_FEATURE)),
+        columns=["c{}".format(x) for x in range(N_FEATURE)],
+    )
+    profiler = cProfile.Profile(subcalls=True, builtins=True, timeunit=0.001)
     lbe = LabelEncoder(min_obs=100)
     profiler.enable()
     lbe.fit(df)
@@ -21,5 +23,5 @@ def test():
     profiler.print_stats()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test()

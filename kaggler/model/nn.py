@@ -15,7 +15,7 @@ logger = getLogger(__name__)
 class NN(object):
     """Implement a neural network with a single h layer."""
 
-    def __init__(self, n=5, h=10, b=100000, l1=.0, l2=.0, random_state=None):
+    def __init__(self, n=5, h=10, b=100000, l1=0.0, l2=0.0, random_state=None):
         """Initialize the NN class object.
 
         Args:
@@ -58,20 +58,20 @@ class NN(object):
         # Set initial weights randomly.
         self.i = X.shape[1]
         self.l1 = self.l1 / self.i
-        self.w = (np.random.rand((self.i + 2) * self.h + 1) - .5) * 1e-6
+        self.w = (np.random.rand((self.i + 2) * self.h + 1) - 0.5) * 1e-6
         self.w_opt = self.w
         self.n_opt = 0
 
-        logger.info('training ...')
+        logger.info("training ...")
         n_obs = X.shape[0]
         batch = self.b
         n_epoch = self.n
         idx = range(n_obs)
-        self.auc_opt = .5
+        self.auc_opt = 0.5
 
         start = time.time()
-        print('\tEPOCH TRAIN     VALID     BEST      TIME (m)')
-        print('\t--------------------------------------------')
+        print("\tEPOCH TRAIN     VALID     BEST      TIME (m)")
+        print("\t--------------------------------------------")
 
         # Before training
         p = self.predict_raw(X)
@@ -81,9 +81,11 @@ class NN(object):
             p_val = self.predict_raw(X_val)
             auc_val = roc_auc_score(y_val, p_val)
 
-        print('\t{:3d}:  {:.6f}  {:.6f}  {:.6f}  {:.2f}'.format(
-              0, auc, auc_val, self.auc_opt,
-              (time.time() - start) / SEC_PER_MIN))
+        print(
+            "\t{:3d}:  {:.6f}  {:.6f}  {:.6f}  {:.2f}".format(
+                0, auc, auc_val, self.auc_opt, (time.time() - start) / SEC_PER_MIN
+            )
+        )
 
         # Use 'while' instead of 'for' to increase n_epoch if the validation
         # error keeps improving at the end of n_epoch
@@ -101,15 +103,13 @@ class NN(object):
             # speed and space trade-offs.
             for i in range(int(n_obs / batch) + 1):
                 if (i + 1) * batch > n_obs:
-                    sub_idx = idx[batch * i:n_obs]
+                    sub_idx = idx[batch * i : n_obs]
                 else:
-                    sub_idx = idx[batch * i:batch * (i + 1)]
+                    sub_idx = idx[batch * i : batch * (i + 1)]
 
                 x = X[sub_idx]
-                neg_idx = [n_idx for n_idx, n_y in enumerate(y[sub_idx])
-                           if n_y == 0.]
-                pos_idx = [p_idx for p_idx, p_y in enumerate(y[sub_idx])
-                           if p_y == 1.]
+                neg_idx = [n_idx for n_idx, n_y in enumerate(y[sub_idx]) if n_y == 0.0]
+                pos_idx = [p_idx for p_idx, p_y in enumerate(y[sub_idx]) if p_y == 1.0]
                 x0 = x[neg_idx]
                 x1 = x[pos_idx]
                 # Update weights to minimize the cost function using the
@@ -117,12 +117,14 @@ class NN(object):
                 #   func -- cost function
                 #   jac -- jacobian (derivative of the cost function)
                 #   maxiter -- number of iterations for L-BFGS-B
-                ret = minimize(self.func,
-                               self.w,
-                               args=(x0, x1),
-                               method='L-BFGS-B',
-                               jac=self.fprime,
-                               options={'maxiter': 5})
+                ret = minimize(
+                    self.func,
+                    self.w,
+                    args=(x0, x1),
+                    method="L-BFGS-B",
+                    jac=self.fprime,
+                    options={"maxiter": 5},
+                )
                 self.w = ret.x
 
             p = self.predict_raw(X)
@@ -143,18 +145,23 @@ class NN(object):
                     if epoch == n_epoch:
                         n_epoch += 5
 
-            print('\t{:3d}:  {:.6f}  {:.6f}  {:.6f}  {:.2f}'.format(
-                  epoch, auc, auc_val, self.auc_opt,
-                  (time.time() - start) / SEC_PER_MIN))
+            print(
+                "\t{:3d}:  {:.6f}  {:.6f}  {:.6f}  {:.2f}".format(
+                    epoch,
+                    auc,
+                    auc_val,
+                    self.auc_opt,
+                    (time.time() - start) / SEC_PER_MIN,
+                )
+            )
 
             epoch += 1
 
         if X_val is not None:
-            print('Optimal epoch is {0} ({1:.6f})'.format(self.n_opt,
-                                                          self.auc_opt))
+            print("Optimal epoch is {0} ({1:.6f})".format(self.n_opt, self.auc_opt))
             self.w = self.w_opt
 
-        logger.info('done training')
+        logger.info("done training")
 
     def predict(self, X):
         """Predict targets for a feature matrix.
@@ -165,7 +172,7 @@ class NN(object):
         Returns:
             prediction (np.array)
         """
-        logger.info('predicting ...')
+        logger.info("predicting ...")
         ps = self.predict_raw(X)
 
         return sigm(ps[:, 0])
@@ -178,21 +185,21 @@ class NN(object):
         """
         # b -- bias for the input and h layers
         b = np.ones((X.shape[0], 1))
-        w2 = self.w[-(self.h + 1):].reshape(self.h + 1, 1)
-        w1 = self.w[:-(self.h + 1)].reshape(self.i + 1, self.h)
+        w2 = self.w[-(self.h + 1) :].reshape(self.h + 1, 1)
+        w1 = self.w[: -(self.h + 1)].reshape(self.i + 1, self.h)
 
         # Make X to have the same number of columns as self.i.
         # Because of the sparse matrix representation, X for prediction can
         # have a different number of columns.
         if X.shape[1] > self.i:
             # If X has more columns, cut extra columns.
-            X = X[:, :self.i]
+            X = X[:, : self.i]
         elif X.shape[1] < self.i:
             # If X has less columns, cut the rows of the weight matrix between
             # the input and h layers instead of X itself because the SciPy
             # sparse matrix does not support .set_shape() yet.
             idx = range(X.shape[1])
-            idx.append(self.i)        # Include the last row for the bias
+            idx.append(self.i)  # Include the last row for the bias
             w1 = w1[idx, :]
 
         if sparse.issparse(X):
@@ -233,15 +240,19 @@ class NN(object):
         # Predict for features -- cannot use predict_raw() because here
         # different weights can be used.
         if sparse.issparse(x0):
-            p0 = np.hstack((sigm(sparse.hstack((x0, b0)).dot(w[:-h1].reshape(
-                               i1, h))), b0)).dot(w[-h1:].reshape(h1, 1))
-            p1 = np.hstack((sigm(sparse.hstack((x1, b1)).dot(w[:-h1].reshape(
-                               i1, h))), b1)).dot(w[-h1:].reshape(h1, 1))
+            p0 = np.hstack(
+                (sigm(sparse.hstack((x0, b0)).dot(w[:-h1].reshape(i1, h))), b0)
+            ).dot(w[-h1:].reshape(h1, 1))
+            p1 = np.hstack(
+                (sigm(sparse.hstack((x1, b1)).dot(w[:-h1].reshape(i1, h))), b1)
+            ).dot(w[-h1:].reshape(h1, 1))
         else:
-            p0 = np.hstack((sigm(np.hstack((x0, b0)).dot(w[:-h1].reshape(
-                               i1, h))), b0)).dot(w[-h1:].reshape(h1, 1))
-            p1 = np.hstack((sigm(np.hstack((x1, b1)).dot(w[:-h1].reshape(
-                               i1, h))), b1)).dot(w[-h1:].reshape(h1, 1))
+            p0 = np.hstack(
+                (sigm(np.hstack((x0, b0)).dot(w[:-h1].reshape(i1, h))), b0)
+            ).dot(w[-h1:].reshape(h1, 1))
+            p1 = np.hstack(
+                (sigm(np.hstack((x1, b1)).dot(w[:-h1].reshape(i1, h))), b1)
+            ).dot(w[-h1:].reshape(h1, 1))
 
         p0 = p0[idx0]
         p1 = p1[idx1]
@@ -249,9 +260,11 @@ class NN(object):
         # Return the cost that consists of the sum of squared error +
         # L2-regularization for weights between the input and h layers +
         # L2-regularization for weights between the h and output layers.
-        return .5 * (sum((1 - p1 + p0) ** 2) / n +
-                     self.l1 * sum(w[:-h1] ** 2) / (i1 * h) +
-                     self.l2 * sum(w[-h1:] ** 2) / h1)
+        return 0.5 * (
+            sum((1 - p1 + p0) ** 2) / n
+            + self.l1 * sum(w[:-h1] ** 2) / (i1 * h)
+            + self.l2 * sum(w[-h1:] ** 2) / h1
+        )
 
     def fprime(self, w, *args):
         """Return the derivatives of the cost function for predictions.
@@ -308,9 +321,10 @@ class NN(object):
         # Calculate the derivative of the cost function w.r.t. F and w2 where:
         # F -- weights between the input and h layers
         # w2 -- weights between the h and output layers
-        dw1 = -(xb1.T.dot(dy.dot(w2[:-1].reshape(1, h)) * dsigm(xb1.dot(w1))) -
-                xb0.T.dot(dy.dot(w2[:-1].reshape(1, h)) * dsigm(xb0.dot(w1)))
-                ).reshape(i1 * h) + self.l1 * w[:-h1] / (i1 * h)
+        dw1 = -(
+            xb1.T.dot(dy.dot(w2[:-1].reshape(1, h)) * dsigm(xb1.dot(w1)))
+            - xb0.T.dot(dy.dot(w2[:-1].reshape(1, h)) * dsigm(xb0.dot(w1)))
+        ).reshape(i1 * h) + self.l1 * w[:-h1] / (i1 * h)
         dw2 = -(z1 - z0).T.dot(dy).reshape(h1) + self.l2 * w[-h1:] / h1
 
         return np.append(dw1, dw2)

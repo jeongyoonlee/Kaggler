@@ -1,2 +1,2 @@
 RANDOM_SEED = 42
-TARGET_COL = 'target'
+TARGET_COL = "target"

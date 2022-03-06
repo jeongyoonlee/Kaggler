@@ -1,6 +1,6 @@
 from sklearn.metrics import log_loss
-from sklearn.metrics import roc_auc_score as auc            # noqa 
-from sklearn.metrics import average_precision_score as ap   # noqa
+from sklearn.metrics import roc_auc_score as auc  # noqa
+from sklearn.metrics import average_precision_score as ap  # noqa
 from ..const import EPS
 
 

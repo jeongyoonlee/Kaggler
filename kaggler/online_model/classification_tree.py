@@ -3,12 +3,13 @@ from ..util import gini, count_dict, argmax
 
 
 class ClassificationTree(Tree):
-
-    def __init__(self,
-                 number_of_features,
-                 number_of_functions=10,
-                 min_sample_split=200,
-                 predict_initialize={'count_dict': {}}):
+    def __init__(
+        self,
+        number_of_features,
+        number_of_functions=10,
+        min_sample_split=200,
+        predict_initialize={"count_dict": {}},
+    ):
 
         # Constant values
         self.number_of_features = number_of_features
@@ -29,28 +30,28 @@ class ClassificationTree(Tree):
 
         score = current_error - after_split_error
         """
-        left_error = gini(split['left'])
-        right_error = gini(split['right'])
+        left_error = gini(split["left"])
+        right_error = gini(split["right"])
         error = gini(self.Y)
         # if the split is any good, the score should be greater than 0
         total = float(len(self.Y))
-        score = (error - 1 / total * (len(split['left']) * left_error +
-                                      len(split['right']) * right_error))
+        score = error - 1 / total * (
+            len(split["left"]) * left_error + len(split["right"]) * right_error
+        )
         return score
 
     def _apply_best_split(self):
         best_split, best_split_score = self._find_best_split()
         if best_split_score > 0:
-            self.criterion = lambda x: x[best_split['feature']] \
-                             > best_split['value']
+            self.criterion = lambda x: x[best_split["feature"]] > best_split["value"]
             # create the left child
             self.left = ClassificationTree(
                 number_of_features=self.number_of_features,
                 number_of_functions=self.number_of_functions,
                 min_sample_split=self.min_sample_split,
                 predict_initialize={
-                    'count_dict': count_dict(best_split['left']),
-                }
+                    "count_dict": count_dict(best_split["left"]),
+                },
             )
             # create the right child
             self.right = ClassificationTree(
@@ -58,8 +59,8 @@ class ClassificationTree(Tree):
                 number_of_functions=self.number_of_functions,
                 min_sample_split=self.min_sample_split,
                 predict_initialize={
-                    'count_dict': count_dict(best_split['right']),
-                }
+                    "count_dict": count_dict(best_split["right"]),
+                },
             )
             # Collect garbage
             self.samples = {}
@@ -71,7 +72,7 @@ class ClassificationTree(Tree):
         node and the statistics inherited from parent.
         """
         if self._is_leaf():
-            d1 = self.predict_initialize['count_dict']
+            d1 = self.predict_initialize["count_dict"]
             d2 = count_dict(self.Y)
             for key, value in d1.items():
                 if key in d2:

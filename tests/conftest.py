@@ -11,7 +11,7 @@ N_CAT_FEATURE = 10
 N_NUM_FEATURE = 5
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def generate_data():
 
     generated = False
@@ -27,12 +27,16 @@ def generate_data():
             X_cat = np.random.randint(0, N_CATEGORY, size=(N_OBS, N_CAT_FEATURE))
             df = pd.DataFrame(
                 np.hstack((X_num, X_cat)),
-                columns=['num_{}'.format(x) for x in range(N_NUM_FEATURE)]
-                + ['cat_{}'.format(x) for x in range(N_CAT_FEATURE)]
+                columns=["num_{}".format(x) for x in range(N_NUM_FEATURE)]
+                + ["cat_{}".format(x) for x in range(N_CAT_FEATURE)],
             )
-            df[TARGET_COL] = (1 + X_num[:, 0] * X_num[:, 1] - np.log1p(np.exp(X_num[:, 1] + X_num[:, 2]))
-                              + 10 * (X_cat[:, 0] == 0).astype(int)
-                              + np.random.normal(scale=.01, size=N_OBS))
+            df[TARGET_COL] = (
+                1
+                + X_num[:, 0] * X_num[:, 1]
+                - np.log1p(np.exp(X_num[:, 1] + X_num[:, 2]))
+                + 10 * (X_cat[:, 0] == 0).astype(int)
+                + np.random.normal(scale=0.01, size=N_OBS)
+            )
 
         return df
 
