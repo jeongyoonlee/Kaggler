@@ -38,21 +38,20 @@ class QuantileEncoder(base.BaseEstimator):
         Returns:
             A trained QuantileEncoder object.
         """
+
         def _calculate_ecdf(x):
             return ECDF(x[~np.isnan(x)])
 
         if self.sample >= X.shape[0]:
             self.ecdfs = X.apply(_calculate_ecdf, axis=0)
         elif self.sample > 1:
-            self.ecdfs = X.sample(n=self.sample,
-                                  random_state=self.random_state).apply(
-                                      _calculate_ecdf, axis=0
-                                  )
+            self.ecdfs = X.sample(n=self.sample, random_state=self.random_state).apply(
+                _calculate_ecdf, axis=0
+            )
         else:
-            self.ecdfs = X.sample(frac=self.sample,
-                                  random_state=self.random_state).apply(
-                                      _calculate_ecdf, axis=0
-                                  )
+            self.ecdfs = X.sample(
+                frac=self.sample, random_state=self.random_state
+            ).apply(_calculate_ecdf, axis=0)
 
         self.is_fitted = True
         return self
@@ -79,7 +78,9 @@ class QuantileEncoder(base.BaseEstimator):
         Returns:
             Encoded features (pandas.DataFrame).
         """
-        assert self.is_fitted, "fit() or fit_transform() must be called before transform()."
+        assert (
+            self.is_fitted
+        ), "fit() or fit_transform() must be called before transform()."
 
         X = X.copy()
         for i, col in enumerate(X.columns):
@@ -101,8 +102,7 @@ class QuantileEncoder(base.BaseEstimator):
         rv = np.ones_like(x) * -1
 
         filt = ~np.isnan(x)
-        rv[filt] = np.floor((self.ecdfs[i](x[filt]) * 0.998 + .001) *
-                            self.n_label)
+        rv[filt] = np.floor((self.ecdfs[i](x[filt]) * 0.998 + 0.001) * self.n_label)
 
         return rv
 
@@ -167,23 +167,22 @@ class Normalizer(base.BaseEstimator):
             A normalized feature vector.
         """
 
-        return norm.ppf(self.ecdfs[col](x.values) * .998 + .001)
+        return norm.ppf(self.ecdfs[col](x.values) * 0.998 + 0.001)
 
 
 class BandpassFilter(base.BaseEstimator):
-
-    def __init__(self, fs=10., lowcut=.5, highcut=3., order=3):
-        self.fs = 10.
-        self.lowcut = .5
-        self.highcut = 3.
+    def __init__(self, fs=10.0, lowcut=0.5, highcut=3.0, order=3):
+        self.fs = 10.0
+        self.lowcut = 0.5
+        self.highcut = 3.0
         self.order = 3
         self.b, self.a = self._butter_bandpass()
 
     def _butter_bandpass(self):
-        nyq = .5 * self.fs
+        nyq = 0.5 * self.fs
         low = self.lowcut / nyq
         high = self.highcut / nyq
-        b, a = butter(self.order, [low, high], btype='band')
+        b, a = butter(self.order, [low, high], btype="band")
 
         return b, a
 

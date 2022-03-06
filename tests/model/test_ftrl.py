@@ -12,16 +12,20 @@ N_FEATURE = 100
 
 
 def main():
-    print('create y...')
+    print("create y...")
     y = np.random.randint(2, size=N_OBS)
-    print('create X...')
+    print("create X...")
     row = np.random.randint(N_OBS, size=N_VALUE)
     col = np.random.randint(N_FEATURE, size=N_VALUE)
     data = np.ones(N_VALUE)
     X = sparse.csr_matrix((data, (row, col)), dtype=np.int8)
 
-    print('train...')
-    profiler = cProfile.Profile(subcalls=True, builtins=True, timeunit=0.001,)
+    print("train...")
+    profiler = cProfile.Profile(
+        subcalls=True,
+        builtins=True,
+        timeunit=0.001,
+    )
     clf = FTRL(interaction=False)
     profiler.enable()
     clf.fit(X, y)
@@ -29,10 +33,10 @@ def main():
     profiler.print_stats()
 
     p = clf.predict(X)
-    print('AUC: {:.4f}'.format(auc(y, p)))
+    print("AUC: {:.4f}".format(auc(y, p)))
 
-    assert auc(y, p) > .5
+    assert auc(y, p) > 0.5
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

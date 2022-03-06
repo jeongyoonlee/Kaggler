@@ -15,7 +15,7 @@ class DropInactive(base.BaseEstimator, base.TransformerMixin):
     def fit(self, X, y=None):
         x = (X > 0.0).astype(bool)
         s = np.array(x.sum(axis=0)).flatten()
-        self.mask = (s >= self.lowest)
+        self.mask = s >= self.lowest
         return self
 
     def transform(self, X):
@@ -42,12 +42,12 @@ class DropLowInfo(base.BaseEstimator, base.TransformerMixin):
             x = X.multiply(ys).sum(axis=0)
             x = x / X.sum(axis=0)
         else:
-            x = (X > 0)
+            x = X > 0
             s = x.sum(axis=0)
             x = x.multiply(ys).sum(axis=0) / s
-        x = np.array(x).flatten().astype('f4')
-        mask1 = (x < lower)
-        mask2 = (x > upper)
+        x = np.array(x).flatten().astype("f4")
+        mask1 = x < lower
+        mask2 = x > upper
         self.mask = (mask1 + mask2).astype(bool)
         return self
 

@@ -34,13 +34,13 @@ def save_data(X, y, path):
         y (numpy array): Target vector. If None, all zero vector will be saved.
         path (str): Path to the CSV, LibSVM or HDF5 file to save data.
     """
-    catalog = {'.csv': save_csv, '.sps': save_libsvm, '.h5': save_hdf5}
+    catalog = {".csv": save_csv, ".sps": save_libsvm, ".h5": save_hdf5}
 
     ext = os.path.splitext(path)[1]
     func = catalog[ext]
 
     if y is None:
-        y = np.zeros((X.shape[0], ))
+        y = np.zeros((X.shape[0],))
 
     func(X, y, path)
 
@@ -57,7 +57,7 @@ def save_csv(X, y, path):
     if sparse.issparse(X):
         X = X.todense()
 
-    np.savetxt(path, np.hstack((y.reshape((-1, 1)), X)), delimiter=',')
+    np.savetxt(path, np.hstack((y.reshape((-1, 1)), X)), delimiter=",")
 
 
 def save_libsvm(X, y, path):
@@ -81,21 +81,21 @@ def save_hdf5(X, y, path):
         path (str): Path to the HDF5 file to save data.
     """
 
-    with h5py.File(path, 'w') as f:
+    with h5py.File(path, "w") as f:
         is_sparse = 1 if sparse.issparse(X) else 0
-        f['issparse'] = is_sparse
-        f['target'] = y
+        f["issparse"] = is_sparse
+        f["target"] = y
 
         if is_sparse:
             if not sparse.isspmatrix_csr(X):
                 X = X.tocsr()
 
-            f['shape'] = np.array(X.shape)
-            f['data'] = X.data
-            f['indices'] = X.indices
-            f['indptr'] = X.indptr
+            f["shape"] = np.array(X.shape)
+            f["data"] = X.data
+            f["indices"] = X.indices
+            f["indptr"] = X.indptr
         else:
-            f['data'] = X
+            f["data"] = X
 
 
 def load_data(path, dense=False):
@@ -110,7 +110,7 @@ def load_data(path, dense=False):
         Data matrix X and target vector y
     """
 
-    catalog = {'.csv': load_csv, '.sps': load_svmlight_file, '.h5': load_hdf5}
+    catalog = {".csv": load_csv, ".sps": load_svmlight_file, ".h5": load_hdf5}
 
     ext = os.path.splitext(path)[1]
     func = catalog[ext]
@@ -137,8 +137,9 @@ def load_csv(path):
     with open(path) as f:
         line = f.readline().strip()
 
-    X = np.loadtxt(path, delimiter=',',
-                   skiprows=0 if is_number(line.split(',')[0]) else 1)
+    X = np.loadtxt(
+        path, delimiter=",", skiprows=0 if is_number(line.split(",")[0]) else 1
+    )
 
     y = np.array(X[:, 0]).flatten()
     X = X[:, 1:]
@@ -158,18 +159,18 @@ def load_hdf5(path):
         Data matrix X and target vector y
     """
 
-    with h5py.File(path, 'r') as f:
-        is_sparse = f['issparse'][...]
+    with h5py.File(path, "r") as f:
+        is_sparse = f["issparse"][...]
         if is_sparse:
-            shape = tuple(f['shape'][...])
-            data = f['data'][...]
-            indices = f['indices'][...]
-            indptr = f['indptr'][...]
+            shape = tuple(f["shape"][...])
+            data = f["data"][...]
+            indices = f["indices"][...]
+            indptr = f["indptr"][...]
             X = sparse.csr_matrix((data, indices, indptr), shape=shape)
         else:
-            X = f['data'][...]
+            X = f["data"][...]
 
-        y = f['target'][...]
+        y = f["target"][...]
 
     return X, y
 
@@ -186,7 +187,7 @@ def read_sps(path):
 
     for line in open(path):
         # parse x
-        xs = line.rstrip().split(' ')
+        xs = line.rstrip().split(" ")
 
         yield xs[1:], int(xs[0])
 
@@ -218,7 +219,7 @@ class PathJoiner:
         y = load(PATH.data('targets.array'))
     """
 
-    def __init__(self, filename='SETTINGS.json'):
+    def __init__(self, filename="SETTINGS.json"):
         with open(filename) as file:
             self.subdirs = json.load(file)
 
@@ -227,14 +228,14 @@ class PathJoiner:
         return lambda *dirs: os.path.join(subdir, *dirs)
 
 
-def stream_lines(filename, encoding='utf-8', ignore_errors=False):
-    errors = 'ignore' if ignore_errors else 'strict'
+def stream_lines(filename, encoding="utf-8", ignore_errors=False):
+    errors = "ignore" if ignore_errors else "strict"
     with open(filename, encoding=encoding, errors=errors) as file:
         for line in file:
             yield line
 
 
-def stream_csv(filename, encoding='utf-8', ignore_errors=False):
+def stream_csv(filename, encoding="utf-8", ignore_errors=False):
     stream = stream_lines(filename, encoding, ignore_errors)
     return csv.reader(stream)
 
@@ -247,68 +248,67 @@ def limit_stream(stream, count=1, skip=0):
 
 
 def save_obj(filename, obj):
-    with open(filename, 'wb') as file:
+    with open(filename, "wb") as file:
         pickle.dump(obj, file, protocol=pickle.HIGHEST_PROTOCOL)
-    logger.info('saved : {}\t{}'.format(filename, type(obj)))
+    logger.info("saved : {}\t{}".format(filename, type(obj)))
 
 
 def load_obj(filename):
-    with open(filename, 'rb') as file:
+    with open(filename, "rb") as file:
         obj = pickle.load(file)
-    logger.info('loaded : {}\t{}'.format(filename, type(obj)))
+    logger.info("loaded : {}\t{}".format(filename, type(obj)))
     return obj
 
 
 def save_array(filename, X):
-    with h5py.File(filename, 'w') as file:
-        file['data'] = X
-    logger.info('saved : {}\t{}\t{}'.format(filename, X.dtype, X.shape))
+    with h5py.File(filename, "w") as file:
+        file["data"] = X
+    logger.info("saved : {}\t{}\t{}".format(filename, X.dtype, X.shape))
 
 
 def load_array(filename):
-    with h5py.File(filename, 'r') as file:
-        X = file['data'][...]
-    logger.info('loaded : {}\t{}\t{}'.format(filename, X.dtype, X.shape))
+    with h5py.File(filename, "r") as file:
+        X = file["data"][...]
+    logger.info("loaded : {}\t{}\t{}".format(filename, X.dtype, X.shape))
     return X
 
 
 def save_sparse(filename, X):
-    with h5py.File(filename, 'w') as file:
-        file['shape'] = np.array(X.shape)
-        file['data'] = X.data
-        file['indices'] = X.indices
-        file['indptr'] = X.indptr
-    logger.info('saved : {}\t{}\t{}'.format(filename, X.dtype, X.shape))
+    with h5py.File(filename, "w") as file:
+        file["shape"] = np.array(X.shape)
+        file["data"] = X.data
+        file["indices"] = X.indices
+        file["indptr"] = X.indptr
+    logger.info("saved : {}\t{}\t{}".format(filename, X.dtype, X.shape))
 
 
 def load_sparse(filename):
-    with h5py.File(filename, 'r') as file:
-        shape = tuple(file['shape'][...])
-        data = file['data'][...]
-        indices = file['indices'][...]
-        indptr = file['indptr'][...]
+    with h5py.File(filename, "r") as file:
+        shape = tuple(file["shape"][...])
+        data = file["data"][...]
+        indices = file["indices"][...]
+        indptr = file["indptr"][...]
     X = sparse.csr_matrix((data, indices, indptr), shape=shape)
-    logger.info('loaded : {}\t{}\t{}'.format(filename, X.dtype, X.shape))
+    logger.info("loaded : {}\t{}\t{}".format(filename, X.dtype, X.shape))
     return X
 
 
 def save(filename, X):
-    catalog = {'obj': save_obj, 'array': save_array, 'sparse': save_sparse}
-    extension = filename.split('.')[-1]
+    catalog = {"obj": save_obj, "array": save_array, "sparse": save_sparse}
+    extension = filename.split(".")[-1]
     func = catalog[extension]
     func(filename, X)
 
 
 def load(filename):
-    catalog = {'obj': load_obj, 'array': load_array, 'sparse': load_sparse}
-    extension = filename.split('.')[-1]
+    catalog = {"obj": load_obj, "array": load_array, "sparse": load_sparse}
+    extension = filename.split(".")[-1]
     func = catalog[extension]
     X = func(filename)
     return X
 
 
 class Clock(object):
-
     def __init__(self):
         self.start = time.time()
         self.last = self.start
@@ -321,8 +321,8 @@ class Clock(object):
         self.last = self.now
 
     def report(self):
-        txt = '\n[CLOCK]  [ {} ]    '
-        txt += 'since start: [ {} ]    since last: [ {} ]\n'
+        txt = "\n[CLOCK]  [ {} ]    "
+        txt += "since start: [ {} ]    since last: [ {} ]\n"
         current = time.asctime().split()[3]
         since_start = datetime.timedelta(seconds=round(self.now - self.start))
         since_last = datetime.timedelta(seconds=round(self.now - self.last))
@@ -331,7 +331,7 @@ class Clock(object):
 
 def beep(n=1):
     for _ in range(n):
-        os.system('beep')
+        os.system("beep")
 
 
 def print_shape_type(*objs):
