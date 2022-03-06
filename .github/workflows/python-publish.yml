@@ -20,13 +20,13 @@ jobs:
         python-version: 3.9
 
     - name: Install pypa/build
-      run: >-
+      run: |
         python -m pip install -U pip
         pip install -U setuptools wheel build
         pip install -r requirements.txt
 
     - name: Build a binary wheel and a source tarball
-      run: >-
+      run: |
         python setup.py build_ext --inplace
         python -m build --sdist --wheel --outdir dist/ .
         
