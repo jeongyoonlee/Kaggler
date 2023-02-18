@@ -54,7 +54,7 @@ def sample_data(X, y, nrows, shuffle=True, random_state=None):
     return X_s, y_s
 
 
-class BaseAutoML(meta=ABCMeta):
+class BaseAutoML(metaclass=ABCMeta):
     """Base optimized regressor class."""
 
     def __init__(
